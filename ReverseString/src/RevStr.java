@@ -7,7 +7,12 @@ public class RevStr{
 Scanner sc = new Scanner(System.in);
 String original = sc.nextLine() ;
 System.out.println(original);
-sc.close();
+String reverse="";
+//char[] s = 
+for(int i=original.length()-1; i>=0 ; i--) {
+	reverse+=original.charAt(i);
+}
+System.out.println(reverse);
 	}
 
 }
