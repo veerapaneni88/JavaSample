@@ -238,13 +238,18 @@ public class ExcelAPIProcessor {
             return "";
         }
         
-        // Handle different POI versions - try modern enum first, then legacy constants
         try {
-            // For POI 4.x and newer (using enum)
-            switch (cell.getCellType()) {
-                case STRING:
+            // Use DataFormatter for the most reliable conversion
+            DataFormatter formatter = new DataFormatter();
+            return formatter.formatCellValue(cell);
+        } catch (Exception e) {
+            // Manual fallback if DataFormatter fails
+            try {
+                CellType cellType = cell.getCellType();
+                
+                if (cellType == CellType.STRING) {
                     return cell.getStringCellValue();
-                case NUMERIC:
+                } else if (cellType == CellType.NUMERIC) {
                     if (DateUtil.isCellDateFormatted(cell)) {
                         return cell.getDateCellValue().toString();
                     } else {
@@ -255,44 +260,17 @@ public class ExcelAPIProcessor {
                             return String.valueOf(numValue);
                         }
                     }
-                case BOOLEAN:
+                } else if (cellType == CellType.BOOLEAN) {
                     return String.valueOf(cell.getBooleanCellValue());
-                case FORMULA:
+                } else if (cellType == CellType.FORMULA) {
                     return cell.getCellFormula();
-                case BLANK:
+                } else if (cellType == CellType.BLANK) {
                     return "";
-                default:
+                } else {
                     return "";
-            }
-        } catch (Exception e) {
-            // Fallback for older POI versions (3.x) using legacy int constants
-            try {
-                int cellType = cell.getCellType();
-                switch (cellType) {
-                    case 1: // STRING
-                        return cell.getStringCellValue();
-                    case 0: // NUMERIC
-                        if (DateUtil.isCellDateFormatted(cell)) {
-                            return cell.getDateCellValue().toString();
-                        } else {
-                            double numValue = cell.getNumericCellValue();
-                            if (numValue == Math.floor(numValue)) {
-                                return String.valueOf((long) numValue);
-                            } else {
-                                return String.valueOf(numValue);
-                            }
-                        }
-                    case 4: // BOOLEAN
-                        return String.valueOf(cell.getBooleanCellValue());
-                    case 2: // FORMULA
-                        return cell.getCellFormula();
-                    case 3: // BLANK
-                        return "";
-                    default:
-                        return "";
                 }
             } catch (Exception ex) {
-                // Last resort - try to get string representation
+                // Final fallback
                 try {
                     return cell.toString();
                 } catch (Exception finalEx) {
