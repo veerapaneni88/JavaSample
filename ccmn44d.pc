@@ -1,0 +1,585 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#include <kglhk020.h>
+#include <kcdak010.h>
+#include "arcsrvr.h"
+
+#include "ccmn44di.h"
+#include "ccmn44do.h"
+
+EXEC SQL INCLUDE sqlca.h;
+
+/*************************************************************************
+*
+*          Function:        ccmn44dQUERYdam
+*
+*
+*              File:        ./src/ccmn44d.pc
+*
+*
+*        Generation:        Thu Feb 16 00:41:54 1995
+*
+*       General Comment:   ANY MODIFICATIONS MADE TO THIS FILE MUST BE REVIEWED
+*                          IN FILE CCMN44DDAO.JAVA FOR NECESSARY MOBILE CHANGES.
+*
+*       Change History:
+*        Date      User      Description
+*        --------  --------  --------------------------------------------------
+*        08/30/05  Nallavs   Added General Comment.
+*
+*        09/26/05  Malpans   SIR 24002 -Disaster Relief Indicator added on
+*			                 Person Detail Page.The query is modified to
+*		                     to get CD_DISASTER_RLF value from Person Table.
+*        06/23/10  dunawak   SIR 1003027 - First, Middle, Last and Suffix added for
+*                            Select Forward Person Data.
+*        01/16/14  MODIAP    SIR 1013003 - Added Cause of Death                   
+*                            SIR 1014120 - Added program specific Reason for      
+*                            Death                                                
+*                            SIR 1012872 - Added Manner of death, Finding, Death  
+*                            Autopsy result and comment for fatality details
+*    
+*        06/16/14  MODIAP    SIR 1020598 - Modified txtFatalityDetails length to 4001 
+*************************************************************************/
+long  ccmn44dQUERYdam(void *pSQLCA,
+                          _CCMN44DI *pInputDataRec,
+                          _CCMN44DO *pOutputDataRec)
+{
+
+EXEC SQL BEGIN DECLARE SECTION;
+unsigned long hI_ulIdPerson;
+short hI_ulIdPerson_i;
+char hO_szCdPersonLivArr[4];
+EXEC SQL VAR hO_szCdPersonLivArr IS STRING;
+short hO_szCdPersonLivArr_i;
+char hO_tsSysTsLastUpdate2[7];
+EXEC SQL VAR hO_tsSysTsLastUpdate2 IS DATE;
+short hO_tsSysTsLastUpdate2_i;
+char hO_szCdPersonDeath[4];
+EXEC SQL VAR hO_szCdPersonDeath IS STRING;
+short hO_szCdPersonDeath_i;
+char hO_szCdPersonEthnicGroup[3];
+EXEC SQL VAR hO_szCdPersonEthnicGroup IS STRING;
+short hO_szCdPersonEthnicGroup_i;
+char hO_szCdPersonLanguage[3];
+EXEC SQL VAR hO_szCdPersonLanguage IS STRING;
+short hO_szCdPersonLanguage_i;
+char hO_szCdPersonMaritalStatus[3];
+EXEC SQL VAR hO_szCdPersonMaritalStatus IS STRING;
+short hO_szCdPersonMaritalStatus_i;
+char hO_szCdPersonReligion[4];
+EXEC SQL VAR hO_szCdPersonReligion IS STRING;
+short hO_szCdPersonReligion_i;
+char hO_cCdPersonSex;
+EXEC SQL VAR hO_cCdPersonSex IS CHAR(1);
+short hO_cCdPersonSex_i;
+char hO_szCdDisasterRlf[3];
+EXEC SQL VAR hO_szCdDisasterRlf IS STRING;
+short hO_szCdDisasterRlf_i;
+char hO_CdPersonStatus[2];
+EXEC SQL VAR hO_CdPersonStatus IS STRING;
+short hO_CdPersonStatus_i;
+char hO_dtDtPersonBirth[7];
+EXEC SQL VAR hO_dtDtPersonBirth IS DATE;
+short hO_dtDtPersonBirth_i;
+char hO_dtDtPersonDeath[7];
+EXEC SQL VAR hO_dtDtPersonDeath IS DATE;
+short hO_dtDtPersonDeath_i;
+unsigned short hO_lNbrPersonAge;
+short hO_lNbrPersonAge_i;
+char hO_szNmPersonFull[26];
+EXEC SQL VAR hO_szNmPersonFull IS STRING;
+short hO_szNmPersonFull_i;
+char hO_szNmPersonFirst[26];
+EXEC SQL VAR hO_szNmPersonFirst IS STRING;
+short hO_szNmPersonFirst_i;
+char hO_szNmPersonMiddle[26];
+EXEC SQL VAR hO_szNmPersonMiddle IS STRING;
+short hO_szNmPersonMiddle_i;
+char hO_szNmPersonLast[26];
+EXEC SQL VAR hO_szNmPersonLast IS STRING;
+short hO_szNmPersonLast_i;
+char hO_cdNmPersonSuffix[5];
+EXEC SQL VAR hO_cdNmPersonSuffix IS STRING;
+short hO_cdNmPersonSuffix_i;
+char hO_szTxtOccupation[21];
+EXEC SQL VAR hO_szTxtOccupation IS STRING;
+short hO_szTxtOccupation_i;
+char hO_szCdOccupation[4];
+EXEC SQL VAR hO_szCdOccupation IS STRING;
+short hO_szCdOccupation_i;
+char hO_tsLastUpdate[7];
+EXEC SQL VAR hO_tsLastUpdate IS DATE;
+short hO_tsLastUpdate_i;
+char hO_szCdPersGuardCnsrv[2];
+EXEC SQL VAR hO_szCdPersGuardCnsrv IS STRING;
+short hO_szCdPersGuardCnsrv_i;
+char hO_bScrIndPersChrctr;
+EXEC SQL VAR hO_bScrIndPersChrctr IS CHAR(1);
+short hO_bScrIndPersChrctr_i;
+char hO_bCdPersonChar;
+EXEC SQL VAR hO_bCdPersonChar IS CHAR(1);
+short hO_bCdPersonChar_i;
+char hO_bIndPersCancelHist;
+EXEC SQL VAR hO_bIndPersCancelHist IS CHAR(1);
+short hO_bIndPersCancelHist_i;
+char hO_bIndPersonDobApprox;
+EXEC SQL VAR hO_bIndPersonDobApprox IS CHAR(1);
+short hO_bIndPersonDobApprox_i;
+char hO_bIndEducationPortfolio;
+EXEC SQL VAR hO_bIndEducationPortfolio IS CHAR(1);
+short hO_bIndEducationPortfolio_i;
+
+char hO_szCdMannerDeath[4];
+EXEC SQL VAR hO_szCdMannerDeath IS STRING;
+short hO_szCdMannerDeath_i;
+
+char hO_szCdDeathRsnCps[4];
+EXEC SQL VAR hO_szCdDeathRsnCps IS STRING;
+short hO_szCdDeathRsnCps_i;
+
+char hO_szCdDeathCause[4];
+EXEC SQL VAR hO_szCdDeathCause IS STRING;
+short hO_szCdDeathCause_i;
+
+char hO_szCdDeathAutpsyRslt[4];
+EXEC SQL VAR hO_szCdDeathAutpsyRslt IS STRING;
+short hO_szCdDeathAutpsyRslt_i;
+
+char hO_szCdDeathFinding[4];
+EXEC SQL VAR hO_szCdDeathFinding IS STRING;
+short hO_szCdDeathFinding_i;
+
+char hO_szTxtFatalityDetails[4001];
+EXEC SQL VAR hO_szTxtFatalityDetails IS STRING;
+short hO_szTxtFatalityDetails_i;
+
+EXEC SQL END DECLARE SECTION;
+
+long BegPageRow = 0, EndPageRow = 0, i = 0;
+unsigned short uStatus;
+struct sqlca previousSQLCA;
+sqlca.sqlcode = 0;
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdPerson,
+             &(pInputDataRec->ulIdPerson),
+             sizeof(pInputDataRec->ulIdPerson),
+             &hI_ulIdPerson_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+
+/*
+** This dam will retrieve an entire row from the person table
+** given the primary key of Id Person
+*/
+
+EXEC SQL
+    DECLARE CCMN44D_CURSOR CURSOR FOR
+    SELECT
+          CD_PERSON_DEATH,
+		  CD_DEATH_RSN_CPS,
+          CD_MANNER_DEATH,
+          CD_DEATH_CAUSE,
+          CD_DEATH_AUTPSY_RSLT,
+          CD_DEATH_FINDING,
+          TXT_FATALITY_DETAILS,
+          CD_PERSON_ETHNIC_GROUP,
+          CD_PERSON_LANGUAGE,
+          CD_PERSON_MARITAL_STATUS,
+          CD_PERSON_RELIGION,
+          CD_PERSON_SEX,
+          CD_PERSON_STATUS,
+          DT_PERSON_BIRTH,
+          DT_PERSON_DEATH,
+          NBR_PERSON_AGE,
+          NM_PERSON_FULL,
+          NM_PERSON_FIRST,
+          NM_PERSON_MIDDLE,
+          NM_PERSON_LAST,
+          CD_PERSON_SUFFIX,
+          TXT_PERSON_OCCUPATION,
+          CD_OCCUPATION,
+          IND_PERS_CANCEL_HIST,
+          CD_PERS_GUARD_CNSRV,
+          DT_LAST_UPDATE,
+          CD_PERSON_LIV_ARR,
+          CD_PERSON_CHAR,
+          IND_PERSON_DOB_APPROX,
+          CD_DISASTER_RLF,
+          IND_EDUCATION_PORTFOLIO
+    FROM
+          PERSON
+    WHERE
+          ID_PERSON    = :hI_ulIdPerson:hI_ulIdPerson_i;
+
+ EXEC SQL
+    OPEN CCMN44D_CURSOR;
+
+if ( sqlca.sqlcode != 0 )
+{
+    memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+    return sqlca.sqlcode;
+}
+
+
+
+    EXEC SQL
+        FETCH CCMN44D_CURSOR
+        INTO
+          :hO_szCdPersonDeath:hO_szCdPersonDeath_i,
+          :hO_szCdDeathRsnCps:hO_szCdDeathRsnCps_i,
+          :hO_szCdMannerDeath:hO_szCdMannerDeath_i,
+          :hO_szCdDeathCause:hO_szCdDeathCause_i,
+          :hO_szCdDeathAutpsyRslt:hO_szCdDeathAutpsyRslt_i,
+          :hO_szCdDeathFinding:hO_szCdDeathFinding_i,
+          :hO_szTxtFatalityDetails:hO_szTxtFatalityDetails_i,
+          :hO_szCdPersonEthnicGroup:hO_szCdPersonEthnicGroup_i,
+          :hO_szCdPersonLanguage:hO_szCdPersonLanguage_i,
+          :hO_szCdPersonMaritalStatus:hO_szCdPersonMaritalStatus_i,
+          :hO_szCdPersonReligion:hO_szCdPersonReligion_i,
+          :hO_cCdPersonSex:hO_cCdPersonSex_i,
+          :hO_CdPersonStatus:hO_CdPersonStatus_i,
+          :hO_dtDtPersonBirth:hO_dtDtPersonBirth_i,
+          :hO_dtDtPersonDeath:hO_dtDtPersonDeath_i,
+          :hO_lNbrPersonAge:hO_lNbrPersonAge_i,
+          :hO_szNmPersonFull:hO_szNmPersonFull_i,
+          :hO_szNmPersonFirst:hO_szNmPersonFirst_i,
+          :hO_szNmPersonMiddle:hO_szNmPersonMiddle_i,
+          :hO_szNmPersonLast:hO_szNmPersonLast_i,
+          :hO_cdNmPersonSuffix:hO_cdNmPersonSuffix_i,
+          :hO_szTxtOccupation:hO_szTxtOccupation_i,
+          :hO_szCdOccupation:hO_szCdOccupation_i,
+          :hO_bIndPersCancelHist:hO_bIndPersCancelHist_i,
+          :hO_szCdPersGuardCnsrv:hO_szCdPersGuardCnsrv_i,
+          :hO_tsLastUpdate:hO_tsLastUpdate_i,
+          :hO_szCdPersonLivArr:hO_szCdPersonLivArr_i,
+          :hO_bCdPersonChar:hO_bCdPersonChar_i,
+          :hO_bIndPersonDobApprox:hO_bIndPersonDobApprox_i,
+          :hO_szCdDisasterRlf:hO_szCdDisasterRlf_i,
+          :hO_bIndEducationPortfolio:hO_bIndEducationPortfolio_i;
+
+
+if ( sqlca.sqlcode != 0 )
+{
+    memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+    return sqlca.sqlcode;
+}
+
+
+memcpy (&previousSQLCA, &sqlca, sizeof (struct sqlca));
+
+if ( sqlca.sqlcode == 0 )
+{
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonLivArr,
+                          hO_szCdPersonLivArr,
+                          CD_PERSON_LIV_ARR_LEN,
+                          hO_szCdPersonLivArr_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->tsSysTsLastUpdate2,
+                          hO_tsSysTsLastUpdate2,
+                          hO_tsSysTsLastUpdate2_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonDeath,
+                          hO_szCdPersonDeath,
+                          CD_PERSON_DEATH_LEN,
+                          hO_szCdPersonDeath_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdDeathRsnCps,
+                          hO_szCdDeathRsnCps,
+                          CD_DEATH_RSN_CPS_LEN,
+                          hO_szCdDeathRsnCps_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+            uStatus=ARC_UTLHostToString(pOutputDataRec->szCdMannerDeath,
+                          hO_szCdMannerDeath,
+                          CD_MANNER_DEATH_LEN,
+                          hO_szCdMannerDeath_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+            uStatus=ARC_UTLHostToString(pOutputDataRec->szCdDeathCause,
+                          hO_szCdDeathCause,
+                          CD_DEATH_CAUSE_LEN,
+                          hO_szCdDeathCause_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+            uStatus=ARC_UTLHostToString(pOutputDataRec->szCdDeathAutpsyRslt,
+                          hO_szCdDeathAutpsyRslt,
+                          CD_DEATH_AUTPSY_RSLT_LEN,
+                          hO_szCdDeathAutpsyRslt_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+            uStatus=ARC_UTLHostToString(pOutputDataRec->szCdDeathFinding,
+                          hO_szCdDeathFinding,
+                          CD_DEATH_FINDING_LEN,
+                          hO_szCdDeathFinding_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+            uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtFatalityDetails,
+                          hO_szTxtFatalityDetails,
+                          TXT_FATALITY_DETAILS_LEN,
+                          hO_szTxtFatalityDetails_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }			 
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonEthnicGroup,
+                          hO_szCdPersonEthnicGroup,
+                          CD_PERSON_ETHNIC_GROUP_LEN,
+                          hO_szCdPersonEthnicGroup_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonLanguage,
+                          hO_szCdPersonLanguage,
+                          CD_PERSON_LANGUAGE_LEN,
+                          hO_szCdPersonLanguage_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonMaritalStatus,
+                          hO_szCdPersonMaritalStatus,
+                          CD_PERSON_MARITAL_STATUS_LEN,
+                          hO_szCdPersonMaritalStatus_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonReligion,
+                          hO_szCdPersonReligion,
+                          CD_PERSON_RELIGION_LEN,
+                          hO_szCdPersonReligion_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->cCdPersonSex),
+                          &hO_cCdPersonSex,
+                          sizeof(hO_cCdPersonSex),
+                          hO_cCdPersonSex_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdDisasterRlf,
+			                           hO_szCdDisasterRlf,
+			                           CD_DISASTER_RLF_LEN,
+			                           hO_szCdDisasterRlf_i);
+			              if (uStatus != 0)
+			              {
+			                  return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->CdPersonStatus,
+                          hO_CdPersonStatus,
+                          CD_PERSON_STATUS_LEN,
+                          hO_CdPersonStatus_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtPersonBirth),
+                          NULL,
+                          hO_dtDtPersonBirth,
+                          hO_dtDtPersonBirth_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtPersonDeath),
+                          NULL,
+                          hO_dtDtPersonDeath,
+                          hO_dtDtPersonDeath_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->lNbrPersonAge),
+                          &hO_lNbrPersonAge,
+                          sizeof(hO_lNbrPersonAge),
+                          hO_lNbrPersonAge_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmPersonFull,
+                          hO_szNmPersonFull,
+                          NM_PERSON_FULL_LEN,
+                          hO_szNmPersonFull_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+             
+		  uStatus=ARC_UTLHostToString(pOutputDataRec->szNmPersonFirst,
+			       hO_szNmPersonFirst,
+			       NM_PERSON_FIRST_LEN,
+			       hO_szNmPersonFirst_i);
+		  if (uStatus != 0)
+		  {
+		      return (uStatus);
+             }
+             
+		  uStatus=ARC_UTLHostToString(pOutputDataRec->szNmPersonMiddle,
+			       hO_szNmPersonMiddle,
+			       NM_PERSON_MIDDLE_LEN,
+			       hO_szNmPersonMiddle_i);
+		  if (uStatus != 0)
+		  {
+		      return (uStatus);
+             }
+             
+		  uStatus=ARC_UTLHostToString(pOutputDataRec->szNmPersonLast,
+			       hO_szNmPersonLast,
+			       NM_PERSON_LAST_LEN,
+			       hO_szNmPersonLast_i);
+		  if (uStatus != 0)
+		  {
+		      return (uStatus);
+             }
+             
+		  uStatus=ARC_UTLHostToString(pOutputDataRec->cdNmPersonSuffix,
+			       hO_cdNmPersonSuffix,
+			       CD_NM_PERSON_SUFFIX_LEN,
+			       hO_cdNmPersonSuffix_i);
+		  if (uStatus != 0)
+		  {
+		      return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtOccupation,
+                          hO_szTxtOccupation,
+                          TXT_PERSON_OCCUPATION_LEN,
+                          hO_szTxtOccupation_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdOccupation,
+                          hO_szCdOccupation,
+                          CD_OCCUPATION_LEN,
+                          hO_szCdOccupation_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->tsLastUpdate,
+                          hO_tsLastUpdate,
+                          hO_tsLastUpdate_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersGuardCnsrv,
+                          hO_szCdPersGuardCnsrv,
+                          CD_PERS_GUARD_CNSRV_LEN,
+                          hO_szCdPersGuardCnsrv_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bScrIndPersChrctr),
+                          &hO_bScrIndPersChrctr,
+                          sizeof(hO_bScrIndPersChrctr),
+                          hO_bScrIndPersChrctr_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bCdPersonChar),
+                          &hO_bCdPersonChar,
+                          sizeof(hO_bCdPersonChar),
+                          hO_bCdPersonChar_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndPersCancelHist),
+                          &hO_bIndPersCancelHist,
+                          sizeof(hO_bIndPersCancelHist),
+                          hO_bIndPersCancelHist_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndPersonDobApprox),
+                          &hO_bIndPersonDobApprox,
+                          sizeof(hO_bIndPersonDobApprox),
+                          hO_bIndPersonDobApprox_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+
+		     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndEducationPortfolio),
+					   &hO_bIndEducationPortfolio,
+					   sizeof(hO_bIndEducationPortfolio),
+					   hO_bIndEducationPortfolio_i);
+		    if (uStatus != 0)
+		    {
+			  return (uStatus);
+            }
+
+}
+
+EXEC SQL
+    CLOSE CCMN44D_CURSOR;
+
+
+memcpy (pSQLCA, &previousSQLCA, sizeof(struct sqlca));
+return (((struct sqlca *)pSQLCA)->sqlcode);
+}
+
+

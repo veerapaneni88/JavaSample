@@ -1,0 +1,874 @@
+/***************************************************************************
+**
+** Module File:  CLSC37D.PC
+** 
+** DAM Name:     CLSC37D
+** 
+** Description:  This dam will select all income or resources for a given ID 
+**      Person that are effective as of a given date. 
+** 
+** Environment:  HP-UX v9.04
+**               FOUNDATION 2.4 for Unix (Construction, Production)
+**               HP-UX Ansi C Compiler
+**               ORACLE Pro*C SQL PreCompiler
+** 
+** Date Created: Mon Oct 30 14:40:10 1995
+**
+** Programmer:  Jennifer Howell
+**
+** Archive Information: $Revision:   1.4  $
+**                      $Date:   09 Dec 1996 08:47:50  $
+**                      $Modtime:   08 Dec 1996 22:39:56  $
+**                      $Author:   pvcs  $
+**
+** Change History:
+**  Date      User      Description
+**  --------  --------  --------------------------------------------------
+**  06/20/96  CYSKD     Enhancement - Added First Name, Middle Name, and
+**                                    Last Name to Select, Fetch and logic.
+**  10/24/96  CYSKD     Enhancement - Added logic to select CD_NAME_SUFFIX
+**                                    from the NAME table.
+**  12/08/96  overentr  11453 - Changed CD_NAME_SUFFIX to CD_PERSON_SUFFIX.
+***************************************************************************/ 
+
+/**************************************************************************
+** Include Files
+***************************************************************************/
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#include <kglhk020.h>
+#include <kcdak010.h>
+#include "arcsrvr.h"
+
+#include "clsc37di.h"
+#include "clsc37do.h"
+
+EXEC SQL INCLUDE sqlca.h;
+
+/*************************************************************************
+*
+*          Function:        clsc37dQUERYdam
+*
+*
+*              File:        CLSC37D.PC
+*
+*
+*        Generation:        Mon Oct 30 14:40:10 1995
+*
+* Date     User     Change
+* ----     ----     ------------------------------------------------------
+* 02/25/96 DMV     Added join to Person Merge View
+*************************************************************************/
+long  clsc37dQUERYdam(void *pSQLCA,
+                          _CLSC37DI *pInputDataRec,
+                          _CLSC37DO *pOutputDataRec) 
+{
+
+EXEC SQL BEGIN DECLARE SECTION;
+unsigned long hI_ulIdPerson;
+short hI_ulIdPerson_i;
+char hI_szCdIncRsrcIncome[4];
+EXEC SQL VAR hI_szCdIncRsrcIncome IS STRING;
+short hI_szCdIncRsrcIncome_i;
+char hI_dtScrDtLastUpdate[7];
+EXEC SQL VAR hI_dtScrDtLastUpdate IS DATE;
+short hI_dtScrDtLastUpdate_i;
+unsigned long hI_ulIdStage;
+short hI_ulIdStage_i;
+
+unsigned long hO_ulIdIncRsrc[50];
+short hO_ulIdIncRsrc_i[50];
+unsigned long hO_ulIdIncRsrcWorker[50];
+short hO_ulIdIncRsrcWorker_i[50];
+unsigned long hO_ulIdPerson[50];
+short hO_ulIdPerson_i[50];
+char hO_tsLastUpdate[50][7];
+EXEC SQL VAR hO_tsLastUpdate IS DATE;
+short hO_tsLastUpdate_i[50];
+double hO_lAmtIncRsrc[50];
+short hO_lAmtIncRsrc_i[50];
+char hO_szCdIncRsrcType[50][4];
+EXEC SQL VAR hO_szCdIncRsrcType IS STRING;
+short hO_szCdIncRsrcType_i[50];
+char hO_dtDtIncRsrcFrom[50][7];
+EXEC SQL VAR hO_dtDtIncRsrcFrom IS DATE;
+short hO_dtDtIncRsrcFrom_i[50];
+char hO_dtDtIncRsrcTo[50][7];
+EXEC SQL VAR hO_dtDtIncRsrcTo IS DATE;
+short hO_dtDtIncRsrcTo_i[50];
+char hO_szCdIncRsrcIncome[50][4];
+EXEC SQL VAR hO_szCdIncRsrcIncome IS STRING;
+short hO_szCdIncRsrcIncome_i[50];
+char hO_cIndIncRsrcNotAccess[50];
+EXEC SQL VAR hO_cIndIncRsrcNotAccess IS CHAR(1);
+short hO_cIndIncRsrcNotAccess_i[50];
+char hO_szSdsIncRrcsSource[50][21];
+EXEC SQL VAR hO_szSdsIncRrcsSource IS STRING;
+short hO_szSdsIncRrcsSource_i[50];
+char hO_szSdsIncRsrcVerfMethod[50][21];
+EXEC SQL VAR hO_szSdsIncRsrcVerfMethod IS STRING;
+short hO_szSdsIncRsrcVerfMethod_i[50];
+char hO_szTxtIncRsrcDesc[50][81];
+EXEC SQL VAR hO_szTxtIncRsrcDesc IS STRING;
+short hO_szTxtIncRsrcDesc_i[50];
+unsigned long hO_ulIdStagePerson[50];
+short hO_ulIdStagePerson_i[50];
+unsigned long hO_ulIdStage[50];
+short hO_ulIdStage_i[50];
+char hO_szCdStagePersRole[50][3];
+EXEC SQL VAR hO_szCdStagePersRole IS STRING;
+short hO_szCdStagePersRole_i[50];
+char hO_bIndStagePersInLaw[50];
+EXEC SQL VAR hO_bIndStagePersInLaw IS CHAR(1);
+short hO_bIndStagePersInLaw_i[50];
+char hO_szCdStagePersType[50][4];
+EXEC SQL VAR hO_szCdStagePersType IS STRING;
+short hO_szCdStagePersType_i[50];
+char hO_szCdStagePersSearchInd[50];
+EXEC SQL VAR hO_szCdStagePersSearchInd IS CHAR(1);
+short hO_szCdStagePersSearchInd_i[50];
+char hO_szTxtStagePersNotes[50][301];
+EXEC SQL VAR hO_szTxtStagePersNotes IS STRING;
+short hO_szTxtStagePersNotes_i[50];
+char hO_dtDtStagePersLink[50][7];
+EXEC SQL VAR hO_dtDtStagePersLink IS DATE;
+short hO_dtDtStagePersLink_i[50];
+char hO_szCdStagePersRelInt[50][3];
+EXEC SQL VAR hO_szCdStagePersRelInt IS STRING;
+short hO_szCdStagePersRelInt_i[50];
+char hO_bIndStagePersReporter[50];
+EXEC SQL VAR hO_bIndStagePersReporter IS CHAR(1);
+short hO_bIndStagePersReporter_i[50];
+char hO_bIndStagePersEmpNew[50];
+EXEC SQL VAR hO_bIndStagePersEmpNew IS CHAR(1);
+short hO_bIndStagePersEmpNew_i[50];
+char hO_cCdPersonSex[50];
+EXEC SQL VAR hO_cCdPersonSex IS CHAR(1);
+short hO_cCdPersonSex_i[50];
+char hO_szNmPersonFull[50][26];
+EXEC SQL VAR hO_szNmPersonFull IS STRING;
+short hO_szNmPersonFull_i[50];
+unsigned short hO_lNbrPersonAge[50];
+short hO_lNbrPersonAge_i[50];
+char hO_dtDtPersonDeath[50][7];
+EXEC SQL VAR hO_dtDtPersonDeath IS DATE;
+short hO_dtDtPersonDeath_i[50];
+char hO_dtDtPersonBirth[50][7];
+EXEC SQL VAR hO_dtDtPersonBirth IS DATE;
+short hO_dtDtPersonBirth_i[50];
+char hO_szCdPersonReligion[50][4];
+EXEC SQL VAR hO_szCdPersonReligion IS STRING;
+short hO_szCdPersonReligion_i[50];
+char hO_bCdPersonChar[50];
+EXEC SQL VAR hO_bCdPersonChar IS CHAR(1);
+short hO_bCdPersonChar_i[50];
+char hO_bIndPersonDobApprox[50];
+EXEC SQL VAR hO_bIndPersonDobApprox IS CHAR(1);
+short hO_bIndPersonDobApprox_i[50];
+char hO_szCdPersonLivArr[50][4];
+EXEC SQL VAR hO_szCdPersonLivArr IS STRING;
+short hO_szCdPersonLivArr_i[50];
+char hO_szCdPersGuardCnsrv[50][2];
+EXEC SQL VAR hO_szCdPersGuardCnsrv IS STRING;
+short hO_szCdPersGuardCnsrv_i[50];
+char hO_CdPersonStatus[50][2];
+EXEC SQL VAR hO_CdPersonStatus IS STRING;
+short hO_CdPersonStatus_i[50];
+char hO_szCdPersonDeath[50][4];
+EXEC SQL VAR hO_szCdPersonDeath IS STRING;
+short hO_szCdPersonDeath_i[50];
+char hO_szCdPersonMaritalStatus[50][3];
+EXEC SQL VAR hO_szCdPersonMaritalStatus IS STRING;
+short hO_szCdPersonMaritalStatus_i[50];
+char hO_szTxtOccupation[50][21];
+EXEC SQL VAR hO_szTxtOccupation IS STRING;
+short hO_szTxtOccupation_i[50];
+char hO_szCdPersonLanguage[50][3];
+EXEC SQL VAR hO_szCdPersonLanguage IS STRING;
+short hO_szCdPersonLanguage_i[50];
+char hO_szCdPersonEthnicGroup[50][3];
+EXEC SQL VAR hO_szCdPersonEthnicGroup IS STRING;
+short hO_szCdPersonEthnicGroup_i[50];
+char hO_bIndPersCancelHist[50];
+EXEC SQL VAR hO_bIndPersCancelHist IS CHAR(1);
+short hO_bIndPersCancelHist_i[50];
+char hO_szNmNameFirst[50][13];
+EXEC SQL VAR hO_szNmNameFirst IS STRING;
+short hO_szNmNameFirst_i[50];
+char hO_szNmNameLast[50][23];
+EXEC SQL VAR hO_szNmNameLast IS STRING;
+short hO_szNmNameLast_i[50];
+char hO_szNmNameMiddle[50][13];
+EXEC SQL VAR hO_szNmNameMiddle IS STRING;
+short hO_szNmNameMiddle_i[50];
+char hO_szCdNameSuffix[50][3];
+EXEC SQL VAR hO_szCdNameSuffix IS STRING;
+short hO_szCdNameSuffix_i[50];
+EXEC SQL END DECLARE SECTION;
+
+long BegPageRow = 0, EndPageRow = 0, i = 0;
+long lTotal = 0, lOutputIndex = 0, lHostIndex = 0;
+unsigned short uStatus;
+struct sqlca previousSQLCA;
+sqlca.sqlcode = 0;
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdPerson,
+             &(pInputDataRec->ulIdPerson),
+             sizeof(pInputDataRec->ulIdPerson),
+             &hI_ulIdPerson_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+uStatus=ARC_UTLStringToHost(hI_szCdIncRsrcIncome,
+             pInputDataRec->szCdIncRsrcIncome,
+             4,
+             &hI_szCdIncRsrcIncome_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+uStatus=ARC_UTLDateAndTimeToHost(hI_dtScrDtLastUpdate,
+             &(pInputDataRec->dtScrDtLastUpdate),
+             NULL,
+             &hI_dtScrDtLastUpdate_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdStage,
+             &(pInputDataRec->ulIdStage),
+             sizeof(pInputDataRec->ulIdStage),
+             &hI_ulIdStage_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+
+
+
+EXEC SQL
+    DECLARE CLSC37D_CURSOR CURSOR FOR
+    SELECT
+        A.ID_INC_RSRC,
+        A.ID_INC_RSRC_WORKER,
+        A.ID_PERSON,
+        A.DT_LAST_UPDATE,
+        A.AMT_INC_RSRC,
+        A.CD_INC_RSRC_TYPE,
+        A.DT_INC_RSRC_FROM,
+        A.DT_INC_RSRC_TO,
+        A.CD_INC_RSRC_INCOME,
+        A.IND_INC_RSRC_NOT_ACCESS,
+        A.SDS_INC_RSRC_SOURCE,
+        A.SDS_INC_RSRC_VERF_METHOD,
+        A.TXT_INC_RSRC_DESC,
+        B.ID_STAGE_PERSON_LINK,
+        B.ID_STAGE,
+        B.CD_STAGE_PERS_ROLE,
+        B.IND_STAGE_PERS_IN_LAW,
+        B.CD_STAGE_PERS_TYPE,
+        B.CD_STAGE_PERS_SEARCH_IND,
+        B.TXT_STAGE_PERS_NOTES,
+        B.DT_STAGE_PERS_LINK,
+        B.CD_STAGE_PERS_REL_INT,
+        B.IND_STAGE_PERS_REPORTER,
+        B.IND_STAGE_PERS_EMP_NEW,
+        C.CD_PERSON_SEX,
+        C.NM_PERSON_FULL,
+        C.NBR_PERSON_AGE,
+        C.DT_PERSON_DEATH,
+        C.DT_PERSON_BIRTH,
+        C.CD_PERSON_RELIGION,
+        C.CD_PERSON_CHAR,
+        C.IND_PERSON_DOB_APPROX,
+        C.CD_PERSON_LIV_ARR,
+        C.CD_PERS_GUARD_CNSRV,
+        C.CD_PERSON_STATUS,
+        C.CD_PERSON_DEATH,
+        C.CD_PERSON_MARITAL_STATUS,
+        C.TXT_PERSON_OCCUPATION,
+        C.CD_PERSON_LANGUAGE,
+        C.CD_PERSON_ETHNIC_GROUP,
+        C.IND_PERS_CANCEL_HIST,
+        C.NM_PERSON_FIRST,
+        C.NM_PERSON_MIDDLE,
+        C.NM_PERSON_LAST,
+        C.CD_PERSON_SUFFIX
+    FROM    STAGE_PERSON_LINK       B,
+            PERSON                  C,
+            PERSON_MERGE_VIEW       V,
+	    INCOME_AND_RESOURCES    A
+    WHERE V.ID_PERSON_INPUT  = :hI_ulIdPerson:hI_ulIdPerson_i
+    AND   A.CD_INC_RSRC_INCOME = :hI_szCdIncRsrcIncome:hI_szCdIncRsrcIncome_i
+    AND   A.DT_INC_RSRC_FROM <= :hI_dtScrDtLastUpdate:hI_dtScrDtLastUpdate_i
+    AND   A.ID_PERSON        = V.ID_PERSON_OUTPUT                      
+    AND   A.ID_PERSON        = B.ID_PERSON
+    AND   A.ID_PERSON        = C.ID_PERSON
+    AND   B.ID_STAGE          = :hI_ulIdStage:hI_ulIdStage_i
+    AND   :hI_dtScrDtLastUpdate:hI_dtScrDtLastUpdate_i <=
+        (SELECT MAX (A2.DT_INC_RSRC_TO)
+        FROM  INCOME_AND_RESOURCES A2,
+              PERSON_MERGE_VIEW    V2
+        WHERE V2.ID_PERSON_INPUT  = :hI_ulIdPerson:hI_ulIdPerson_i
+        AND   A2.ID_PERSON         = V2.ID_PERSON_OUTPUT             
+        AND   A2.CD_INC_RSRC_INCOME =
+:hI_szCdIncRsrcIncome:hI_szCdIncRsrcIncome_i
+    AND   A2.DT_INC_RSRC_FROM <= :hI_dtScrDtLastUpdate:hI_dtScrDtLastUpdate_i)
+    ORDER BY A.CD_INC_RSRC_TYPE;
+
+
+/*****************************/
+/* Total selected fields: 45 */
+/*****************************/
+
+EXEC SQL
+    OPEN CLSC37D_CURSOR;
+
+
+if ( sqlca.sqlcode != 0 )
+{
+    memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+    return sqlca.sqlcode;
+}
+
+EndPageRow = pInputDataRec->ArchInputStruct.usPageNbr * 
+             pInputDataRec->ArchInputStruct.ulPageSizeNbr;
+BegPageRow = ((pInputDataRec->ArchInputStruct.usPageNbr - 1) * 
+               pInputDataRec->ArchInputStruct.ulPageSizeNbr);
+
+if (BegPageRow < 0)
+{
+    return (ARC_ERR_BAD_PAGE_NUMBER);
+} /* end if */
+
+
+while ( (lTotal <= EndPageRow) && (sqlca.sqlcode == 0) )
+{
+        memcpy (&previousSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+
+
+EXEC SQL
+    FETCH CLSC37D_CURSOR INTO
+        :hO_ulIdIncRsrc:hO_ulIdIncRsrc_i,
+        :hO_ulIdIncRsrcWorker:hO_ulIdIncRsrcWorker_i,
+        :hO_ulIdPerson:hO_ulIdPerson_i,
+        :hO_tsLastUpdate:hO_tsLastUpdate_i,
+        :hO_lAmtIncRsrc:hO_lAmtIncRsrc_i,
+        :hO_szCdIncRsrcType:hO_szCdIncRsrcType_i,
+        :hO_dtDtIncRsrcFrom:hO_dtDtIncRsrcFrom_i,
+        :hO_dtDtIncRsrcTo:hO_dtDtIncRsrcTo_i,
+        :hO_szCdIncRsrcIncome:hO_szCdIncRsrcIncome_i,
+        :hO_cIndIncRsrcNotAccess:hO_cIndIncRsrcNotAccess_i,
+        :hO_szSdsIncRrcsSource:hO_szSdsIncRrcsSource_i,
+        :hO_szSdsIncRsrcVerfMethod:hO_szSdsIncRsrcVerfMethod_i,
+        :hO_szTxtIncRsrcDesc:hO_szTxtIncRsrcDesc_i,
+        :hO_ulIdStagePerson:hO_ulIdStagePerson_i,
+        :hO_ulIdStage:hO_ulIdStage_i,
+        :hO_szCdStagePersRole:hO_szCdStagePersRole_i,
+        :hO_bIndStagePersInLaw:hO_bIndStagePersInLaw_i,
+        :hO_szCdStagePersType:hO_szCdStagePersType_i,
+        :hO_szCdStagePersSearchInd:hO_szCdStagePersSearchInd_i,
+        :hO_szTxtStagePersNotes:hO_szTxtStagePersNotes_i,
+        :hO_dtDtStagePersLink:hO_dtDtStagePersLink_i,
+        :hO_szCdStagePersRelInt:hO_szCdStagePersRelInt_i,
+        :hO_bIndStagePersReporter:hO_bIndStagePersReporter_i,
+        :hO_bIndStagePersEmpNew:hO_bIndStagePersEmpNew_i,
+        :hO_cCdPersonSex:hO_cCdPersonSex_i,
+        :hO_szNmPersonFull:hO_szNmPersonFull_i,
+        :hO_lNbrPersonAge:hO_lNbrPersonAge_i,
+        :hO_dtDtPersonDeath:hO_dtDtPersonDeath_i,
+        :hO_dtDtPersonBirth:hO_dtDtPersonBirth_i,
+        :hO_szCdPersonReligion:hO_szCdPersonReligion_i,
+        :hO_bCdPersonChar:hO_bCdPersonChar_i,
+        :hO_bIndPersonDobApprox:hO_bIndPersonDobApprox_i,
+        :hO_szCdPersonLivArr:hO_szCdPersonLivArr_i,
+        :hO_szCdPersGuardCnsrv:hO_szCdPersGuardCnsrv_i,
+        :hO_CdPersonStatus:hO_CdPersonStatus_i,
+        :hO_szCdPersonDeath:hO_szCdPersonDeath_i,
+        :hO_szCdPersonMaritalStatus:hO_szCdPersonMaritalStatus_i,
+        :hO_szTxtOccupation:hO_szTxtOccupation_i,
+        :hO_szCdPersonLanguage:hO_szCdPersonLanguage_i,
+        :hO_szCdPersonEthnicGroup:hO_szCdPersonEthnicGroup_i,
+        :hO_bIndPersCancelHist:hO_bIndPersCancelHist_i,
+        :hO_szNmNameFirst:hO_szNmNameFirst_i,
+        :hO_szNmNameLast:hO_szNmNameLast_i,
+        :hO_szNmNameMiddle:hO_szNmNameMiddle_i,
+        :hO_szCdNameSuffix:hO_szCdNameSuffix_i;
+
+/**************************/
+/* Total fetch fields: 45 */
+/**************************/
+
+  
+        /* Get cumulative rows fetched with cursor */
+        lTotal = sqlca.sqlerrd[2];  
+        if (lTotal > BegPageRow)
+        {
+            if (BegPageRow > i)
+            {
+                lHostIndex = BegPageRow - i;
+                i = BegPageRow;
+            }
+            else
+            {
+                lHostIndex = 0;
+            }
+
+            while ( (i < lTotal) && (i < EndPageRow))
+            {
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].ulIdIncRsrc),
+                                          &hO_ulIdIncRsrc[lHostIndex],
+                                          sizeof(hO_ulIdIncRsrc[lHostIndex]),
+                                          hO_ulIdIncRsrc_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].ulIdIncRsrcWorker),
+                                          &hO_ulIdIncRsrcWorker[lHostIndex],
+                                          sizeof(hO_ulIdIncRsrcWorker[lHostIndex]),
+                                          hO_ulIdIncRsrcWorker_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].ulIdPerson),
+                                          &hO_ulIdPerson[lHostIndex],
+                                          sizeof(hO_ulIdPerson[lHostIndex]),
+                                          hO_ulIdPerson_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].tsLastUpdate,
+                                          hO_tsLastUpdate[lHostIndex],
+                                          hO_tsLastUpdate_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].lAmtIncRsrc),
+                                          &hO_lAmtIncRsrc[lHostIndex],
+                                          sizeof(hO_lAmtIncRsrc[lHostIndex]),
+                                          hO_lAmtIncRsrc_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdIncRsrcType,
+                                          hO_szCdIncRsrcType[lHostIndex],
+                                          4,
+                                          hO_szCdIncRsrcType_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].dtDtIncRsrcFrom),
+                                          pOutputDataRec->ROWCLSC37DO[lOutputIndex].tmScrTmGeneric1,
+                                          hO_dtDtIncRsrcFrom[lHostIndex],
+                                          hO_dtDtIncRsrcFrom_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].dtDtIncRsrcTo),
+                                          pOutputDataRec->ROWCLSC37DO[lOutputIndex].tmScrTmGeneric2,
+                                          hO_dtDtIncRsrcTo[lHostIndex],
+                                          hO_dtDtIncRsrcTo_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdIncRsrcIncome,
+                                          hO_szCdIncRsrcIncome[lHostIndex],
+                                          4,
+                                          hO_szCdIncRsrcIncome_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].cIndIncRsrcNotAccess),
+                                          &hO_cIndIncRsrcNotAccess[lHostIndex],
+                                          sizeof(hO_cIndIncRsrcNotAccess[lHostIndex]),
+                                          hO_cIndIncRsrcNotAccess_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szSdsIncRrcsSource,
+                                          hO_szSdsIncRrcsSource[lHostIndex],
+                                          21,
+                                          hO_szSdsIncRrcsSource_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szSdsIncRsrcVerfMethod,
+                                          hO_szSdsIncRsrcVerfMethod[lHostIndex],
+                                          21,
+                                          hO_szSdsIncRsrcVerfMethod_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szTxtIncRsrcDesc,
+                                          hO_szTxtIncRsrcDesc[lHostIndex],
+                                          81,
+                                          hO_szTxtIncRsrcDesc_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].ulIdStagePerson),
+                                          &hO_ulIdStagePerson[lHostIndex],
+                                          sizeof(hO_ulIdStagePerson[lHostIndex]),
+                                          hO_ulIdStagePerson_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].ulIdStage),
+                                          &hO_ulIdStage[lHostIndex],
+                                          sizeof(hO_ulIdStage[lHostIndex]),
+                                          hO_ulIdStage_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdStagePersRole,
+                                          hO_szCdStagePersRole[lHostIndex],
+                                          3,
+                                          hO_szCdStagePersRole_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bIndStagePersInLaw),
+                                          &hO_bIndStagePersInLaw[lHostIndex],
+                                          sizeof(hO_bIndStagePersInLaw[lHostIndex]),
+                                          hO_bIndStagePersInLaw_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdStagePersType,
+                                          hO_szCdStagePersType[lHostIndex],
+                                          4,
+                                          hO_szCdStagePersType_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdStagePersSearchInd),
+                                          &hO_szCdStagePersSearchInd[lHostIndex],
+                                          sizeof(hO_szCdStagePersSearchInd[lHostIndex]),
+                                          hO_szCdStagePersSearchInd_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szTxtStagePersNotes,
+                                          hO_szTxtStagePersNotes[lHostIndex],
+                                          301,
+                                          hO_szTxtStagePersNotes_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].dtDtStagePersLink),
+                                          pOutputDataRec->ROWCLSC37DO[lOutputIndex].tmScrTmGeneric3,
+                                          hO_dtDtStagePersLink[lHostIndex],
+                                          hO_dtDtStagePersLink_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdStagePersRelInt,
+                                          hO_szCdStagePersRelInt[lHostIndex],
+                                          3,
+                                          hO_szCdStagePersRelInt_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bIndStagePersReporter),
+                                          &hO_bIndStagePersReporter[lHostIndex],
+                                          sizeof(hO_bIndStagePersReporter[lHostIndex]),
+                                          hO_bIndStagePersReporter_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bIndStagePersEmpNew),
+                                          &hO_bIndStagePersEmpNew[lHostIndex],
+                                          sizeof(hO_bIndStagePersEmpNew[lHostIndex]),
+                                          hO_bIndStagePersEmpNew_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].cCdPersonSex),
+                                          &hO_cCdPersonSex[lHostIndex],
+                                          sizeof(hO_cCdPersonSex[lHostIndex]),
+                                          hO_cCdPersonSex_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szNmPersonFull,
+                                          hO_szNmPersonFull[lHostIndex],
+                                          26,
+                                          hO_szNmPersonFull_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].lNbrPersonAge),
+                                          &hO_lNbrPersonAge[lHostIndex],
+                                          sizeof(hO_lNbrPersonAge[lHostIndex]),
+                                          hO_lNbrPersonAge_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].dtDtPersonDeath),
+                                          pOutputDataRec->ROWCLSC37DO[lOutputIndex].tmScrTmGeneric4,
+                                          hO_dtDtPersonDeath[lHostIndex],
+                                          hO_dtDtPersonDeath_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].dtDtPersonBirth),
+                                          pOutputDataRec->ROWCLSC37DO[lOutputIndex].tmScrTmGeneric5,
+                                          hO_dtDtPersonBirth[lHostIndex],
+                                          hO_dtDtPersonBirth_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonReligion,
+                                          hO_szCdPersonReligion[lHostIndex],
+                                          4,
+                                          hO_szCdPersonReligion_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bCdPersonChar),
+                                          &hO_bCdPersonChar[lHostIndex],
+                                          sizeof(hO_bCdPersonChar[lHostIndex]),
+                                          hO_bCdPersonChar_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bIndPersonDobApprox),
+                                          &hO_bIndPersonDobApprox[lHostIndex],
+                                          sizeof(hO_bIndPersonDobApprox[lHostIndex]),
+                                          hO_bIndPersonDobApprox_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonLivArr,
+                                          hO_szCdPersonLivArr[lHostIndex],
+                                          4,
+                                          hO_szCdPersonLivArr_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersGuardCnsrv,
+                                          hO_szCdPersGuardCnsrv[lHostIndex],
+                                          2,
+                                          hO_szCdPersGuardCnsrv_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].CdPersonStatus,
+                                          hO_CdPersonStatus[lHostIndex],
+                                          2,
+                                          hO_CdPersonStatus_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonDeath,
+                                          hO_szCdPersonDeath[lHostIndex],
+                                          4,
+                                          hO_szCdPersonDeath_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonMaritalStatus,
+                                          hO_szCdPersonMaritalStatus[lHostIndex],
+                                          3,
+                                          hO_szCdPersonMaritalStatus_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szTxtOccupation,
+                                          hO_szTxtOccupation[lHostIndex],
+                                          21,
+                                          hO_szTxtOccupation_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonLanguage,
+                                          hO_szCdPersonLanguage[lHostIndex],
+                                          3,
+                                          hO_szCdPersonLanguage_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdPersonEthnicGroup,
+                                          hO_szCdPersonEthnicGroup[lHostIndex],
+                                          3,
+                                          hO_szCdPersonEthnicGroup_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].bIndPersCancelHist),
+                                          &hO_bIndPersCancelHist[lHostIndex],
+                                          sizeof(hO_bIndPersCancelHist[lHostIndex]),
+                                          hO_bIndPersCancelHist_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szNmNameFirst,
+                                          hO_szNmNameFirst[lHostIndex],
+                                          13,
+                                          hO_szNmNameFirst_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szNmNameLast,
+                                          hO_szNmNameLast[lHostIndex],
+                                          23,
+                                          hO_szNmNameLast_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szNmNameMiddle,
+                                          hO_szNmNameMiddle[lHostIndex],
+                                          13,
+                                          hO_szNmNameMiddle_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSC37DO[i - BegPageRow].szCdNameSuffix,
+                                          hO_szCdNameSuffix[lHostIndex],
+                                          3,
+                                          hO_szCdNameSuffix_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                i++; 
+                lHostIndex++; 
+                lOutputIndex++;
+            } /* end while */
+        }
+    else
+    {
+            i = lTotal;
+    }
+}
+
+
+if (i < BegPageRow)
+{
+    i = BegPageRow;
+}
+
+pOutputDataRec->ArchOutputStruct.ulRowQty = i - BegPageRow;
+
+if (pOutputDataRec->ArchOutputStruct.ulRowQty == 0)
+{
+    memcpy (&previousSQLCA, &sqlca,  sizeof (struct sqlca));
+}
+
+if (lTotal > EndPageRow)
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = TRUE;
+}
+
+else
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = FALSE;
+}
+
+
+
+EXEC SQL
+    CLOSE CLSC37D_CURSOR;
+
+
+memcpy (pSQLCA, &previousSQLCA, sizeof(struct sqlca));
+return (((struct sqlca *)pSQLCA)->sqlcode);
+}

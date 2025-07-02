@@ -1,0 +1,327 @@
+/***************************************************************************
+**
+** Module File:  CLSS52D.PC
+** 
+** DAM Name:     CLSS52D
+** 
+** Description:  This DAM will retrieve full rows from the LEGAL_ACTION
+**		 table where ID_PERSON equals the host.
+** 
+** Environment:  HP-UX v9.04
+**               FOUNDATION 2.4 for Unix (Construction, Production)
+**               HP-UX Ansi C Compiler
+**               ORACLE Pro*C SQL PreCompiler
+** 
+** Date Created: Mon Nov 13 16:24:38 1995
+**
+** Programmer:   Jeff Hughes
+**
+** Archive Information: $Revision:   1.0  $
+**                      $Date:   27 May 1996 20:30:32  $
+**                      $Modtime:   29 Mar 1996 23:18:50  $
+**                      $Author:   pvcs  $
+**
+** Change History:
+**  Date      User      Description
+**  --------  --------  --------------------------------------------------
+**
+***************************************************************************/ 
+
+/**************************************************************************
+** Include Files
+***************************************************************************/
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#include <kglhk020.h>
+#include <kcdak010.h>
+#include "arcsrvr.h"
+
+#include "clss52di.h"
+#include "clss52do.h"
+
+EXEC SQL INCLUDE sqlca.h;
+
+/*************************************************************************
+*
+*          Function:        clss52dQUERYdam
+*
+*
+*              File:        CLSS52D.PC
+*
+*
+*        Generation:        Mon Nov 13 16:24:38 1995
+*
+*************************************************************************/
+long  clss52dQUERYdam(void *pSQLCA,
+                          _CLSS52DI *pInputDataRec,
+                          _CLSS52DO *pOutputDataRec) 
+{
+
+EXEC SQL BEGIN DECLARE SECTION;
+unsigned long hI_ulIdPerson;
+short hI_ulIdPerson_i;
+
+unsigned long hO_ulIdLegalActEvent[100];
+short hO_ulIdLegalActEvent_i[100];
+char hO_tsLastUpdate[100][7];
+EXEC SQL VAR hO_tsLastUpdate IS DATE;
+short hO_tsLastUpdate_i[100];
+unsigned long hO_ulIdPerson[100];
+short hO_ulIdPerson_i[100];
+char hO_szCdLegalActAction[100][5];
+EXEC SQL VAR hO_szCdLegalActAction IS STRING;
+short hO_szCdLegalActAction_i[100];
+char hO_szCdLegalActActnSubtype[100][4];
+EXEC SQL VAR hO_szCdLegalActActnSubtype IS STRING;
+short hO_szCdLegalActActnSubtype_i[100];
+char hO_szCdLegalActOutcome[100][4];
+EXEC SQL VAR hO_szCdLegalActOutcome IS STRING;
+short hO_szCdLegalActOutcome_i[100];
+char hO_dtDtLegalActDateFiled[100][7];
+EXEC SQL VAR hO_dtDtLegalActDateFiled IS DATE;
+short hO_dtDtLegalActDateFiled_i[100];
+char hO_dtDtLegalActOutcomeDt[100][7];
+EXEC SQL VAR hO_dtDtLegalActOutcomeDt IS DATE;
+short hO_dtDtLegalActOutcomeDt_i[100];
+char hO_cIndLegalActDocsNCase[100];
+EXEC SQL VAR hO_cIndLegalActDocsNCase IS CHAR(1);
+short hO_cIndLegalActDocsNCase_i[100];
+char hO_szTxtLegalActComment[100][301];
+EXEC SQL VAR hO_szTxtLegalActComment IS STRING;
+short hO_szTxtLegalActComment_i[100];
+EXEC SQL END DECLARE SECTION;
+
+long BegPageRow = 0, EndPageRow = 0, i = 0;
+long lTotal = 0, lOutputIndex = 0, lHostIndex = 0;
+unsigned short uStatus;
+struct sqlca previousSQLCA;
+sqlca.sqlcode = 0;
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdPerson,
+             &(pInputDataRec->ulIdPerson),
+             sizeof(pInputDataRec->ulIdPerson),
+             &hI_ulIdPerson_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+
+
+
+EXEC SQL
+	DECLARE CLSS52D_CURSOR CURSOR FOR
+	SELECT
+		LA.ID_LEGAL_ACT_EVENT,
+		LA.DT_LAST_UPDATE,
+		LA.ID_PERSON,
+		LA.CD_LEGAL_ACT_ACTION,
+		LA.CD_LEGAL_ACT_ACTN_SUBTYPE,
+		LA.CD_LEGAL_ACT_OUTCOME,
+		LA.DT_LEGAL_ACT_DATE_FILED,
+		LA.DT_LEGAL_ACT_OUTCOME_DT,
+		LA.IND_LEGAL_ACT_DOCS_N_CASE,
+		LA.TXT_LEGAL_ACT_COMMENT
+	FROM	LEGAL_ACTION LA
+	WHERE	ID_PERSON = :hI_ulIdPerson:hI_ulIdPerson_i;
+/*****************************/
+/* Total selected fields: 10 */
+/*****************************/
+
+EXEC SQL
+	OPEN CLSS52D_CURSOR;
+
+
+if ( sqlca.sqlcode != 0 )
+{
+	memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+	return sqlca.sqlcode;
+}
+
+EndPageRow = pInputDataRec->ArchInputStruct.usPageNbr * 
+             pInputDataRec->ArchInputStruct.ulPageSizeNbr;
+BegPageRow = ((pInputDataRec->ArchInputStruct.usPageNbr - 1) * 
+               pInputDataRec->ArchInputStruct.ulPageSizeNbr);
+
+if (BegPageRow < 0)
+{
+    return (ARC_ERR_BAD_PAGE_NUMBER);
+} /* end if */
+
+
+while ( (lTotal <= EndPageRow) && (sqlca.sqlcode == 0) )
+{
+        memcpy (&previousSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+
+
+EXEC SQL
+	FETCH CLSS52D_CURSOR INTO
+		:hO_ulIdLegalActEvent:hO_ulIdLegalActEvent_i,
+		:hO_tsLastUpdate:hO_tsLastUpdate_i,
+		:hO_ulIdPerson:hO_ulIdPerson_i,
+		:hO_szCdLegalActAction:hO_szCdLegalActAction_i,
+		:hO_szCdLegalActActnSubtype:hO_szCdLegalActActnSubtype_i,
+		:hO_szCdLegalActOutcome:hO_szCdLegalActOutcome_i,
+		:hO_dtDtLegalActDateFiled:hO_dtDtLegalActDateFiled_i,
+		:hO_dtDtLegalActOutcomeDt:hO_dtDtLegalActOutcomeDt_i,
+		:hO_cIndLegalActDocsNCase:hO_cIndLegalActDocsNCase_i,
+		:hO_szTxtLegalActComment:hO_szTxtLegalActComment_i;
+
+/**************************/
+/* Total fetch fields: 10 */
+/**************************/
+
+  
+        /* Get cumulative rows fetched with cursor */
+        lTotal = sqlca.sqlerrd[2];	
+        if (lTotal > BegPageRow)
+        {
+            if (BegPageRow > i)
+            {
+                lHostIndex = BegPageRow - i;
+                i = BegPageRow;
+            }
+            else
+            {
+                lHostIndex = 0;
+            }
+
+            while ( (i < lTotal) && (i < EndPageRow))
+            {
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].ulIdLegalActEvent),
+                                          &hO_ulIdLegalActEvent[lHostIndex],
+                                          sizeof(hO_ulIdLegalActEvent[lHostIndex]),
+                                          hO_ulIdLegalActEvent_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].tsLastUpdate,
+                                          hO_tsLastUpdate[lHostIndex],
+                                          hO_tsLastUpdate_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].ulIdPerson),
+                                          &hO_ulIdPerson[lHostIndex],
+                                          sizeof(hO_ulIdPerson[lHostIndex]),
+                                          hO_ulIdPerson_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].szCdLegalActAction,
+                                          hO_szCdLegalActAction[lHostIndex],
+                                          5,
+                                          hO_szCdLegalActAction_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].szCdLegalActActnSubtype,
+                                          hO_szCdLegalActActnSubtype[lHostIndex],
+                                          4,
+                                          hO_szCdLegalActActnSubtype_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].szCdLegalActOutcome,
+                                          hO_szCdLegalActOutcome[lHostIndex],
+                                          4,
+                                          hO_szCdLegalActOutcome_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].dtDtLegalActDateFiled),
+                                          pOutputDataRec->ROWCLSS52DO[lOutputIndex].tmScrTmGeneric1,
+                                          hO_dtDtLegalActDateFiled[lHostIndex],
+                                          hO_dtDtLegalActDateFiled_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].dtDtLegalActOutcomeDt),
+                                          pOutputDataRec->ROWCLSS52DO[lOutputIndex].tmScrTmGeneric2,
+                                          hO_dtDtLegalActOutcomeDt[lHostIndex],
+                                          hO_dtDtLegalActOutcomeDt_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].cIndLegalActDocsNCase),
+                                          &hO_cIndLegalActDocsNCase[lHostIndex],
+                                          sizeof(hO_cIndLegalActDocsNCase[lHostIndex]),
+                                          hO_cIndLegalActDocsNCase_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS52DO[i - BegPageRow].szTxtLegalActComment,
+                                          hO_szTxtLegalActComment[lHostIndex],
+                                          301,
+                                          hO_szTxtLegalActComment_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+
+                i++; 
+                lHostIndex++; 
+                lOutputIndex++;
+            } /* end while */
+        }
+	else
+	{
+            i = lTotal;
+	}
+}
+
+
+if (i < BegPageRow)
+{
+    i = BegPageRow;
+}
+
+pOutputDataRec->ArchOutputStruct.ulRowQty = i - BegPageRow;
+
+if (pOutputDataRec->ArchOutputStruct.ulRowQty == 0)
+{
+    memcpy (&previousSQLCA, &sqlca,  sizeof (struct sqlca));
+}
+
+if (lTotal > EndPageRow)
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = TRUE;
+}
+
+else
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = FALSE;
+}
+
+
+
+EXEC SQL
+	CLOSE CLSS52D_CURSOR;
+
+
+memcpy (pSQLCA, &previousSQLCA, sizeof(struct sqlca));
+return (((struct sqlca *)pSQLCA)->sqlcode);
+}

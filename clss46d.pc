@@ -1,0 +1,302 @@
+/***************************************************************************
+**
+** Module File:  CLSS46D.PC
+** 
+** DAM Name:     CLSS46D
+** 
+** Description:  This DAM will select all the characteristics for a child
+**		 given ID PERSON and the CD CHAR CATEG which are efeective 
+**		 Today.
+** 
+** Environment:  HP-UX v9.04
+**               FOUNDATION 2.4 for Unix (Construction, Production)
+**               HP-UX Ansi C Compiler
+**               ORACLE Pro*C SQL PreCompiler
+** 
+** Date Created: Tue Nov  7 10:03:53 1995
+**
+** Programmer:   Jeff Hughes
+**
+** Archive Information: $Revision:   1.0  $
+**                      $Date:   27 May 1996 20:30:16  $
+**                      $Modtime:   28 Mar 1996 20:24:58  $
+**                      $Author:   pvcs  $
+**
+** Change History:
+**  Date      User      Description
+**  --------  --------  --------------------------------------------------
+**
+***************************************************************************/ 
+
+/**************************************************************************
+** Include Files
+***************************************************************************/
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#include <kglhk020.h>
+#include <kcdak010.h>
+#include "arcsrvr.h"
+
+#include "clss46di.h"
+#include "clss46do.h"
+
+EXEC SQL INCLUDE sqlca.h;
+
+/*************************************************************************
+*
+*          Function:        clss46dQUERYdam
+*
+*
+*              File:        CLSS46D.PC
+*
+*
+*        Generation:        Tue Nov  7 10:03:53 1995
+* 
+*************************************************************************/
+long  clss46dQUERYdam(void *pSQLCA,
+                          _CLSS46DI *pInputDataRec,
+                          _CLSS46DO *pOutputDataRec) 
+{
+
+EXEC SQL BEGIN DECLARE SECTION;
+unsigned long hI_ulIdPerson;
+short hI_ulIdPerson_i;
+char hI_szCdCharCategory[4];
+EXEC SQL VAR hI_szCdCharCategory IS STRING;
+short hI_szCdCharCategory_i;
+
+unsigned long hO_ulIdCharacteristics[50];
+short hO_ulIdCharacteristics_i[50];
+char hO_tsLastUpdate[50][7];
+EXEC SQL VAR hO_tsLastUpdate IS DATE;
+short hO_tsLastUpdate_i[50];
+unsigned long hO_ulIdPerson[50];
+short hO_ulIdPerson_i[50];
+char hO_CdCharacteristic[50][3];
+EXEC SQL VAR hO_CdCharacteristic IS STRING;
+short hO_CdCharacteristic_i[50];
+char hO_dtDtCharStart[50][7];
+EXEC SQL VAR hO_dtDtCharStart IS DATE;
+short hO_dtDtCharStart_i[50];
+char hO_dtDtCharEnd[50][7];
+EXEC SQL VAR hO_dtDtCharEnd IS DATE;
+short hO_dtDtCharEnd_i[50];
+char hO_szCdCharCategory[50][4];
+EXEC SQL VAR hO_szCdCharCategory IS STRING;
+short hO_szCdCharCategory_i[50];
+EXEC SQL END DECLARE SECTION;
+
+long BegPageRow = 0, EndPageRow = 0, i = 0;
+long lTotal = 0, lOutputIndex = 0, lHostIndex = 0;
+unsigned short uStatus;
+struct sqlca previousSQLCA;
+sqlca.sqlcode = 0;
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdPerson,
+             &(pInputDataRec->ulIdPerson),
+             sizeof(pInputDataRec->ulIdPerson),
+             &hI_ulIdPerson_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+uStatus=ARC_UTLStringToHost(hI_szCdCharCategory,
+             pInputDataRec->szCdCharCategory,
+             4,
+             &hI_szCdCharCategory_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+
+
+
+EXEC SQL
+	DECLARE CLSS46D_CURSOR CURSOR FOR
+	SELECT
+		C.ID_CHARACTERISTICS,
+		C.DT_LAST_UPDATE,
+		C.ID_PERSON,
+		C.CD_CHARACTERISTIC,
+		C.DT_CHAR_START,
+		C.DT_CHAR_END,
+		C.CD_CHAR_CATEGORY
+	FROM 	CHARACTERISTICS C
+	WHERE	ID_PERSON         = :hI_ulIdPerson:hI_ulIdPerson_i
+	AND	CD_CHAR_CATEGORY  = :hI_szCdCharCategory:hI_szCdCharCategory_i
+	AND	DT_CHAR_START    <= TRUNC(SYSDATE)
+	AND 	DT_CHAR_END      >= TRUNC(SYSDATE);
+
+/*****************************/
+/* Total selected fields: 7 */
+/*****************************/
+
+EXEC SQL
+	OPEN CLSS46D_CURSOR;
+
+
+if ( sqlca.sqlcode != 0 )
+{
+	memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+	return sqlca.sqlcode;
+}
+
+EndPageRow = pInputDataRec->ArchInputStruct.usPageNbr * 
+             pInputDataRec->ArchInputStruct.ulPageSizeNbr;
+BegPageRow = ((pInputDataRec->ArchInputStruct.usPageNbr - 1) * 
+               pInputDataRec->ArchInputStruct.ulPageSizeNbr);
+
+if (BegPageRow < 0)
+{
+    return (ARC_ERR_BAD_PAGE_NUMBER);
+} /* end if */
+
+
+while ( (lTotal <= EndPageRow) && (sqlca.sqlcode == 0) )
+{
+        memcpy (&previousSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+
+
+EXEC SQL
+	FETCH CLSS46D_CURSOR INTO
+		:hO_ulIdCharacteristics:hO_ulIdCharacteristics_i,
+		:hO_tsLastUpdate:hO_tsLastUpdate_i,
+		:hO_ulIdPerson:hO_ulIdPerson_i,
+		:hO_CdCharacteristic:hO_CdCharacteristic_i,
+		:hO_dtDtCharStart:hO_dtDtCharStart_i,
+		:hO_dtDtCharEnd:hO_dtDtCharEnd_i,
+		:hO_szCdCharCategory:hO_szCdCharCategory_i;
+
+/**************************/
+/* Total fetch fields: 7 */
+/**************************/
+
+  
+        /* Get cumulative rows fetched with cursor */
+        lTotal = sqlca.sqlerrd[2];	
+        if (lTotal > BegPageRow)
+        {
+            if (BegPageRow > i)
+            {
+                lHostIndex = BegPageRow - i;
+                i = BegPageRow;
+            }
+            else
+            {
+                lHostIndex = 0;
+            }
+
+            while ( (i < lTotal) && (i < EndPageRow))
+            {
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].ulIdCharacteristics),
+                                          &hO_ulIdCharacteristics[lHostIndex],
+                                          sizeof(hO_ulIdCharacteristics[lHostIndex]),
+                                          hO_ulIdCharacteristics_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].tsLastUpdate,
+                                          hO_tsLastUpdate[lHostIndex],
+                                          hO_tsLastUpdate_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].ulIdPerson),
+                                          &hO_ulIdPerson[lHostIndex],
+                                          sizeof(hO_ulIdPerson[lHostIndex]),
+                                          hO_ulIdPerson_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].CdCharacteristic,
+                                          hO_CdCharacteristic[lHostIndex],
+                                          3,
+                                          hO_CdCharacteristic_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].dtDtCharStart),
+                                          pOutputDataRec->ROWCLSS46DO[lOutputIndex].tmScrTmGeneric1,
+                                          hO_dtDtCharStart[lHostIndex],
+                                          hO_dtDtCharStart_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].dtDtCharEnd),
+                                          pOutputDataRec->ROWCLSS46DO[lOutputIndex].tmScrTmGeneric2,
+                                          hO_dtDtCharEnd[lHostIndex],
+                                          hO_dtDtCharEnd_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+                     uStatus=ARC_UTLHostToString(pOutputDataRec->ROWCLSS46DO[i - BegPageRow].szCdCharCategory,
+                                          hO_szCdCharCategory[lHostIndex],
+                                          4,
+                                          hO_szCdCharCategory_i[lHostIndex]);
+                     if (uStatus != 0)
+                     {
+                         return (uStatus);
+                     }
+
+
+                i++; 
+                lHostIndex++; 
+                lOutputIndex++;
+            } /* end while */
+        }
+	else
+	{
+            i = lTotal;
+	}
+}
+
+
+if (i < BegPageRow)
+{
+    i = BegPageRow;
+}
+
+pOutputDataRec->ArchOutputStruct.ulRowQty = i - BegPageRow;
+
+if (pOutputDataRec->ArchOutputStruct.ulRowQty == 0)
+{
+    memcpy (&previousSQLCA, &sqlca,  sizeof (struct sqlca));
+}
+
+if (lTotal > EndPageRow)
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = TRUE;
+}
+
+else
+{
+    pOutputDataRec->ArchOutputStruct.bMoreDataInd = FALSE;
+}
+
+
+
+EXEC SQL
+	CLOSE CLSS46D_CURSOR;
+
+
+memcpy (pSQLCA, &previousSQLCA, sizeof(struct sqlca));
+return (((struct sqlca *)pSQLCA)->sqlcode);
+}

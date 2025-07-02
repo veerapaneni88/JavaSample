@@ -1,0 +1,1082 @@
+/***************************************************************************
+**
+** Module File:  CSEC15D.PC
+** 
+** DAM Name:     CSEC15D
+** 
+** Description: This DAM will retrieve a row given Id Stage.
+**               It will be used to populate the Standard Subcare form header.
+** 
+** Environment:  HP-UX v9.04
+**               FOUNDATION 2.4 for Unix (Construction, Production)
+**               HP-UX Ansi C Compiler
+**               ORACLE Pro*C SQL PreCompiler
+** 
+** Date Created: Wed Oct 11 13:46:42 1995
+**
+** Programmer:  Jennifer Howell 
+**
+** Archive Information: $Revision:   1.5  $
+**                      $Date:   09 Dec 1996 08:47:56  $
+**                      $Modtime:   08 Dec 1996 22:40:28  $
+**                      $Author:   pvcs  $
+**
+** Change History:
+**  Date      User      Description
+**  --------  --------  --------------------------------------------------
+**  06/20/96  CYSKD     ENH - Added First Name, Middle Name and Last
+**                            Name to Select, Fetch, and Code.
+**  8/22/96   DYARGR    SIR 22085 - Replace COPYSZ with API
+**  10/25/96  CYSKD     ENH - Added code to select CD_NAME_SUFFIX from
+**                            NAME table.
+**  12/08/96  overentr  11453 - Changed CD_NAME_SUFFIX to CD_PERSON_SUFFIX.
+**
+**  09/04/08  ravih     SIR 26532 - Increased the szTxtCaseSensitiveCmnts 
+**                      size 301 to 2001.
+** 
+***************************************************************************/ 
+
+/**************************************************************************
+** Include Files
+***************************************************************************/
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
+#include <kglhk020.h>
+#include <kcdak010.h>
+#include "arcsrvr.h"
+
+#include "csec15di.h"
+#include "csec15do.h"
+
+#define SPL "PC"
+EXEC SQL INCLUDE sqlca.h;
+
+/*************************************************************************
+*
+*          Function:        csec15dQUERYdam
+*
+*
+*              File:        CSEC15D.PC
+*
+*
+*        Generation:        Wed Oct 11 13:46:42 1995
+*
+*************************************************************************/
+long  csec15dQUERYdam(void *pSQLCA,
+                          _CSEC15DI *pInputDataRec,
+                          _CSEC15DO *pOutputDataRec) 
+{
+
+EXEC SQL BEGIN DECLARE SECTION;
+unsigned long hI_ulIdStage;
+short hI_ulIdStage_i;
+
+/* SIR 22085 Declare the local correctly */
+char  SplRole[3];
+EXEC SQL VAR SplRole IS STRING;
+short SplRole_i;
+
+
+unsigned long hO_ulIdStage;
+short hO_ulIdStage_i;
+char hO_tsLastUpdate[7];
+EXEC SQL VAR hO_tsLastUpdate IS DATE;
+short hO_tsLastUpdate_i;
+char hO_szCdStageType[6];
+EXEC SQL VAR hO_szCdStageType IS STRING;
+short hO_szCdStageType_i;
+unsigned long hO_ulIdUnit;
+short hO_ulIdUnit_i;
+unsigned long hO_ulIdCase;
+short hO_ulIdCase_i;
+char hO_dtDtStageClose[7];
+EXEC SQL VAR hO_dtDtStageClose IS DATE;
+short hO_dtDtStageClose_i;
+char hO_szCdStageClassification[5];
+EXEC SQL VAR hO_szCdStageClassification IS STRING;
+short hO_szCdStageClassification_i;
+char hO_szCdStageCurrPriority[2];
+EXEC SQL VAR hO_szCdStageCurrPriority IS STRING;
+short hO_szCdStageCurrPriority_i;
+char hO_szCdStageInitialPriority[2];
+EXEC SQL VAR hO_szCdStageInitialPriority IS STRING;
+short hO_szCdStageInitialPriority_i;
+char hO_szCdStageRsnPriorityChgd[3];
+EXEC SQL VAR hO_szCdStageRsnPriorityChgd IS STRING;
+short hO_szCdStageRsnPriorityChgd_i;
+char hO_szCdStageReasonClosed[4];
+EXEC SQL VAR hO_szCdStageReasonClosed IS STRING;
+short hO_szCdStageReasonClosed_i;
+char hO_bIndStageClose;
+EXEC SQL VAR hO_bIndStageClose IS CHAR(1);
+short hO_bIndStageClose_i;
+char hO_szTxtStagePriorityCmnts[81];
+EXEC SQL VAR hO_szTxtStagePriorityCmnts IS STRING;
+short hO_szTxtStagePriorityCmnts_i;
+char hO_szCdStageCnty[4];
+EXEC SQL VAR hO_szCdStageCnty IS STRING;
+short hO_szCdStageCnty_i;
+char hO_szNmStage[26];
+EXEC SQL VAR hO_szNmStage IS STRING;
+short hO_szNmStage_i;
+char hO_szCdStageRegion[3];
+EXEC SQL VAR hO_szCdStageRegion IS STRING;
+short hO_szCdStageRegion_i;
+char hO_dtDtStageStart[7];
+EXEC SQL VAR hO_dtDtStageStart IS DATE;
+short hO_dtDtStageStart_i;
+unsigned long hO_ulIdSituation;
+short hO_ulIdSituation_i;
+char hO_szCdStageProgram[4];
+EXEC SQL VAR hO_szCdStageProgram IS STRING;
+short hO_szCdStageProgram_i;
+char hO_szCdStage[4];
+EXEC SQL VAR hO_szCdStage IS STRING;
+short hO_szCdStage_i;
+char hO_szTxtStageClosureCmnts[301];
+EXEC SQL VAR hO_szTxtStageClosureCmnts IS STRING;
+short hO_szTxtStageClosureCmnts_i;
+char hO_szCdCaseProgram[4];
+EXEC SQL VAR hO_szCdCaseProgram IS STRING;
+short hO_szCdCaseProgram_i;
+char hO_szCdCaseCounty[4];
+EXEC SQL VAR hO_szCdCaseCounty IS STRING;
+short hO_szCdCaseCounty_i;
+char hO_szCdCaseSpeclHndlg[3];
+EXEC SQL VAR hO_szCdCaseSpeclHndlg IS STRING;
+short hO_szCdCaseSpeclHndlg_i;
+char hO_bIndCaseWorkerSafety;
+EXEC SQL VAR hO_bIndCaseWorkerSafety IS CHAR(1);
+short hO_bIndCaseWorkerSafety_i;
+char hO_szTxtCaseWorkerSafety[301];
+EXEC SQL VAR hO_szTxtCaseWorkerSafety IS STRING;
+short hO_szTxtCaseWorkerSafety_i;
+char hO_szTxtCaseSensitiveCmnts[2001];
+EXEC SQL VAR hO_szTxtCaseSensitiveCmnts IS STRING;
+short hO_szTxtCaseSensitiveCmnts_i;
+char hO_bIndCaseSensitive;
+EXEC SQL VAR hO_bIndCaseSensitive IS CHAR(1);
+short hO_bIndCaseSensitive_i;
+char hO_bIndCaseArchived;
+EXEC SQL VAR hO_bIndCaseArchived IS CHAR(1);
+short hO_bIndCaseArchived_i;
+char hO_dtDtCaseClosed[7];
+EXEC SQL VAR hO_dtDtCaseClosed IS DATE;
+short hO_dtDtCaseClosed_i;
+char hO_szCdCaseRegion[3];
+EXEC SQL VAR hO_szCdCaseRegion IS STRING;
+short hO_szCdCaseRegion_i;
+char hO_dtDtCaseOpened[7];
+EXEC SQL VAR hO_dtDtCaseOpened IS DATE;
+short hO_dtDtCaseOpened_i;
+char hO_szNmCase[26];
+EXEC SQL VAR hO_szNmCase IS STRING;
+short hO_szNmCase_i;
+unsigned long hO_ulIdPerson;
+short hO_ulIdPerson_i;
+char hO_cCdPersonSex;
+EXEC SQL VAR hO_cCdPersonSex IS CHAR(1);
+short hO_cCdPersonSex_i;
+char hO_szNmPersonFull[26];
+EXEC SQL VAR hO_szNmPersonFull IS STRING;
+short hO_szNmPersonFull_i;
+unsigned short hO_lNbrPersonAge;
+short hO_lNbrPersonAge_i;
+char hO_dtDtPersonDeath[7];
+EXEC SQL VAR hO_dtDtPersonDeath IS DATE;
+short hO_dtDtPersonDeath_i;
+char hO_dtDtPersonBirth[7];
+EXEC SQL VAR hO_dtDtPersonBirth IS DATE;
+short hO_dtDtPersonBirth_i;
+char hO_szCdPersonReligion[4];
+EXEC SQL VAR hO_szCdPersonReligion IS STRING;
+short hO_szCdPersonReligion_i;
+char hO_bCdPersonChar;
+EXEC SQL VAR hO_bCdPersonChar IS CHAR(1);
+short hO_bCdPersonChar_i;
+char hO_bIndPersonDobApprox;
+EXEC SQL VAR hO_bIndPersonDobApprox IS CHAR(1);
+short hO_bIndPersonDobApprox_i;
+char hO_szCdPersonLivArr[4];
+EXEC SQL VAR hO_szCdPersonLivArr IS STRING;
+short hO_szCdPersonLivArr_i;
+char hO_szCdPersGuardCnsrv[2];
+EXEC SQL VAR hO_szCdPersGuardCnsrv IS STRING;
+short hO_szCdPersGuardCnsrv_i;
+char hO_CdPersonStatus[2];
+EXEC SQL VAR hO_CdPersonStatus IS STRING;
+short hO_CdPersonStatus_i;
+char hO_szCdPersonDeath[4];
+EXEC SQL VAR hO_szCdPersonDeath IS STRING;
+short hO_szCdPersonDeath_i;
+char hO_szCdPersonMaritalStatus[3];
+EXEC SQL VAR hO_szCdPersonMaritalStatus IS STRING;
+short hO_szCdPersonMaritalStatus_i;
+char hO_szTxtOccupation[21];
+EXEC SQL VAR hO_szTxtOccupation IS STRING;
+short hO_szTxtOccupation_i;
+char hO_szCdPersonLanguage[3];
+EXEC SQL VAR hO_szCdPersonLanguage IS STRING;
+short hO_szCdPersonLanguage_i;
+char hO_szCdPersonEthnicGroup[3];
+EXEC SQL VAR hO_szCdPersonEthnicGroup IS STRING;
+short hO_szCdPersonEthnicGroup_i;
+char hO_IndPersCancelHist[9];
+EXEC SQL VAR hO_IndPersCancelHist IS STRING;
+short hO_IndPersCancelHist_i;
+unsigned long hO_ulIdStagePerson;
+short hO_ulIdStagePerson_i;
+char hO_szCdStagePersRole[3];
+EXEC SQL VAR hO_szCdStagePersRole IS STRING;
+short hO_szCdStagePersRole_i;
+char hO_bIndStagePersInLaw;
+EXEC SQL VAR hO_bIndStagePersInLaw IS CHAR(1);
+short hO_bIndStagePersInLaw_i;
+char hO_szCdStagePersType[4];
+EXEC SQL VAR hO_szCdStagePersType IS STRING;
+short hO_szCdStagePersType_i;
+char hO_szCdStagePersSearchInd;
+EXEC SQL VAR hO_szCdStagePersSearchInd IS CHAR(1);
+short hO_szCdStagePersSearchInd_i;
+char hO_szTxtStagePersNotes[301];
+EXEC SQL VAR hO_szTxtStagePersNotes IS STRING;
+short hO_szTxtStagePersNotes_i;
+char hO_dtDtStagePersLink[7];
+EXEC SQL VAR hO_dtDtStagePersLink IS DATE;
+short hO_dtDtStagePersLink_i;
+char hO_szCdStagePersRelInt[3];
+EXEC SQL VAR hO_szCdStagePersRelInt IS STRING;
+short hO_szCdStagePersRelInt_i;
+char hO_bIndStagePersReporter;
+EXEC SQL VAR hO_bIndStagePersReporter IS CHAR(1);
+short hO_bIndStagePersReporter_i;
+char hO_bIndStagePersEmpNew;
+EXEC SQL VAR hO_bIndStagePersEmpNew IS CHAR(1);
+short hO_bIndStagePersEmpNew_i;
+char hO_dtScrDtCurrentDate[7];
+EXEC SQL VAR hO_dtScrDtCurrentDate IS DATE;
+short hO_dtScrDtCurrentDate_i;
+char hO_szNmNameFirst[13];
+EXEC SQL VAR hO_szNmNameFirst IS STRING;
+short hO_szNmNameFirst_i;
+char hO_szNmNameMiddle[13];
+EXEC SQL VAR hO_szNmNameMiddle IS STRING;
+short hO_szNmNameMiddle_i;
+char hO_szNmNameLast[23];
+EXEC SQL VAR hO_szNmNameLast IS STRING;
+short hO_szNmNameLast_i;
+char hO_szCdNameSuffix[3];
+EXEC SQL VAR hO_szCdNameSuffix IS STRING;
+short hO_szCdNameSuffix_i;
+EXEC SQL END DECLARE SECTION;
+
+long BegPageRow = 0, EndPageRow = 0, i = 0;
+long lTotal = 0, lOutputIndex = 0, lHostIndex = 0;
+unsigned short uStatus;
+struct sqlca previousSQLCA;
+sqlca.sqlcode = 0;
+
+uStatus=ARC_UTLNumberToHost(&hI_ulIdStage,
+             &(pInputDataRec->ulIdStage),
+             sizeof(pInputDataRec->ulIdStage),
+             &hI_ulIdStage_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+/*
+** SIR 22085 Replace COPYSZ with API
+*/
+ 
+uStatus=ARC_UTLStringToHost(SplRole,
+             SPL,
+             sizeof(SplRole),
+             &SplRole_i);
+if (uStatus != 0)
+{
+    return (uStatus);
+}
+
+
+EXEC SQL
+    DECLARE CSEC15D_CURSOR CURSOR FOR
+    SELECT
+        S.ID_STAGE,
+        CC.DT_LAST_UPDATE,
+        S.CD_STAGE_TYPE,
+        S.ID_UNIT,
+        CC.ID_CASE,
+        S.DT_STAGE_CLOSE,
+        S.CD_STAGE_CLASSIFICATION,
+        S.CD_STAGE_CURR_PRIORITY,
+        S.CD_STAGE_INITIAL_PRIORITY,
+        S.CD_STAGE_RSN_PRIORITY_CHGD,
+        S.CD_STAGE_REASON_CLOSED,
+        S.IND_STAGE_CLOSE,
+        S.TXT_STAGE_PRIORITY_CMNTS,
+        S.CD_STAGE_CNTY,
+        S.NM_STAGE,
+        S.CD_STAGE_REGION,
+        S.DT_STAGE_START,
+        S.ID_SITUATION,
+        S.CD_STAGE_PROGRAM,
+        S.CD_STAGE,
+        S.TXT_STAGE_CLOSURE_CMNTS,
+        CC.CD_CASE_PROGRAM,
+        CC.CD_CASE_COUNTY,
+        CC.CD_CASE_SPECIAL_HANDLING,
+        CC.IND_CASE_WORKER_SAFETY,
+        CC.TXT_CASE_WORKER_SAFETY,
+        CC.TXT_CASE_SENSITIVE_CMNTS,
+        CC.IND_CASE_SENSITIVE,
+        CC.IND_CASE_ARCHIVED,
+        CC.DT_CASE_CLOSED,
+        CC.CD_CASE_REGION,
+        CC.DT_CASE_OPENED,
+        CC.NM_CASE,
+        P.ID_PERSON,
+        P.CD_PERSON_SEX,
+        P.NM_PERSON_FULL,
+        P.NBR_PERSON_AGE,
+        P.DT_PERSON_DEATH,
+        P.DT_PERSON_BIRTH,
+        P.CD_PERSON_RELIGION,
+        P.CD_PERSON_CHAR,
+        P.IND_PERSON_DOB_APPROX,
+        P.CD_PERSON_LIV_ARR,
+        P.CD_PERS_GUARD_CNSRV,
+        P.CD_PERSON_STATUS,
+        P.CD_PERSON_DEATH,
+        P.CD_PERSON_MARITAL_STATUS,
+        P.TXT_PERSON_OCCUPATION,
+        P.CD_PERSON_LANGUAGE,
+        P.CD_PERSON_ETHNIC_GROUP,
+        P.IND_PERS_CANCEL_HIST,
+        SPL.ID_STAGE_PERSON_LINK,
+        SPL.CD_STAGE_PERS_ROLE,
+        SPL.IND_STAGE_PERS_IN_LAW,
+        SPL.CD_STAGE_PERS_TYPE,
+        SPL.CD_STAGE_PERS_SEARCH_IND,
+        SPL.TXT_STAGE_PERS_NOTES,
+        SPL.DT_STAGE_PERS_LINK,
+        SPL.CD_STAGE_PERS_REL_INT,
+        SPL.IND_STAGE_PERS_REPORTER,
+        SPL.IND_STAGE_PERS_EMP_NEW,
+        P.NM_PERSON_FIRST,
+        P.NM_PERSON_MIDDLE,
+        P.NM_PERSON_LAST,
+            SYSDATE,
+        P.CD_PERSON_SUFFIX
+    FROM    PERSON P,
+            CAPS_CASE CC,
+            STAGE_PERSON_LINK SPL,
+            STAGE S
+    WHERE   CC.ID_CASE              = S.ID_CASE
+    AND     S.ID_STAGE              = :hI_ulIdStage:hI_ulIdStage_i
+    AND     SPL.ID_STAGE            = S.ID_STAGE
+    AND     SPL.CD_STAGE_PERS_ROLE  = :SplRole
+    AND     SPL.ID_PERSON           = P.ID_PERSON;
+
+
+/*****************************/
+/* Total selected fields: 66 */
+/*****************************/
+
+EXEC SQL
+    OPEN CSEC15D_CURSOR;
+
+
+if ( sqlca.sqlcode != 0 )
+{
+    memcpy(pSQLCA, (void *)&sqlca, sizeof(struct sqlca));
+    return sqlca.sqlcode;
+}
+
+
+EXEC SQL
+    FETCH CSEC15D_CURSOR INTO
+        :hO_ulIdStage:hO_ulIdStage_i,
+        :hO_tsLastUpdate:hO_tsLastUpdate_i,
+        :hO_szCdStageType:hO_szCdStageType_i,
+        :hO_ulIdUnit:hO_ulIdUnit_i,
+        :hO_ulIdCase:hO_ulIdCase_i,
+        :hO_dtDtStageClose:hO_dtDtStageClose_i,
+        :hO_szCdStageClassification:hO_szCdStageClassification_i,
+        :hO_szCdStageCurrPriority:hO_szCdStageCurrPriority_i,
+        :hO_szCdStageInitialPriority:hO_szCdStageInitialPriority_i,
+        :hO_szCdStageRsnPriorityChgd:hO_szCdStageRsnPriorityChgd_i,
+        :hO_szCdStageReasonClosed:hO_szCdStageReasonClosed_i,
+        :hO_bIndStageClose:hO_bIndStageClose_i,
+        :hO_szTxtStagePriorityCmnts:hO_szTxtStagePriorityCmnts_i,
+        :hO_szCdStageCnty:hO_szCdStageCnty_i,
+        :hO_szNmStage:hO_szNmStage_i,
+        :hO_szCdStageRegion:hO_szCdStageRegion_i,
+        :hO_dtDtStageStart:hO_dtDtStageStart_i,
+        :hO_ulIdSituation:hO_ulIdSituation_i,
+        :hO_szCdStageProgram:hO_szCdStageProgram_i,
+        :hO_szCdStage:hO_szCdStage_i,
+        :hO_szTxtStageClosureCmnts:hO_szTxtStageClosureCmnts_i,
+        :hO_szCdCaseProgram:hO_szCdCaseProgram_i,
+        :hO_szCdCaseCounty:hO_szCdCaseCounty_i,
+        :hO_szCdCaseSpeclHndlg:hO_szCdCaseSpeclHndlg_i,
+        :hO_bIndCaseWorkerSafety:hO_bIndCaseWorkerSafety_i,
+        :hO_szTxtCaseWorkerSafety:hO_szTxtCaseWorkerSafety_i,
+        :hO_szTxtCaseSensitiveCmnts:hO_szTxtCaseSensitiveCmnts_i,
+        :hO_bIndCaseSensitive:hO_bIndCaseSensitive_i,
+        :hO_bIndCaseArchived:hO_bIndCaseArchived_i,
+        :hO_dtDtCaseClosed:hO_dtDtCaseClosed_i,
+        :hO_szCdCaseRegion:hO_szCdCaseRegion_i,
+        :hO_dtDtCaseOpened:hO_dtDtCaseOpened_i,
+        :hO_szNmCase:hO_szNmCase_i,
+        :hO_ulIdPerson:hO_ulIdPerson_i,
+        :hO_cCdPersonSex:hO_cCdPersonSex_i,
+        :hO_szNmPersonFull:hO_szNmPersonFull_i,
+        :hO_lNbrPersonAge:hO_lNbrPersonAge_i,
+        :hO_dtDtPersonDeath:hO_dtDtPersonDeath_i,
+        :hO_dtDtPersonBirth:hO_dtDtPersonBirth_i,
+        :hO_szCdPersonReligion:hO_szCdPersonReligion_i,
+        :hO_bCdPersonChar:hO_bCdPersonChar_i,
+        :hO_bIndPersonDobApprox:hO_bIndPersonDobApprox_i,
+        :hO_szCdPersonLivArr:hO_szCdPersonLivArr_i,
+        :hO_szCdPersGuardCnsrv:hO_szCdPersGuardCnsrv_i,
+        :hO_CdPersonStatus:hO_CdPersonStatus_i,
+        :hO_szCdPersonDeath:hO_szCdPersonDeath_i,
+        :hO_szCdPersonMaritalStatus:hO_szCdPersonMaritalStatus_i,
+        :hO_szTxtOccupation:hO_szTxtOccupation_i,
+        :hO_szCdPersonLanguage:hO_szCdPersonLanguage_i,
+        :hO_szCdPersonEthnicGroup:hO_szCdPersonEthnicGroup_i,
+        :hO_IndPersCancelHist:hO_IndPersCancelHist_i,
+        :hO_ulIdStagePerson:hO_ulIdStagePerson_i,
+        :hO_szCdStagePersRole:hO_szCdStagePersRole_i,
+        :hO_bIndStagePersInLaw:hO_bIndStagePersInLaw_i,
+        :hO_szCdStagePersType:hO_szCdStagePersType_i,
+        :hO_szCdStagePersSearchInd:hO_szCdStagePersSearchInd_i,
+        :hO_szTxtStagePersNotes:hO_szTxtStagePersNotes_i,
+        :hO_dtDtStagePersLink:hO_dtDtStagePersLink_i,
+        :hO_szCdStagePersRelInt:hO_szCdStagePersRelInt_i,
+        :hO_bIndStagePersReporter:hO_bIndStagePersReporter_i,
+        :hO_bIndStagePersEmpNew:hO_bIndStagePersEmpNew_i,
+        :hO_szNmNameFirst:hO_szNmNameFirst_i,
+        :hO_szNmNameMiddle:hO_szNmNameMiddle_i,
+        :hO_szNmNameLast:hO_szNmNameLast_i,
+        :hO_dtScrDtCurrentDate:hO_dtScrDtCurrentDate_i,
+    :hO_szCdNameSuffix:hO_szCdNameSuffix_i;
+
+/**************************/
+/* Total fetch fields: 66 */
+/**************************/
+
+
+memcpy (&previousSQLCA, &sqlca, sizeof (struct sqlca));
+
+if ( sqlca.sqlcode == 0 )
+{
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdStage),
+                          &hO_ulIdStage,
+                          sizeof(hO_ulIdStage),
+                          hO_ulIdStage_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToTimestamp(pOutputDataRec->tsLastUpdate,
+                          hO_tsLastUpdate,
+                          hO_tsLastUpdate_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageType,
+                          hO_szCdStageType,
+                          6,
+                          hO_szCdStageType_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdUnit),
+                          &hO_ulIdUnit,
+                          sizeof(hO_ulIdUnit),
+                          hO_ulIdUnit_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdCase),
+                          &hO_ulIdCase,
+                          sizeof(hO_ulIdCase),
+                          hO_ulIdCase_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtStageClose),
+                          pOutputDataRec->tmScrTmGeneric1,
+                          hO_dtDtStageClose,
+                          hO_dtDtStageClose_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageClassification,
+                          hO_szCdStageClassification,
+                          5,
+                          hO_szCdStageClassification_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageCurrPriority,
+                          hO_szCdStageCurrPriority,
+                          2,
+                          hO_szCdStageCurrPriority_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageInitialPriority,
+                          hO_szCdStageInitialPriority,
+                          2,
+                          hO_szCdStageInitialPriority_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageRsnPriorityChgd,
+                          hO_szCdStageRsnPriorityChgd,
+                          3,
+                          hO_szCdStageRsnPriorityChgd_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageReasonClosed,
+                          hO_szCdStageReasonClosed,
+                          4,
+                          hO_szCdStageReasonClosed_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndStageClose),
+                          &hO_bIndStageClose,
+                          sizeof(hO_bIndStageClose),
+                          hO_bIndStageClose_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtStagePriorityCmnts,
+                          hO_szTxtStagePriorityCmnts,
+                          81,
+                          hO_szTxtStagePriorityCmnts_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageCnty,
+                          hO_szCdStageCnty,
+                          4,
+                          hO_szCdStageCnty_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmStage,
+                          hO_szNmStage,
+                          26,
+                          hO_szNmStage_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageRegion,
+                          hO_szCdStageRegion,
+                          3,
+                          hO_szCdStageRegion_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtStageStart),
+                          pOutputDataRec->tmScrTmGeneric2,
+                          hO_dtDtStageStart,
+                          hO_dtDtStageStart_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdSituation),
+                          &hO_ulIdSituation,
+                          sizeof(hO_ulIdSituation),
+                          hO_ulIdSituation_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStageProgram,
+                          hO_szCdStageProgram,
+                          4,
+                          hO_szCdStageProgram_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStage,
+                          hO_szCdStage,
+                          4,
+                          hO_szCdStage_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtStageClosureCmnts,
+                          hO_szTxtStageClosureCmnts,
+                          301,
+                          hO_szTxtStageClosureCmnts_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdCaseProgram,
+                          hO_szCdCaseProgram,
+                          4,
+                          hO_szCdCaseProgram_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdCaseCounty,
+                          hO_szCdCaseCounty,
+                          4,
+                          hO_szCdCaseCounty_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdCaseSpeclHndlg,
+                          hO_szCdCaseSpeclHndlg,
+                          3,
+                          hO_szCdCaseSpeclHndlg_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndCaseWorkerSafety),
+                          &hO_bIndCaseWorkerSafety,
+                          sizeof(hO_bIndCaseWorkerSafety),
+                          hO_bIndCaseWorkerSafety_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtCaseWorkerSafety,
+                          hO_szTxtCaseWorkerSafety,
+                          301,
+                          hO_szTxtCaseWorkerSafety_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtCaseSensitiveCmnts,
+                          hO_szTxtCaseSensitiveCmnts,
+                          2001,
+                          hO_szTxtCaseSensitiveCmnts_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndCaseSensitive),
+                          &hO_bIndCaseSensitive,
+                          sizeof(hO_bIndCaseSensitive),
+                          hO_bIndCaseSensitive_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndCaseArchived),
+                          &hO_bIndCaseArchived,
+                          sizeof(hO_bIndCaseArchived),
+                          hO_bIndCaseArchived_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtCaseClosed),
+                          pOutputDataRec->tmScrTmGeneric3,
+                          hO_dtDtCaseClosed,
+                          hO_dtDtCaseClosed_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdCaseRegion,
+                          hO_szCdCaseRegion,
+                          3,
+                          hO_szCdCaseRegion_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtCaseOpened),
+                          pOutputDataRec->tmScrTmGeneric4,
+                          hO_dtDtCaseOpened,
+                          hO_dtDtCaseOpened_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmCase,
+                          hO_szNmCase,
+                          26,
+                          hO_szNmCase_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdPerson),
+                          &hO_ulIdPerson,
+                          sizeof(hO_ulIdPerson),
+                          hO_ulIdPerson_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->cCdPersonSex),
+                          &hO_cCdPersonSex,
+                          sizeof(hO_cCdPersonSex),
+                          hO_cCdPersonSex_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmPersonFull,
+                          hO_szNmPersonFull,
+                          26,
+                          hO_szNmPersonFull_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->lNbrPersonAge),
+                          &hO_lNbrPersonAge,
+                          sizeof(hO_lNbrPersonAge),
+                          hO_lNbrPersonAge_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtPersonDeath),
+                          pOutputDataRec->tmScrTmGeneric5,
+                          hO_dtDtPersonDeath,
+                          hO_dtDtPersonDeath_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtPersonBirth),
+                          pOutputDataRec->tmScrTmGeneric6,
+                          hO_dtDtPersonBirth,
+                          hO_dtDtPersonBirth_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonReligion,
+                          hO_szCdPersonReligion,
+                          4,
+                          hO_szCdPersonReligion_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bCdPersonChar),
+                          &hO_bCdPersonChar,
+                          sizeof(hO_bCdPersonChar),
+                          hO_bCdPersonChar_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndPersonDobApprox),
+                          &hO_bIndPersonDobApprox,
+                          sizeof(hO_bIndPersonDobApprox),
+                          hO_bIndPersonDobApprox_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonLivArr,
+                          hO_szCdPersonLivArr,
+                          4,
+                          hO_szCdPersonLivArr_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersGuardCnsrv,
+                          hO_szCdPersGuardCnsrv,
+                          2,
+                          hO_szCdPersGuardCnsrv_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->CdPersonStatus,
+                          hO_CdPersonStatus,
+                          2,
+                          hO_CdPersonStatus_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonDeath,
+                          hO_szCdPersonDeath,
+                          4,
+                          hO_szCdPersonDeath_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonMaritalStatus,
+                          hO_szCdPersonMaritalStatus,
+                          3,
+                          hO_szCdPersonMaritalStatus_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtOccupation,
+                          hO_szTxtOccupation,
+                          21,
+                          hO_szTxtOccupation_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonLanguage,
+                          hO_szCdPersonLanguage,
+                          3,
+                          hO_szCdPersonLanguage_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdPersonEthnicGroup,
+                          hO_szCdPersonEthnicGroup,
+                          3,
+                          hO_szCdPersonEthnicGroup_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->IndPersCancelHist,
+                          hO_IndPersCancelHist,
+                          9,
+                          hO_IndPersCancelHist_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->ulIdStagePerson),
+                          &hO_ulIdStagePerson,
+                          sizeof(hO_ulIdStagePerson),
+                          hO_ulIdStagePerson_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStagePersRole,
+                          hO_szCdStagePersRole,
+                          3,
+                          hO_szCdStagePersRole_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndStagePersInLaw),
+                          &hO_bIndStagePersInLaw,
+                          sizeof(hO_bIndStagePersInLaw),
+                          hO_bIndStagePersInLaw_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStagePersType,
+                          hO_szCdStagePersType,
+                          4,
+                          hO_szCdStagePersType_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->szCdStagePersSearchInd),
+                          &hO_szCdStagePersSearchInd,
+                          sizeof(hO_szCdStagePersSearchInd),
+                          hO_szCdStagePersSearchInd_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szTxtStagePersNotes,
+                          hO_szTxtStagePersNotes,
+                          301,
+                          hO_szTxtStagePersNotes_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtDtStagePersLink),
+                          pOutputDataRec->tmScrTmGeneric7,
+                          hO_dtDtStagePersLink,
+                          hO_dtDtStagePersLink_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdStagePersRelInt,
+                          hO_szCdStagePersRelInt,
+                          3,
+                          hO_szCdStagePersRelInt_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndStagePersReporter),
+                          &hO_bIndStagePersReporter,
+                          sizeof(hO_bIndStagePersReporter),
+                          hO_bIndStagePersReporter_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToNumber(&(pOutputDataRec->bIndStagePersEmpNew),
+                          &hO_bIndStagePersEmpNew,
+                          sizeof(hO_bIndStagePersEmpNew),
+                          hO_bIndStagePersEmpNew_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToDateAndTime(&(pOutputDataRec->dtScrDtCurrentDate),
+                          pOutputDataRec->tmScrTmGeneric8,
+                          hO_dtScrDtCurrentDate,
+                          hO_dtScrDtCurrentDate_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+             
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmNameFirst,
+                          hO_szNmNameFirst,
+                          13,
+                          hO_szNmNameFirst_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+             
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmNameMiddle,
+                          hO_szNmNameMiddle,
+                          13,
+                          hO_szNmNameMiddle_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+             
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szNmNameLast,
+                          hO_szNmNameLast,
+                          23,
+                          hO_szNmNameLast_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+
+             uStatus=ARC_UTLHostToString(pOutputDataRec->szCdNameSuffix,
+                          hO_szCdNameSuffix,
+                          3,
+                          hO_szCdNameSuffix_i);
+             if (uStatus != 0)
+             {
+                 return (uStatus);
+             }
+}
+
+
+EXEC SQL
+    CLOSE CSEC15D_CURSOR;
+
+
+memcpy (pSQLCA, &previousSQLCA, sizeof(struct sqlca));
+return (((struct sqlca *)pSQLCA)->sqlcode);
+}
+
+

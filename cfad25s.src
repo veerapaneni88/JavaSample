@@ -1,0 +1,2121 @@
+/* This shell is for a FORM service only.  If creating a non-Form service,
+   use the svcshell.src shell. */
+
+/**************************************************************************
+**
+** Module File:   cfad25s.src
+**
+** Service Name:  CFAD25S
+**
+** Description:   The Adoption Assistance Eligibility Form helps the
+**                adoption subsidy worker determine whether the
+**                child/adoption qualifies for adoption assistance
+**                and if so under which subsidy program the child is
+**                eligible to receive benefits
+**
+** Environment:   HP-UX B.11.31 U ia64
+**                HP-UX Ansi C Compiler
+**
+** Date Created:  11/27/1995
+**
+** Programmer:    Joe Foist
+**
+** Archive Information: $Revision:   1.1  $
+**                      $Date:   13 Nov 1996 12:58:30  $
+**                      $Modtime:   13 Nov 1996 10:27:06  $
+**                      $Author:   pvcs  $
+**
+** Change History:
+**  Date      User      Description
+**  --------  --------  --------------------------------------------------
+**  11/12/96  CYSKD     ENH (Name Person Full) - Added pointers to function
+**                      calls for CSEC01D and CSEC35D that will return a
+**                      row qty. if CASE SQL SUCCESS is reached.
+**  03/21/01  CWC       Added a case to the switch statement for CallCSEC01D
+**                      to capture the Oracle error for no rows returned.
+**  04/10/03  Srini D   Modified the error handling to set rc to explan_code 
+**  04/04/12  thompswa  SIR 1007795 add BUSINESS phones.
+***************************************************************************/
+
+/**************************************************************************
+** Service Include Files
+***************************************************************************/
+#include <impact.h>
+#include <arcmsgs.h>
+#include <arcsvcid.h>
+#include <libarcd.h>
+#include <arcsrvr.h>
+
+/* Tux include files */
+#include <atmi.h>
+#include <expat.h>
+#include <arcxmlerrors.h>
+#include <arcxmlmarshal.h>
+#include <arcxmlunmarshal.h>
+#include <arctuxperf.h>
+#include <arcfrmid.h>
+
+/*************************************
+** Service function prototypes 
+***************************************/
+void marshalCFAD25SO(OUTPUTMSG* pOutput, char** pXmlBuffer, int* piBuffLength);
+void startElementCFAD25SI(void *pUserData, const char *szElement, const char **attributes);
+void endElementCFAD25SI(void *pUserData, const char *szElement);
+void unmarshalCFAD25SI(INPUTMSG* pInput, char** pXmlBuffer, TUX_DECL_STATUSPARMS);
+
+/*****************************************
+** Global Variables 
+*******************************************/
+#define ulIdStage_STRING "ulIdStage"
+#define ulIdStage_IND 13
+#define ulIdPerson_STRING "ulIdPerson"
+#define ulIdPerson_IND 14
+
+/**************************************************************************
+** Service Macro Definitions
+***************************************************************************/
+
+/* #define DEBUG */    /* XXXXX Uncomment if print of form output is desired */
+
+#define MAX_DAMS 99  /* Maximum number of DAMS called */
+
+#define YES      "Yes" /* Used to populate specified fields in code */
+#define NO       "No"  /* in order to trigger the proper yes/no template */
+                       /* on the form (relates to age and minority status) */
+                       /* DAM CCMN44D */
+
+#define CPL      "CPL" /* used to qualify characteristics of the child */
+                       /* in DAM CLSS46D */
+
+#define INC      "INC" /* used to determine if a row in the INCOME_AND_RESOURCES */
+#define RES      "RES" /* table qualifies as an income or resource */
+                       /* DAM CLSC37D */
+
+#define WHITE    "WH"  /* used to determine minority status in code */
+                       /* DAM CCMN44D */
+#define BUSINESS_PHONE         "BS"/*          SIR 1007795 */
+#define BUSINESS_CELL          "BC"/*          "           */
+/**************************************************************************
+** Function Prototypes
+***************************************************************************/
+/*
+**
+** Create a function for each DAM that will be called and repeat the
+** following function prototype for each function.  Notice that the
+** prototype for calling a CallDAM function for a form service is
+** slightly different than a generic service in that the DAM output
+** buffer pointer is passed to the callDAM function.
+**
+** EXAMPLE:  Form service calls DAM named ZPIL01D.
+**           The function that calls the DAM is CallZPIL01D.
+**           The function prototype is as follows:
+**
+** static long CallZPIL01D(INPUTMSG *,
+**             OUTPUTMSG *,
+**             _ZPIL01DO *,
+**             TUX_DECL_STATUSPARMS);
+**
+*/
+static long CallCSEC15D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long *,
+            _CSEC15DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCSEC35D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CSEC35DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCCMN44D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CCMN44DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCSES28D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CSES28DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCLSS51D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CLSS51DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCLSS52D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CLSS52DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCLSS46D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            _CLSS46DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCLSC37D(INPUTMSG *,
+            OUTPUTMSG *,
+            char far *,
+            unsigned long,
+            _CLSC37DO *,
+            TUX_DECL_STATUSPARMS);
+
+static long CallCSEC01D(INPUTMSG *,
+            OUTPUTMSG *,
+            unsigned long,
+            unsigned long *,
+            _CSEC01DO *,
+            TUX_DECL_STATUSPARMS);
+
+/**************************************************************************
+** Service Function
+***************************************************************************/
+
+/**************************************************************************
+**
+** Function Name:  CFAD25S
+**
+** Description:    Main Service Function
+**
+***************************************************************************/
+
+static INPUTMSG  *pInputMsg = NULL;
+static OUTPUTMSG  *pOutputMsg = NULL;
+void CFAD25S (TPSVCINFO *request)
+{
+
+	PERF_TIMER_START;
+	TUX_DECL_STATUSVARS
+
+	/* Allocate the Input message that will be used within the service */
+	pInputMsg = malloc(sizeof(INPUTMSG));
+	memset(pInputMsg, 0x00, sizeof(INPUTMSG));
+	szXmlInBuff = malloc(request->len +1);
+	memcpy(szXmlInBuff, (char *) request->data, request->len);
+	memset(szXmlInBuff +  (request->len), 0x00, 1);
+	unmarshalCFAD25SI(pInputMsg, &szXmlInBuff, TUX_STATUSPARMS);
+	free(szXmlInBuff);
+
+	long OutputMsgSize = sizeof(OUTPUTMSG);
+	long         *pOutputMsgSize = &OutputMsgSize;
+
+	//The output msg must be initialized or output Fielded Buffer will be filled with gargage
+	pOutputMsg = malloc(sizeof(OUTPUTMSG));
+	memset(pOutputMsg, 0x00, sizeof(OUTPUTMSG));
+	*pOutputMsgSize = 0;
+
+	/* Begin a Global transaction */
+	if (tpbegin(0, 0) == -1) {
+		userlog("ERROR: tpbegin failed (%s)\n",tpstrerror(tperrno));
+		pServiceStatus->severity = FND_SEVERITY_ERROR;
+		pServiceStatus->explan_code = ARC_ERR_TUX_TPBEGIN_FAILED;
+		rc = ARC_ERR_TUX_TPBEGIN_FAILED;
+		PROCESS_TUX_RC_ERROR;
+		}
+
+   /*
+   ** Declare local variables
+   */
+
+   int            iNumDAMs;            /* Total number of DAMs called */
+   void *         pDAMPtrs[MAX_DAMS];  /* Array of pointers to DAM output */
+   int uFormDataSize;       /* Total size of service output buffer
+                                          after ARC_FRMProduceFormData */
+   unsigned long  ulIdPerson;          /* Variable used to pass IdPerson from DAM CSEC15D */
+   unsigned long  ulIdPerson1;
+   unsigned long  ulIdPerson2;
+
+   short          sMonthDiff,         /* Variables to calculate the age with */
+                  sDayDiff,
+                  sYear;
+
+   FND_INT3DATE   dtCurrDate;         /* variable to hold current date for
+                                         age calculation */
+
+   int i;                             /* Loop counter */
+
+   char       szType2[]  = "020";     /* Variables used to check if a */
+   char       szType3[]  = "030";     /* legal status row is considered */
+   char       szType4[]  = "040";     /* a conservatorship */
+   char       szType5[]  = "050";     /* DAM CLSS51D */
+   char       szType6[]  = "060";
+   char       szType7[]  = "070";
+   char       szType13[] = "130";
+
+   /*
+   ** Declare a DAM output pointer for each DAM output.  Repeat the
+   ** following statement for each DAM to be called.
+   */
+
+   _CSEC15DO *pCSEC15DOutputRec;
+   _CSEC35DO *pCSEC35DOutputRec;
+   _CCMN44DO *pCCMN44DOutputRec;
+   _CSES28DO *pCSES28DOutputRec;
+   _CLSS51DO *pCLSS51DOutputRec;
+   _CLSS52DO *pCLSS52DOutputRec;
+   _CLSS46DO *pCLSS46DOutputRec;
+   _CLSC37DO *pCLSC37DOutputRecA;
+   _CLSC37DO *pCLSC37DOutputRecB;
+   _CSEC01DO *pCSEC01DOutputRecA;
+   _CSEC01DO *pCSEC01DOutputRecB;
+   /*
+   ** Start performance timer for service. All performance functions always
+   ** return success so there is no need to check status.
+   */
+
+	rc=ARC_PRFServiceStartTime_TUX(pInputMsg->ArchInputStruct);
+
+   /*********************************************************************
+   *  Call DAMs to retrieve data
+   **********************************************************************/
+
+
+   pCSEC15DOutputRec = (_CSEC15DO *) malloc(sizeof(_CSEC15DO));
+   if (pCSEC15DOutputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+   rc=CallCSEC15D(pInputMsg,
+            pOutputMsg,
+            &ulIdPerson,
+            pCSEC15DOutputRec,
+           TUX_STATUSPARMS);
+   switch(rc)
+   {
+       case ARC_SUCCESS:
+
+       pCSEC35DOutputRec = (_CSEC35DO *) malloc(sizeof(_CSEC35DO));
+       if (pCSEC35DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCSEC35D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCSEC35DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCCMN44DOutputRec = (_CCMN44DO *) malloc(sizeof(_CCMN44DO));
+       if (pCCMN44DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCCMN44D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCCMN44DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCSES28DOutputRec = (_CSES28DO *) malloc(sizeof(_CSES28DO));
+       if (pCSES28DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCSES28D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCSES28DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCLSS51DOutputRec = (_CLSS51DO *) malloc(sizeof(_CLSS51DO));
+       if (pCLSS51DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCLSS51D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCLSS51DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+       /* This for loop first determines whether or not a legal status is
+       ** a conservatorship and then populates the form accordingly.
+       ** The first row that meets the criteria to be a conservatorship
+       ** will be used to populate conservatorship region and county.
+       ** If none exist these two fields will be empty or null.
+       ** CCMN44D is used to hold these variables because CLSS51D
+       ** would attempt to populate these fields unnecessarily
+       ** multiple times along with the yes/no conservatorship determination. */
+
+
+
+       for ( i=0; i<pCLSS51DOutputRec->ArchOutputStruct.ulRowQty; ++i )
+        {
+        if((!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType2))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType3))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType4))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType5))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType6))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType7))
+           || (!strcmp(pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatStatus, szType13)))
+          {
+          COPYSZ(pCCMN44DOutputRec->szCdPersonLivArr, YES);
+          COPYSZ(pCCMN44DOutputRec->szTxtOccupation, pCLSS51DOutputRec->ROWCLSS51DO[i].szCdLegalStatCnty);
+          break;
+          }  /* end if */
+          else
+          {
+          COPYSZ(pCCMN44DOutputRec->szCdPersonLivArr, NO);
+          COPYSZ(pCCMN44DOutputRec->szTxtOccupation, NULL);
+          }  /* end else */
+
+        }   /* end for */
+
+
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCLSS51DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCLSS52DOutputRec = (_CLSS52DO *) malloc(sizeof(_CLSS52DO));
+       if (pCLSS52DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCLSS52D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCLSS52DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCLSS51DOutputRec);
+                free(pCLSS52DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCLSS46DOutputRec = (_CLSS46DO *) malloc(sizeof(_CLSS46DO));
+       if (pCLSS46DOutputRec == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCLSS46D(pInputMsg,
+                pOutputMsg,
+                ulIdPerson,
+                pCLSS46DOutputRec,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCLSS51DOutputRec);
+                free(pCLSS52DOutputRec);
+                free(pCLSS46DOutputRec);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCLSC37DOutputRecA = (_CLSC37DO *) malloc(sizeof(_CLSC37DO));
+       if (pCLSC37DOutputRecA == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCLSC37D(pInputMsg,
+                pOutputMsg,
+                INC,
+                ulIdPerson,
+                pCLSC37DOutputRecA,
+               TUX_STATUSPARMS);
+
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCLSS51DOutputRec);
+                free(pCLSS52DOutputRec);
+                free(pCLSS46DOutputRec);
+                free(pCLSC37DOutputRecA);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+       pCLSC37DOutputRecB = (_CLSC37DO *) malloc(sizeof(_CLSC37DO));
+       if (pCLSC37DOutputRecB == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCLSC37D(pInputMsg,
+                pOutputMsg,
+                RES,
+                ulIdPerson,
+                pCLSC37DOutputRecB,
+               TUX_STATUSPARMS);
+
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           break;
+
+           case MSG_NO_ROWS_RETURNED:
+           break;
+
+           default:
+
+                free(pCSEC35DOutputRec);
+                free(pCCMN44DOutputRec);
+                free(pCSES28DOutputRec);
+                free(pCLSS51DOutputRec);
+                free(pCLSS52DOutputRec);
+                free(pCLSS46DOutputRec);
+                free(pCLSC37DOutputRecA);
+                free(pCLSC37DOutputRecB);
+                free(pCSEC15DOutputRec);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+
+       break;
+
+       case MSG_NO_ROWS_RETURNED:
+       break;
+
+       default:
+
+            free(pCSEC15DOutputRec);
+            PROCESS_TUX_RC_ERROR;
+
+   } /* end switch */
+
+       pCSEC01DOutputRecA = (_CSEC01DO *) malloc(sizeof(_CSEC01DO));
+       if (pCSEC01DOutputRecA == NULL)
+       {
+           rc=ARC_ERR_MALLOC_FAILED;
+           PROCESS_TUX_RC_ERROR;
+       }
+
+       rc=CallCSEC01D(pInputMsg,
+                pOutputMsg,
+                pInputMsg->ulIdPerson,
+                &ulIdPerson1,
+                pCSEC01DOutputRecA,
+               TUX_STATUSPARMS);
+       switch(rc)
+       {
+           case ARC_SUCCESS:
+
+           pCSEC01DOutputRecB = (_CSEC01DO *) malloc(sizeof(_CSEC01DO));
+           if (pCSEC01DOutputRecB == NULL)
+           {
+               rc=ARC_ERR_MALLOC_FAILED;
+               PROCESS_TUX_RC_ERROR;
+           }
+
+           rc=CallCSEC01D(pInputMsg,
+                    pOutputMsg,
+                    ulIdPerson1,
+                    &ulIdPerson2,
+                    pCSEC01DOutputRecB,
+                   TUX_STATUSPARMS);
+           switch(rc)
+           {
+               case ARC_SUCCESS:
+
+               break;
+
+               case MSG_NO_ROWS_RETURNED:
+               break;
+
+               default:
+
+                    free(pCSEC15DOutputRec);
+                    free(pCSEC01DOutputRecB);
+                    free(pCSEC01DOutputRecA);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+           break;
+
+
+           default:
+
+                free(pCSEC15DOutputRec);
+                free(pCSEC01DOutputRecA);
+
+                PROCESS_TUX_RC_ERROR;
+
+       } /* end switch */
+
+  /* this is added to catch errors if the DAM calls are not successful */
+   if (rc != ARC_SUCCESS)
+	  {
+	     pServiceStatus->severity    = FND_SEVERITY_ERROR;
+	     pServiceStatus->explan_code = rc;
+	     rc = ARC_ERR_NO_PROC_RC;
+      }
+
+
+
+
+   if (rc == ARC_SUCCESS)
+   {
+     /*********************************************************************
+      *  Populate the pDAMPtrs structure with the address of the DAM output
+      *  of each DAM called.
+      *  Then call ARC_FRMProduceFormData with the output of each DAM to
+      *  prepare the service output message with formated form data.
+      **********************************************************************/
+
+      iNumDAMs = 0;
+
+      /* Repeat the following 2 statements for each DAM called.
+         (DO NOT leave out the 2nd iNumDAMs increment when populating
+         pDAMPtrs with your last DAM output pointer.)
+         Remember that the order in which the DAM pointers
+         is added to the array must exactly match the sequence number
+         specified for each DAM when the form was registered in the
+         database. */
+
+      pDAMPtrs[iNumDAMs] = pCSEC15DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCCMN44DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCSES28DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCLSS51DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCLSS52DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCLSS46DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCLSC37DOutputRecA;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCLSC37DOutputRecB;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCSEC01DOutputRecA;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCSEC01DOutputRecB;
+      iNumDAMs = iNumDAMs + 1;
+
+      pDAMPtrs[iNumDAMs] = pCSEC35DOutputRec;
+      iNumDAMs = iNumDAMs + 1;
+
+      /* Initialize the output buffer size to 0 */
+      uFormDataSize = 0;
+
+      /* Call ARC_FRMProduceFormData to format the data */
+      rc = ARC_FRMProduceFormData (SUBSIDY_ELIGIBILITY,
+                                   iNumDAMs,
+                                   (char **) &pDAMPtrs,
+                                   (char *) pOutputMsg,
+                                   sizeof (OUTPUTMSG),
+                                   &uFormDataSize);
+      #ifdef DEBUG
+      {
+          /*
+          ** If DEBUG is defined, print out to the console the status, size
+          ** and form data produced by ARC_FRMProduceFormData().
+          */
+
+          int i;
+          printf ("Status on ARC_FRMProduceFormData = %d\n", rc);
+          printf ("Size of output = %d\n", uFormDataSize);
+          for (i=sizeof (_ARCHOUTPUTSTRUCT); i<uFormDataSize;i++)
+          {
+              printf ("%c", ((char *)pOutputMsg)[i]);
+          }
+      }
+      #endif
+
+
+      /*
+      ** If an error occurred producing the form data, return the error
+      ** to the client.
+      */
+      if (rc != ARC_SUCCESS)
+      {
+         pServiceStatus->severity    = FND_SEVERITY_ERROR;
+         pServiceStatus->explan_code = rc;
+         rc = ARC_ERR_NO_PROC_RC;
+      }
+
+
+   } /* end if all DAM calls successful */
+
+   /*
+   ** Free memory for each DAM output record.  Repeat the following statement
+   ** for each DAM called.
+   */
+
+   free(pCSEC15DOutputRec);
+   free(pCSEC35DOutputRec);
+   free(pCCMN44DOutputRec);
+   free(pCSES28DOutputRec);
+   free(pCLSS51DOutputRec);
+   free(pCLSS52DOutputRec);
+   free(pCLSS46DOutputRec);
+   free(pCLSC37DOutputRecA);
+   free(pCLSC37DOutputRecB);
+   free(pCSEC01DOutputRecA);
+   free(pCSEC01DOutputRecB);
+
+   /*
+   ** Set the output message size to the size set by ARC_FRMProduceFormData.
+   */
+   *pOutputMsgSize = uFormDataSize;
+
+   /*
+   ** Stop performance timer for service
+   */
+
+	ARC_PRFServiceStopTime_TUX(pInputMsg->ArchInputStruct, pOutputMsg->ArchOutputStruct);
+
+    //04/10/03 Srini: Modified the error handling to set rc to explan_code 
+	rc = pServiceStatus->explan_code;
+	TUX_CHECK_APPL_STATUS
+	marshalCFAD25SO(pOutputMsg, &szXmlOutBuff, &iBufferLength);
+	pOutputMsgXml = tpalloc("XML", (char *)0, strlen(szXmlOutBuff));
+	free(pInputMsg);
+	free(pOutputMsg);
+	strcpy(pOutputMsgXml, szXmlOutBuff);
+	free(szXmlOutBuff);
+	PERF_TIMER_END;
+	tpreturn(TPSUCCESS, 0, pOutputMsgXml, strlen(pOutputMsgXml), 0);
+}
+
+/*
+**
+** The following function is an example of a call to a Simple Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCSEC15D
+**
+** Description:    This DAM receives input ID_STAGE using the STAGE
+**                 table. It populates date of birth on the form and
+**                 passes ID_PERSON to the following DAMS: CSEC35D,
+**                 CCMN44D, CSES28D, CLSS51D, CLSS52D, CLSS46D,
+**                 & CLSC37D. This DAM uses the PERSON, CAPS_CASE,
+**                 STAGE_PERSON_LINK, & STAGE.
+**
+***************************************************************************/
+static long CallCSEC15D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long *ulIdPerson,
+            _CSEC15DO *pCSEC15DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   _CSEC15DI  *pCSEC15DInputRec;
+
+   /*
+   ** Allocate memory for DAM Input Structure
+   */
+   pCSEC15DInputRec =  (_CSEC15DI *) malloc(sizeof(_CSEC15DI));
+   if (pCSEC15DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCSEC15DInputRec, NULL, sizeof(_CSEC15DI));
+   memset(pCSEC15DOutputRec, NULL, sizeof(_CSEC15DO));
+
+
+   /*
+   ** Populate the username in the DAM Input architecture header by copying
+   ** the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCSEC15DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+
+   pCSEC15DInputRec->ulIdStage = pInputMsg->ulIdStage;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CSEC15D");
+
+   /*
+   ** Call DAM
+   */
+   rc=csec15dQUERYdam((void *)&sqlca,
+              pCSEC15DInputRec,
+              pCSEC15DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+
+           *ulIdPerson = pCSEC15DOutputRec->ulIdPerson;
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           pServiceStatus->severity = FND_SEVERITY_WARNING;
+           pServiceStatus->explan_code = MSG_NO_ROWS_RETURNED;
+           rc = MSG_NO_ROWS_RETURNED;
+      break;
+
+      /*
+      **  PROCESS_TUX_SQL_ERROR is called only when there is an unexpected
+      **  SQL error returned from the DAM.
+      */
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+
+   free(pCSEC15DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+
+}
+
+
+/*
+**
+** The following function is an example of a call to a Simple Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCCMN44D
+**
+** Description:    This DAM receives input ID_PERSON from CSEC15D and is
+**                 used on a functional level to populate the child's
+**                 sex and etnicity on the form.  This DAM is also used
+**                 to detemine the child's age through code contained
+**                 below.  This age is then used to determine whether
+**                 a yes or no response is returned in the templates
+**                 that deal with age and minority status.
+**                 [TMPLAT_AGE_YES(NO) & TMPLAT_MIN_YES(NO)]
+**                 This DAM uses the PERSON table.
+**
+***************************************************************************/
+static long CallCCMN44D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CCMN44DO *pCCMN44DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   _CCMN44DI  *pCCMN44DInputRec;
+
+   short          sMonthDiff,         /* Variables to calculate the age with */
+                  sDayDiff,
+                  sYear;
+
+   FND_INT3DATE   dtCurrDate;         /* variable to hold current date for
+                                         age calculation */
+   long           lAge      =  2;     /* used to compare child's age against
+                                         minimum age necessary to qualify
+                                         as a minority */
+
+   /*
+   ** Allocate memory for DAM Input Structure
+   */
+   pCCMN44DInputRec =  (_CCMN44DI *) malloc(sizeof(_CCMN44DI));
+   if (pCCMN44DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCCMN44DInputRec, NULL, sizeof(_CCMN44DI));
+   memset(pCCMN44DOutputRec, NULL, sizeof(_CCMN44DO));
+
+
+   /*
+   ** Populate the username in the DAM Input architecture header by copying
+   ** the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCCMN44DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   pCCMN44DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CCMN44D");
+
+   /*
+   ** Call DAM
+   */
+   rc=ccmn44dQUERYdam((void *)&sqlca,
+              pCCMN44DInputRec,
+              pCCMN44DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+
+   /* Populate Architecture field ulRowQty with the number 1 so that
+   ** the forms architecture recognizes that a row
+   */
+
+     pCCMN44DOutputRec->ArchOutputStruct.ulRowQty = 1;
+
+   /*
+   ** The following logic replaces the person age with a calcualted age from
+   ** the date of birth and the current date.
+   */
+   rc = ARC_UTLGetDateAndTime(&dtCurrDate, NULL);
+
+        if(pCCMN44DOutputRec->dtDtPersonBirth.year != -1)
+            {
+
+                sMonthDiff = dtCurrDate.month -
+                    pCCMN44DOutputRec->dtDtPersonBirth.month;
+
+                sDayDiff = dtCurrDate.day -
+                    pCCMN44DOutputRec->dtDtPersonBirth.day;
+
+                if(sMonthDiff > 0)
+                {
+                    sYear = dtCurrDate.year -
+                        pCCMN44DOutputRec->dtDtPersonBirth.year;
+                }   /* end if */
+
+                else if(sMonthDiff < 0)
+                {
+                    sYear = dtCurrDate.year -
+                        pCCMN44DOutputRec->dtDtPersonBirth.year - 1;
+                }   /* end else if */
+
+                else if(sDayDiff < 0)
+                {
+                    sYear = dtCurrDate.year -
+                        pCCMN44DOutputRec->dtDtPersonBirth.year - 1;
+                }   /* end else if */
+
+                else
+                {
+                    sYear = dtCurrDate.year -
+                        pCCMN44DOutputRec->dtDtPersonBirth.year;
+                }   /* end else */
+
+                pCCMN44DOutputRec->lNbrPersonAge = sYear;
+                sYear = 0;
+
+            }  /* end if */
+
+            /* The following logic determines the child's minority status */
+
+            if(pCCMN44DOutputRec->lNbrPersonAge < lAge)
+              {
+               COPYSZ(pCCMN44DOutputRec->szCdPersonReligion, NO);
+              }
+            else if(!strcmp(pCCMN44DOutputRec->szCdPersonEthnicGroup, WHITE))
+                   {
+                   COPYSZ(pCCMN44DOutputRec->szCdPersonReligion, NO);
+                   }
+            else
+                {
+                COPYSZ(pCCMN44DOutputRec->szCdPersonReligion, YES);
+                }
+
+            rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           rc = ARC_SUCCESS;
+
+      break;
+
+      /*
+      **  PROCESS_TUX_SQL_ERROR is called only when there is an unexpected
+      **  SQL error returned from the DAM.
+      */
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+
+   free(pCCMN44DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+
+}
+
+/*
+**
+** The following function is an example of a call to a Simple Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCSES28D
+**
+** Description:    This DAM receives input ID_PERSON from CSEC15D
+**                 and populates all the Placement information on the
+**                 form using the CPAS_RESOURCE and PLACEMENT table.
+**
+***************************************************************************/
+static long CallCSES28D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CSES28DO *pCSES28DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   _CSES28DI  *pCSES28DInputRec;
+
+   /*
+   ** Allocate memory for DAM Input Structure
+   */
+   pCSES28DInputRec =  (_CSES28DI *) malloc(sizeof(_CSES28DI));
+   if (pCSES28DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCSES28DInputRec, NULL, sizeof(_CSES28DI));
+   memset(pCSES28DOutputRec, NULL, sizeof(_CSES28DO));
+
+
+   /*
+   ** Populate the username in the DAM Input architecture header by copying
+   ** the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCSES28DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   pCSES28DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CSES28D");
+
+   /*
+   ** Call DAM
+   */
+   rc=cses28dQUERYdam((void *)&sqlca,
+              pCSES28DInputRec,
+              pCSES28DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           pServiceStatus->severity = FND_SEVERITY_WARNING;
+           pServiceStatus->explan_code = MSG_NO_ROWS_RETURNED;
+           rc = MSG_NO_ROWS_RETURNED;
+      break;
+
+      /*
+      **  PROCESS_TUX_SQL_ERROR is called only when there is an unexpected
+      **  SQL error returned from the DAM.
+      */
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+
+   free(pCSES28DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+
+}
+
+
+/*
+**
+** The following function is an example of a call to a Simple Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCSEC01D
+**
+** Description:    This DAM receives input ID_PERSON from the window.
+**                 This DAM populates all the bookmarks contained within
+**                 the Worker and Supervisor sections of the form.  This
+**                 DAM uses the follwing tables:  NAME, PERSON_PHONE,
+**                 MAIL_CODE, OFFICE, EMPLOYEE_JOB_HISTORY, & EMPLOYEE.
+**
+***************************************************************************/
+static long CallCSEC01D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long InputIdPerson,
+            unsigned long *SupvIdPerson,
+            _CSEC01DO *pCSEC01DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   _CSEC01DI  *pCSEC01DInputRec;
+
+   /*
+   ** Allocate memory for DAM Input Structure
+   */
+   pCSEC01DInputRec =  (_CSEC01DI *) malloc(sizeof(_CSEC01DI));
+   if (pCSEC01DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCSEC01DInputRec, NULL, sizeof(_CSEC01DI));
+   memset(pCSEC01DOutputRec, NULL, sizeof(_CSEC01DO));
+
+
+   /*
+   ** Populate the username in the DAM Input architecture header by copying
+   ** the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCSEC01DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   pCSEC01DInputRec->ulIdPerson = InputIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CSEC01D");
+
+   /*
+   ** Call DAM
+   */
+   rc=csec01dQUERYdam((void *)&sqlca,
+              pCSEC01DInputRec,
+              pCSEC01DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+
+           *SupvIdPerson = pCSEC01DOutputRec->ulIdJobPersSupv;
+
+           /* Name Person Full Enhancement */
+           pCSEC01DOutputRec->ArchOutputStruct.ulRowQty = 1;
+		   /*
+		   ** SIR 1007795 If there is no primary business phone or cell
+		   ** for a worker, the phone number for staff from the mail
+		   ** code-office table will overwrite lNbrPhone.
+		   */
+		   if(!(0 == strcmp(BUSINESS_PHONE,
+		                  pCSEC01DOutputRec->szCdPhoneType) ||
+		      0 == strcmp(BUSINESS_CELL,
+		                  pCSEC01DOutputRec->szCdPhoneType)))
+		   {
+			   COPYSZ(pCSEC01DOutputRec->lNbrPhone,
+			          pCSEC01DOutputRec->szNbrMailCodePhone);
+			   COPYSZ(pCSEC01DOutputRec->lNbrPhoneExtension,
+			          pCSEC01DOutputRec->szNbrMailCodePhoneExt);
+		   }
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           pServiceStatus->severity = FND_SEVERITY_WARNING;
+           pServiceStatus->explan_code = MSG_NO_ROWS_RETURNED;
+           rc = MSG_NO_ROWS_RETURNED;
+      break;
+
+      /*
+      **  PROCESS_TUX_SQL_ERROR is called only when there is an unexpected
+      **  SQL error returned from the DAM.
+      */
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+
+   free(pCSEC01DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+
+}
+
+/*
+**
+** The following function is an example of a call to a Simple Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCSEC35D
+**
+** Description:    This DAM receives input ID_PERSON from DAM CSEC15D.
+**                 This DAM is used to populate the Header information
+**                 of the form and the child's name
+**                 information. This DAM uses the NAME table.
+**
+***************************************************************************/
+static long CallCSEC35D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CSEC35DO *pCSEC35DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   _CSEC35DI  *pCSEC35DInputRec;
+
+   /*
+   ** Allocate memory for DAM Input Structure
+   */
+   pCSEC35DInputRec =  (_CSEC35DI *) malloc(sizeof(_CSEC35DI));
+   if (pCSEC35DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCSEC35DInputRec, NULL, sizeof(_CSEC35DI));
+   memset(pCSEC35DOutputRec, NULL, sizeof(_CSEC35DO));
+
+
+   /*
+   ** Populate the username in the DAM Input architecture header by copying
+   ** the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCSEC35DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   pCSEC35DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CSEC35D");
+
+   /*
+   ** Call DAM
+   */
+   rc=csec35dQUERYdam((void *)&sqlca,
+              pCSEC35DInputRec,
+              pCSEC35DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+
+           /* Name Person Full Enhancement */
+           pCSEC35DOutputRec->ArchOutputStruct.ulRowQty = 1;
+
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           pServiceStatus->severity = FND_SEVERITY_WARNING;
+           pServiceStatus->explan_code = MSG_NO_ROWS_RETURNED;
+           rc = MSG_NO_ROWS_RETURNED;
+      break;
+
+      /*
+      **  PROCESS_TUX_SQL_ERROR is called only when there is an unexpected
+      **  SQL error returned from the DAM.
+      */
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+
+   free(pCSEC35DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+
+}
+
+/*
+**
+** The following function is an example of a call to a List Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCLSS51D
+**
+** Description:    This DAM receives input ID_PERSON from DAM CSEC15D.
+**                 This DAM populates all bookmarks in the Legal Status
+**                 section of the form.  This DAM also is used to determine
+**                 whether or not a row from table LEGAL_STATUS is considered
+**                 a Conservatorship or not.  This information is then used
+**                 to populate the Conservatorship Templates and Bookmarks
+**                 in accordance with design and functional requirements.
+**                 This DAM uses the LEGAL_STATUS table.
+**                 [TMPLAT_LEG_STAT]
+**
+***************************************************************************/
+static long CallCLSS51D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CLSS51DO *pCLSS51DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+      _CLSS51DI  *pCLSS51DInputRec;
+
+   /*
+   ** Allocate memory for Input Structure
+   */
+   pCLSS51DInputRec = (_CLSS51DI *) malloc(sizeof(_CLSS51DI));
+   if (pCLSS51DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCLSS51DInputRec, NULL, sizeof(_CLSS51DI));
+   memset(pCLSS51DOutputRec, NULL, sizeof(_CLSS51DO));
+
+   /*
+   ** Populate Input Structure for DAM
+   */
+
+   pCLSS51DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Populate the username in the DAM Input architecture header by
+   ** copying the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCLSS51DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   /*
+   ** Set the page number to intial page and the page size to the size of
+   ** of the DAM output record.
+   */
+   pCLSS51DInputRec->ArchInputStruct.usPageNbr = 1;
+   pCLSS51DInputRec->ArchInputStruct.ulPageSizeNbr =
+                            _CLSS51DO__ROWCLSS51DO_SIZE;
+
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CLSS51D");
+
+   /*
+   ** Call DAM
+   */
+   rc=clss51dQUERYdam((void *)&sqlca,
+              pCLSS51DInputRec,
+              pCLSS51DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+      case SQL_SUCCESS:
+                rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           rc = ARC_SUCCESS;
+      break;
+
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+   /*
+   ** Free allocated memory for DAM Input Structure.  Do not free memory
+   ** for the output structure; It will be free'd in the calling function
+   ** after the form data is processed.
+   */
+   free(pCLSS51DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+}
+
+/*
+**
+** The following function is an example of a call to a List Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCLSS52D
+**
+** Description:    This DAM receives input ID_PERSON from DAM CSEC15D.
+**                 This DAM is used to populate all bookmarks in
+**                 the Legal Action section on the form.  This DAM
+**                 uses the LEGAL_ACTION table.
+**                 [TMPLAT_LEG_ACT]
+**
+***************************************************************************/
+static long CallCLSS52D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CLSS52DO *pCLSS52DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   int i;                             /* Loop counter */
+   _CLSS52DI  *pCLSS52DInputRec;
+
+   /*
+   ** Allocate memory for Input Structure
+   */
+   pCLSS52DInputRec = (_CLSS52DI *) malloc(sizeof(_CLSS52DI));
+   if (pCLSS52DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCLSS52DInputRec, NULL, sizeof(_CLSS52DI));
+   memset(pCLSS52DOutputRec, NULL, sizeof(_CLSS52DO));
+
+   /*
+   ** Populate Input Structure for DAM
+   */
+
+   pCLSS52DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Populate the username in the DAM Input architecture header by
+   ** copying the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCLSS52DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   /*
+   ** Set the page number to intial page and the page size to the size of
+   ** of the DAM output record.
+   */
+   pCLSS52DInputRec->ArchInputStruct.usPageNbr = 1;
+   pCLSS52DInputRec->ArchInputStruct.ulPageSizeNbr =
+                            _CLSS52DO__ROWCLSS52DO_SIZE;
+
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CLSS52D");
+
+   /*
+   ** Call DAM
+   */
+   rc=clss52dQUERYdam((void *)&sqlca,
+              pCLSS52DInputRec,
+              pCLSS52DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+           for ( i=0; i<pCLSS52DOutputRec->ArchOutputStruct.ulRowQty; ++i )
+           {
+
+           }
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           rc = ARC_SUCCESS;
+
+      break;
+
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+   /*
+   ** Free allocated memory for DAM Input Structure.  Do not free memory
+   ** for the output structure; It will be free'd in the calling function
+   ** after the form data is processed.
+   */
+   free(pCLSS52DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+}
+
+
+/*
+**
+** The following function is an example of a call to a List Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCLSS46D
+**
+** Description:    This DAM receives input ID_PERSON from DAM CSEC15D.
+**                 This DAM populates the TMPLAT_CHILD_CHAR Template
+**                 which contains any medical/mental conditions the child
+**                 may suffer from. This DAM uses the CHARACTERISTICS table.
+**
+***************************************************************************/
+static long CallCLSS46D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            unsigned long ulIdPerson,
+            _CLSS46DO *pCLSS46DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   int i;                             /* Loop counter */
+   _CLSS46DI  *pCLSS46DInputRec;
+
+   /*
+   ** Allocate memory for Input Structure
+   */
+   pCLSS46DInputRec = (_CLSS46DI *) malloc(sizeof(_CLSS46DI));
+   if (pCLSS46DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCLSS46DInputRec, NULL, sizeof(_CLSS46DI));
+   memset(pCLSS46DOutputRec, NULL, sizeof(_CLSS46DO));
+
+   /*
+   ** Populate Input Structure for DAM
+   */
+   COPYSZ(pCLSS46DInputRec->szCdCharCategory, CPL);
+   pCLSS46DInputRec->ulIdPerson = ulIdPerson;
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Populate the username in the DAM Input architecture header by
+   ** copying the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCLSS46DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   /*
+   ** Set the page number to intial page and the page size to the size of
+   ** of the DAM output record.
+   */
+   pCLSS46DInputRec->ArchInputStruct.usPageNbr = 1;
+   pCLSS46DInputRec->ArchInputStruct.ulPageSizeNbr =
+                            _CLSS46DO__ROWCLSS46DO_SIZE;
+
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CLSS46D");
+
+   /*
+   ** Call DAM
+   */
+   rc=clss46dQUERYdam((void *)&sqlca,
+              pCLSS46DInputRec,
+              pCLSS46DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+           for ( i=0; i<pCLSS46DOutputRec->ArchOutputStruct.ulRowQty; ++i )
+           {
+
+           }
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           rc = ARC_SUCCESS;
+
+      break;
+
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+   /*
+   ** Free allocated memory for DAM Input Structure.  Do not free memory
+   ** for the output structure; It will be free'd in the calling function
+   ** after the form data is processed.
+   */
+   free(pCLSS46DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+}
+
+/*
+**
+** The following function is an example of a call to a List Query DAM.
+** Cut, Copy, Paste as needed for each DAM of this type that is called.
+**
+*/
+/**************************************************************************
+**
+** Function Name:  CallCLSC37D
+**
+** Description:    This DAM receives input ID_PERSON from DAM CSEC15D.
+**                 This DAM populates all the bookmarks in templates
+**                 TMPLAT_CHILD_INCOME & TMPLAT_CHILD_RSRC. These templates
+**                 contain information about any financial resources or
+**                 income that the child may have. This DAM uses the
+**                 INCOME_AND_RESOURCES table.
+**
+***************************************************************************/
+static long CallCLSC37D(INPUTMSG *pInputMsg,
+            OUTPUTMSG *pOutputMsg,
+            char far *Type, /* used to determine if a row is an income or resource */
+            unsigned long ulIdPerson,
+            _CLSC37DO *pCLSC37DOutputRec,
+            TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+
+   /*
+   ** Declare local variables
+   */
+   long rc;                           /* Return code */
+   int i;                             /* Loop counter */
+   _CLSC37DI  *pCLSC37DInputRec;
+
+   /*
+   ** Allocate memory for Input Structure
+   */
+   pCLSC37DInputRec = (_CLSC37DI *) malloc(sizeof(_CLSC37DI));
+   if (pCLSC37DInputRec == NULL)
+   {
+       rc=ARC_ERR_MALLOC_FAILED;
+       PROCESS_TUX_RC_ERROR;
+   }
+
+   /*
+   ** Initialize Input and Output Structures
+   */
+   memset(pCLSC37DInputRec, NULL, sizeof(_CLSC37DI));
+   memset(pCLSC37DOutputRec, NULL, sizeof(_CLSC37DO));
+
+   /*
+   ** Populate Input Structure for DAM
+   */
+
+   pCLSC37DInputRec->ulIdPerson = ulIdPerson;
+   pCLSC37DInputRec->ulIdStage  = pInputMsg->ulIdStage;
+   COPYSZ(pCLSC37DInputRec->szCdIncRsrcIncome, Type);
+   rc = ARC_UTLGetDateAndTime (&pCLSC37DInputRec->dtScrDtLastUpdate, NULL);
+
+   /*
+   **  Insert logic for populating the Input structure for the DAM.
+   **
+   **  Note:  use the COPYSZ macro instead of strcpy.
+   */
+
+   /*
+   ** Populate the username in the DAM Input architecture header by
+   ** copying the service input header message
+   ** architecture header to the DAM Input architecture header.
+   */
+   memcpy (&pCLSC37DInputRec->ArchInputStruct,
+           &pInputMsg->ArchInputStruct, sizeof (_ARCHINPUTSTRUCT));
+
+   /*
+   ** Set the page number to intial page and the page size to the size of
+   ** of the DAM output record.
+   */
+   pCLSC37DInputRec->ArchInputStruct.usPageNbr = 1;
+   pCLSC37DInputRec->ArchInputStruct.ulPageSizeNbr =
+                            _CLSC37DO__ROWCLSC37DO_SIZE;
+
+
+   /*
+   ** Start performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStartTime("CLSC37D");
+
+   /*
+   ** Call DAM
+   */
+   rc=clsc37dQUERYdam((void *)&sqlca,
+              pCLSC37DInputRec,
+              pCLSC37DOutputRec);
+
+   /*
+   ** Stop performance timer for Data Access Module
+   */
+   ARC_PRFDataAccessStopTime();
+
+   /*
+   ** Analyze return code
+   */
+   switch(rc)
+   {
+
+
+      case SQL_SUCCESS:
+           for ( i=0; i<pCLSC37DOutputRec->ArchOutputStruct.ulRowQty; ++i )
+           {
+
+           }
+
+           rc = ARC_SUCCESS;
+      break;
+
+      case SQL_NOT_FOUND:
+           rc = ARC_SUCCESS;
+
+      break;
+
+      default:
+           PROCESS_TUX_SQL_ERROR;
+
+   } /* end switch */
+
+   /*
+   ** Free allocated memory for DAM Input Structure.  Do not free memory
+   ** for the output structure; It will be free'd in the calling function
+   ** after the form data is processed.
+   */
+   free(pCLSC37DInputRec);
+
+	PERF_TIMER_END;
+   return (rc);
+}
+
+void marshalCFAD25SO(OUTPUTMSG* pOutput, char** pXmlBuffer, int* piBuffLength)
+{
+	PERF_TIMER_START;
+	int i =0;
+	marshalHeader(pXmlBuffer, piBuffLength);
+	marshalElementStart("CFAD25SO", pXmlBuffer, piBuffLength);
+	marshalArchOutputStruct(pOutput->ArchOutputStruct, pXmlBuffer, piBuffLength);
+	marshalFormStruct(pOutput->FormStruct, pXmlBuffer, piBuffLength);
+	marshalElementEnd("CFAD25SO", pXmlBuffer, piBuffLength);
+	PERF_TIMER_END;
+}
+
+void startElementCFAD25SI(void *pUserData, const char *szElement, const char **attributes)
+{
+	ParserData *pParserData = (ParserData*) pUserData;
+	pParserData->iElementIndicator = 0;
+	pParserData->szCharDataBuffer[0]=0x00;
+
+	if ( MATCH == strcmp(szElement, "CFAD25SI") ){
+		pParserData->bInScope = TRUE;
+		return;
+	}
+
+	if (pParserData->bInScope){
+		if(0==strcmp(szElement, ulIdStage_STRING))  {
+			pParserData->iElementIndicator = ulIdStage_IND;
+		} else if(0==strcmp(szElement, ulIdPerson_STRING))  {
+			pParserData->iElementIndicator = ulIdPerson_IND;
+		}else {
+		}
+	}
+
+}  /* End of startElementCFAD25SI handler */
+
+void endElementCFAD25SI(void *pUserData, const char *szElement)
+{
+	ParserData *pParserData = (ParserData*) pUserData;
+	INPUTMSG* pData = (INPUTMSG*) pParserData->data;
+
+	if ( MATCH == strcmp(szElement, "CFAD25SI") ){
+		pParserData->bInScope = FALSE;
+		return;
+	}
+
+	if (pParserData->bInScope){
+		switch (pParserData->iElementIndicator) {
+			case ulIdStage_IND:
+				pData->ulIdStage=strtoul(pParserData->szCharDataBuffer,NULL,10);
+				break;
+			case ulIdPerson_IND:
+				pData->ulIdPerson=strtoul(pParserData->szCharDataBuffer,NULL,10);
+				break;
+		}
+	}
+	// Reset the element indicator to show that you have left an element;
+	pParserData->iElementIndicator=0;
+
+	// Reset the char data to show that you have completed processing this char data
+	pParserData->szCharDataBuffer[0]=0x00;
+
+} /* end of end handler */ 
+
+void unmarshalCFAD25SI(INPUTMSG* pInput, char** pXmlBuffer, TUX_DECL_STATUSPARMS)
+{
+	PERF_TIMER_START;
+	int len=strlen(*pXmlBuffer);
+	int done=1;
+	unsigned short rc=0;
+
+	ParserData parserData;
+	memset((void*)&parserData,0x00,sizeof(ParserData));
+	parserData.data = (void*)pInput;
+	ParserData *pParserData = &parserData;
+
+	memset((void*)pInput, 0x00, sizeof(INPUTMSG));
+
+	unmarshalArchInputStruct(&(pInput->ArchInputStruct), pXmlBuffer, TUX_STATUSPARMS);
+
+	XML_Parser parser = XML_ParserCreate(NULL);
+	if (! parser) {
+		rc=ARC_XML_NO_PARSER_ERROR;
+		PROCESS_TUX_RC_ERROR;
+	}
+
+	XML_SetUserData(parser, (void*) pParserData);
+	XML_SetElementHandler(parser, startElementCFAD25SI, endElementCFAD25SI);
+	XML_SetCharacterDataHandler(parser, dataHandler);
+	XML_SetUnknownEncodingHandler(parser, (XML_UnknownEncodingHandler)enchandler,NULL);
+
+	if (! XML_Parse(parser, *pXmlBuffer, len, done)) {
+		rc=ARC_XML_PARSING_ERROR;
+		PROCESS_XML_PARSE_ERROR;
+	}
+	XML_ParserFree(parser);
+	PERF_TIMER_END;
+}
+
+
+
+
+
