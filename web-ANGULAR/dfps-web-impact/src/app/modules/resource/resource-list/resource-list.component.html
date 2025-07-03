@@ -1,0 +1,71 @@
+<div class="container-fluid bodycolor" *ngIf="existingResources">
+    <div class="row">
+        <h1>Existing Resources </h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form>
+        <div class="row" id="paymentEligibilityTable">
+            <div class="col-md-12">
+                <dfps-data-table [dataTable]="resourcesDataTable" (selectedData)="getSelectedResource($event)">
+                </dfps-data-table>
+            </div>
+        </div>
+        <div *ngIf="resourceServiceResponse">
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">Contact: </div>
+                    <div class="col-sm-7">{{contact }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">Maintainer: </div>
+                    <div class="col-sm-7">{{maintainer }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">Contact Phone: </div>
+                    <div class="col-sm-7">{{contactPhone }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">Facility Type: </div>
+                    <div class="col-sm-7">{{facilityType }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">Facility Number: </div>
+                    <div class="col-sm-7">{{facilityNumber }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-5">MHMR Code: </div>
+                    <div class="col-sm-7">{{mhmrCode }}</div>
+                </div>
+            </div>
+            <div class="row pt-4" id="resourceServicesTable">
+                <div class="col-md-12">
+                    <dfps-data-table [dataTable]="resourceServicesDataTable">
+                    </dfps-data-table>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mt-2">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Select Resource" (click)="resourceSelected()">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Add" (click)="addResource()" [disabled]="!formData">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Cancel" (click)="cancel()">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

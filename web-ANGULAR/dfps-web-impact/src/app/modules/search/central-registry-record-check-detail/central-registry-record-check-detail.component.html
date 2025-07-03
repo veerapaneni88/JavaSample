@@ -1,0 +1,294 @@
+<div class="container-fluid bodycolor" *ngIf="displayRecordCheckDetail">
+    <div class="row">
+        <h1>Central Registry Record Check Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="centralRegistryRecordCheckDetailForm">
+        <div class="form-group">
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-4">
+                    <label for="searchType" class="col-sm-4 col-form-label col-form-label-sm">Search Type:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.searchType}}</div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4">
+                    <label for="DateofRequest" class="col-sm-4 col-form-label col-form-label-sm">Date of
+                        Request:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.dtRequested}}</div>
+                </div>
+            </div>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-4">
+                    <label for="requestId" class="col-sm-4 col-form-label col-form-label-sm">Request ID:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.reqId}}</div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4">
+                    <label for="dateCompleted" class="col-sm-4 col-form-label col-form-label-sm">Date Completed:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegDueProcessInfoDto?.dtCompleted ?
+                        displayRecordCheckDetail?.centralRegDueProcessInfoDto?.dtCompleted: ''}}</div>
+                </div>
+            </div>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-4">
+                    <label for="requestedBy" class="col-sm-4 col-form-label col-form-label-sm">Requested By:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.requestedBy}}</div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4">
+                    <label for="email" class="col-sm-4 col-form-label col-form-label-sm">Email:</label>
+                    <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.emailId}}</div>
+                </div>
+            </div>
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <h2 class="pt-4">Overall Central Registry Comments</h2>
+            <div class="row" id="commentsListTable">
+                <div class="col-md-12" style="overflow-y: auto; max-height: 300px;">
+                    <dfps-data-table [dataTable]="commentsListTable" class="data-table dataTableConfig">
+                    </dfps-data-table>
+                </div>
+            </div>
+            <div class="row pb-4">
+                <div class="d-flex col-md-12 justify-content-end">
+                    <dfps-button label="Add Comment" _id="addComment" (click)="addComment()"></dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="isDisplayComment">
+                <div class="d-flex col-md-4 pt-4">
+                    <label class="col-sm-6" for="comments">Comments:</label>
+                    <dfps-textarea class="col-sm-6 col-md-12 col-2" id="comments" formControlName="comments"
+                        maxLength="500" ariaLabel="Comments"></dfps-textarea>
+                    <dfps-button class="pl-4 pt-2" size="extraSmall" label="Save" _id="saveComments"
+                        (click)="saveRecordComments()"></dfps-button>
+                </div>
+            </div>
+            <dfps-collapsable-section>
+                <accordion>
+                    <accordion-group class="accordion-group pt-2" heading="CRC History Decision">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4">
+                                <label for="determination"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Determination:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="determination" formControlName="determination"
+                                        [dropDownValues]="displayRecordCheckDetail.determinationTypeList"
+                                        ariaLabel="Determination">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4 pt-4">
+                            <div class="d-flex col-md-4">
+                                <label for="dateClearedEmail" class="col-sm-6 col-form-label col-form-label-sm">Date
+                                    Completed:</label>
+                                <div class="col-sm-6">
+                                    {{displayRecordCheckDetail?.centralRegDueProcessInfoDto?.dtCompleted}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-4" id="crcHistoryDecisionTable">
+                            <div class="col-md-12 pl-4" style="overflow-y: auto; max-height: 300px;">
+                                <dfps-data-table [dataTable]="crcHistoryDecisionTable"
+                                    class="data-table dataTableConfig">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Send Cleared Email" _id="sendClearedEmailButtonId" (click)="sendClearanceNotif()"
+                                    [hidden]="!isDisplaySendClearedEmail"></dfps-button>
+                            </div>
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Save" _id="saveCRCHistoryButtonId" (click)="saveCRCHistory()"
+                                    [disabled]="isDisableCrcHistorySave"></dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+                    <accordion-group class="accordion-group" heading="Potential Matches">
+                        <div class="row pl-4" *ngIf="isDisplayTypeOfAbuse">
+                            <div class="d-flex col-md-8 pt-4">
+                                <label for="typeOfAbuse"
+                                    class="col-sm-2 col-form-label col-form-label-sm">Type Of
+                                    Abuse:</label>
+                                <div class="col-sm-4">
+                                    <dfps-select _id="typeOfAbuse" formControlName="typeOfAbuse"
+                                        [dropDownValues]="displayRecordCheckDetail?.allegationTypeList"
+                                        ariaLabel="Assigned To">
+                                    </dfps-select>
+                                </div>
+                                <dfps-button add-button size="small" label="Add" (click)="addTypeOfAbuse()">
+                                </dfps-button>
+                            </div>
+                        </div>
+                        <div class="row pb-4">
+                            <div class="d-flex col-md-12 justify-content-end">
+                                <dfps-button label="Reject All" _id="rejectAll" (click)="rejectAllPotentialMatches()"
+                                    [disabled]="isDisablePotentialButtons"></dfps-button>
+                            </div>
+                        </div>
+                        <div class="row pb-4">
+                            <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.headerInfo}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pt-12" >
+                                <dfps-data-table class="data-table dataTableConfig" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                                    [dataTable]="potentialMatchesDataTable" (handleClickEvent)="handleRouting($event)">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Save" _id="savePotentialButtonId" (click)="savePotentialMatches()"
+                                    [disabled]="isDisablePotentialButtons"></dfps-button>
+                            </div>
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Save & Post" _id="saveandPostButtonId"
+                                    (click)="saveAndPostPotentialMatches()" [disabled]="isDisablePotentialButtons">
+                                </dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Match Information">
+                        <div class="row pb-4">
+                            <div class="col-sm-8">{{displayRecordCheckDetail?.centralRegBasicInfoDto?.headerInfo}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 pt-12" style="overflow-y: auto; max-height: 300px;">
+                                <dfps-data-table [dataTable]="matchInformationDataTable"
+                                    class="data-table dataTableConfig">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                    </accordion-group>
+                    <accordion-group class="accordion-group pt-2" heading="Due Process Tracking"
+                        *ngIf="centralRegistryRecordCheckDetailForm.get('determination').value=='SHEG'">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-6">
+                                <label for="certifiedMailTracking"
+                                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Certified Mail
+                                    Tracking #:</label>
+                                <div class="col-sm-6">
+                                    <dfps-input _id="certifiedMailTracking" maxlength="25" formControlName="certifiedMailTracking"
+                                        ariaLabel="Certified Mail Tracking"></dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-6 pt-4">
+                                <label for="soahMailed"
+                                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Date SOAH
+                                    Offer Mailed:</label>
+                                <div class="col-sm-6">
+                                    <dfps-date-picker _id="soahMailed" formControlName="soahMailed"
+                                        ariaLabel="Date SOAH Offer Mailed"></dfps-date-picker>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-6 pt-4">
+                                <label for="dateResponseReceived" class="col-sm-4 col-form-label col-form-label-sm">Date
+                                    Response Received:</label>
+                                <div class="col-sm-6">
+                                    <dfps-date-picker _id="dateResponseReceived" formControlName="dateResponseReceived"
+                                        ariaLabel="Date Response Received"></dfps-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-6 pt-4">
+                                <label for="soahHearingStatus"
+                                    class="col-sm-4 col-form-label col-form-label-sm">SOAH
+                                    Hearing Status:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="soahHearingStatus" ariaLabel="SOAH Hearing Status"
+                                        formControlName="soahHearingStatus"
+                                        [dropDownValues]="displayRecordCheckDetail.soahStatusTypeList">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-6 pt-4">
+                                <label for="soahDecisionDate"
+                                    class="col-sm-4 col-form-label col-form-label-sm">SOAH
+                                    Decision Date:</label>
+                                <div class="col-sm-6">
+                                    <dfps-date-picker _id="soahDecisionDate" formControlName="soahDecisionDate"
+                                        ariaLabel="SOAH Decision Date"></dfps-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-4 pb-4">
+                            <div class="d-flex col-md-12 justify-content-end">
+                                <dfps-button label="Save" _id="saveDueProcess" (click)="saveDueProcess()"></dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+<!--This section should be displayed only for orgUsers-->
+                   <accordion-group class="accordion-group pt-2" heading="Uploaded Documents" *ngIf="displayRecordCheckDetail?.centralRegBasicInfoDto?.indSingleUser === 'N'">
+                        <div class="row">
+                            <div class="col-md-12 pt-12" style="overflow-y: auto; max-height: 300px;">
+                                <dfps-data-table [dataTable]="documentsDataTable" class="data-table dataTableConfig"
+                                    (selectedData)="selectedDocument($event)"
+                                    >
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Delete" _id="deleteDocButtonId" (click)="deleteDocument()"
+                                    ></dfps-button>
+                            </div>
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button class="pl-2" label="View Document" _id="viewDocButtonId"
+                                    (click)="viewDocument()" ></dfps-button>
+                            </div>
+                        </div>
+                   </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Notifications">
+                        <div class="row">
+                            <div class="col-md-12 pt-12" style="overflow-y: auto; max-height: 300px;">
+                                <dfps-data-table [dataTable]="notificationsDataTable" class="data-table dataTableConfig"
+                                    (selectedData)="selectedNotification($event)"
+                                    (handleClickEvent)="handleFormRelaunch($event)">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button label="Refresh" _id="refreshButtonId" (click)="refresh()"
+                                    [disabled]="isDisableRefresh"></dfps-button>
+                            </div>
+                            <div class="d-flex btn-sm pt-4">
+                                <dfps-button class="pl-2" label="Resend Email" _id="resendEmailId"
+                                    (click)="resendEmail()" [disabled]="isDisableResendEmail"></dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+            </dfps-collapsable-section>
+            <div class="row">
+                <br />
+            </div>
+            <div class="card formPanel">
+                <div class="p-2 mb-2 card-heading formHeader">
+                    <h2>Forms</h2>
+                </div>
+                <div class="row pl-4 pb-2">
+                    <div class="d-flex col-md-6">
+                        <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                            [createEvent]='true'>
+                        </dfps-form-launch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

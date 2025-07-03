@@ -1,0 +1,92 @@
+<div class="container-fluid bodycolor" *ngIf="contractVersion">
+    <div class="row">
+        <h1>Contract Version Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <form [formGroup]="contractVersionForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Contract # : {{contractNumber !== '0' ? contractNumber : ''}} </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Agency Acct ID : {{contractId}}</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Period : {{period}}</div>
+        </div>
+
+        <div class="form-group mt-5">
+            <h2>Contract Version Detail</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="effectiveDate"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Effective:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="effectiveDate" formControlName="effectiveDate" placeholder="Effective"
+                            ariaLabel="Effective date is required field"></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="version" class="col-sm-4 col-form-label col-form-label-sm">Version:</label>
+                    <span id="version" class="col-sm-6"> {{contractVersion?.versionNumber}}
+                    </span>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="end" class="col-sm-4 col-form-label col-form-label-sm">End:
+                    </label>
+                    <div class="col-sm-6"> {{contractVersion?.endDate}}
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="created" class="col-sm-4 col-form-label col-form-label-sm">Created:
+                    </label>
+                    <div class="col-sm-6"> {{contractVersion?.createDate}}
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="noShowPercent" class="col-sm-4 col-form-label col-form-label-sm">No Show %:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="noShowPercent" formControlName="noShowPercent" maxlength=6 ariaLabel="No Show"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="locked" ariaLabel="Locked" label="Locked" inputName="locked"
+                            [formControl]="contractVersionForm.controls['locked']">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-8 pt-4">
+                    <label class="col-sm-6 col-md-6 col-2" for="comment">
+                        Comment:</label>
+                    <dfps-textarea class="col-sm-6 col-md-6 col-2" id="comment" formControlName="comment"
+                    maxLength="80" ariaLabel="Comment" [disabled]="false"></dfps-textarea>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3">
+            <dfps-button label="Save" _id="contractSave" [hidden]="hideSaveButton" (click)="doSave()"></dfps-button>
+        </div>
+        <input type="hidden" aria-hidden="true" id="lastUpdatedDate" formControlName="lastUpdatedDate">
+    </form>
+</div>

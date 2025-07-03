@@ -1,0 +1,132 @@
+<div class="row mt-2" *ngIf="!(apsServicePlanDetailsForm.controls['pageTitle'].value === 'Service Plan')">
+    <div class="col-12"><b>Section 4:
+            Immediate Interventions</b>
+    </div>
+    <div class="col-12">
+        Note: This section is required if there were immediate interventions during Case Initiation
+        or if there are any current danger factors identified in Section 3.
+        <a target="_blank"
+            href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_4/ImmediateInterventionDefinitions_v1.html"><i>Immediate
+                Interventions Instructions and Definitions </i></a>
+    </div>
+    <div class="col-12" *ngIf="showImmediateInterventionSourcesMsg">
+        <b>Immediate interventions were not provided at Case Initiation and no Danger Factors are selected.</b>
+    </div>
+</div>
+<div class="d-flex justify-content-center"
+    *ngIf="((apsServicePlanDetailsForm.controls['pageTitle'].value === 'Service Plan') && showImmediateInterventionSourcesMsg)">
+    <b> No Immediate Interventions have been identified from the Safety Assessment or Safety Reassessment.</b>
+</div>
+<form [formGroup]="apsServicePlanDetailsForm">
+    <div class="row border-background-color-1" formGroupName="apsServicePlanDto">
+        <div class="row col-12" formArrayName="immediateInterventionSources"
+            *ngFor="let data of servicePlanSourcesList; let taskIndex=index;">
+            <div [formGroupName]="taskIndex" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0">
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="d-flex align-items-center">
+                        <p-radioButton [value]="true" (onClick)="selectedSrc(listOfSrc, taskIndex)"
+                            class="field-checkbox" formControlName="selected" name="selected"
+                            inputId="{{data.controls['sourceText'].value}}{{taskIndex}}">
+                        </p-radioButton>
+                        <label class="ml-4 mt-2"
+                            [for]="data.controls['sourceText'].value + taskIndex">{{data.controls['sourceText'].value}}</label>
+                    </div>
+                    <div formArrayName="serviceProblems"
+                        *ngFor="let svcPblm of getServiceProblemsFor(taskIndex);let svcPblmIndex=index;">
+                        <div class="row m-4 align-items-center" [formGroupName]="svcPblmIndex">
+                            <div class="col-md-3 d-flex">
+                                <dfps-checkbox _id="{{data.controls['sourceText'].value}}{{taskIndex}}{{svcPblmIndex}}"
+                                    [formControl]="svcPblm.controls['selected']"
+                                    inputName="svcPblm.controls['selected']">
+                                </dfps-checkbox>
+                                <label class="ml-2 mt-1" for="{{data.controls['sourceText'].value}}{{taskIndex}}{{svcPblmIndex}}">Select
+                                    Problem</label>
+                            </div>
+                            <div class="col-md-9 border-background-color-2">
+                                <div class="row d-flex flex-row col-12">
+                                    <label class="col-sm-3 col-md-3 col-form-label"
+                                        for="svcPblm.controls['problemDescription']">
+                                        Problem Description:</label>
+                                    <dfps-textarea class="col-md-9 col-sm-9"
+                                        id="svcPblm.controls['problemDescription']"
+                                        inputName="svcPblm.controls['problemDescription']"
+                                        [formControl]="svcPblm.controls['problemDescription']"
+                                        ariaLabel="Problem Description" maxLength="1000">
+                                    </dfps-textarea>
+                                </div>
+                                <div formArrayName="actions" class="row mt-2"
+                                    *ngFor="let action of getActionsFor(taskIndex, svcPblmIndex);let actionIndex=index;">
+                                    <div [formGroupName]="actionIndex" class="row col-12 flex align-items-center">
+                                        <div class="col-md-3 d-flex">
+                                            <dfps-checkbox
+                                                _id="{{data.controls['sourceText'].value}}{{taskIndex}}{{svcPblmIndex}}{{actionIndex}}"
+                                                [formControl]="action.controls['selected']"
+                                                inputName="action.controls['selected']">
+                                            </dfps-checkbox>
+                                            <label class="ml-2 mt-1"
+                                                for="{{data.controls['sourceText'].value}}{{taskIndex}}{{svcPblmIndex}}{{actionIndex}}">Select
+                                                Action</label>
+                                        </div>
+                                        <div class="col-md-8 col-sm-8 ml-4 border-background-color-3">
+                                            <div class="d-flex col-md-12 mt-1">
+                                                <label for="actionDescription"
+                                                    class="col-sm-3 col-md-3 col-form-label col-form-label-sm ">Action
+                                                    Description:</label>
+                                                <dfps-input _id="actionDescription" maxlength="90"
+                                                    class="col-md-9 col-sm-9"
+                                                    [formControl]="action.controls['actionDescription']"
+                                                    name="actionDescription" inputName="actionDescription"
+                                                    ariaLabel="Action Description">
+                                                </dfps-input>
+                                            </div>
+                                            <div class="d-flex col-md-12 mt-1">
+                                                <label for="actionCategoryCode"
+                                                    class="col-sm-3 col-md-3 col-form-label col-form-label-sm ">Action
+                                                    Category:
+                                                </label>
+                                                <dfps-select _id="actionCategoryCode" class="col-md-9 col-sm-9"
+                                                    ariaLabel="Action Category code"
+                                                    [formControl]="action.controls['actionCategoryCode']"
+                                                    name="actionCategoryCode"
+                                                    [dropDownValues]="apsServicePlanDetailsForm.value.apsServicePlanDto.actionCategoryCodes">
+                                                </dfps-select>
+                                            </div>
+                                            <div class="d-flex col-md-12 mt-1">
+                                                <label for="actionResultsCode"
+                                                    class="col-sm-3 col-md-3 col-form-label col-form-label-sm ">Action
+                                                    Result:
+                                                </label>
+                                                <dfps-select _id="actionResultsCode" class="col-md-9 col-sm-9"
+                                                    ariaLabel="Action Result code"
+                                                    [formControl]="action.controls['actionResultsCode']"
+                                                    [dropDownValues]="apsServicePlanDetailsForm.value.apsServicePlanDto.actionResultCodes">
+                                                </dfps-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row d-flex flex-row col-12 pt-1 mt-1">
+                                    <label for="actionOutcomeCodes" class="col-md-3 col-sm-3 col-form-label">Outcome:
+                                    </label>
+                                    <dfps-select _id="actionOutcomeCodes" ariaLabel="Outcome" class="col-md-6 col-sm-6"
+                                        formControlName="outcomeCode"
+                                        [dropDownValues]="apsServicePlanDetailsForm.value.apsServicePlanDto.actionOutcomeCodes">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-between align-items-center mt-4">
+        <div *ngIf="!showImmediateInterventionSourcesMsg" aria-label="Back to Top">
+            <a href="javascript:void(0)" (click)="backToTopClick()"><u><b>Back to Top</b></u></a>
+        </div>
+        <div *ngIf="hideAllBtns">
+            <app-aps-sp-action-buttons [enableII]=enableII actionBtnClickedFrom='II'>
+            </app-aps-sp-action-buttons>
+        </div>
+    </div>
+</form>

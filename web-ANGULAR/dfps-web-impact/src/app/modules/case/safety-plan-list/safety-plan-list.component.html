@@ -1,0 +1,37 @@
+<div class="container-fluid bodycolor" *ngIf="safetyPlansResponse">
+    <div class="row">
+        <h1>Safety Plan List</h1>
+    </div>
+    <div class="row">
+        <hr aria-hidden="true">
+    </div>
+
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2">{{safetyPlansResponse.stageName }}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2">{{safetyPlansResponse.caseId }}</div>
+    </div>
+
+    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <dfps-data-table [dataTable]="safetyPlansTable" (selectedData)="selectedSafetyPlans($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 d-flex justify-content-begin" *ngIf="safetyPlansResponse?.showDeleteButton">
+            <dfps-button _id="delete" label="Delete" (click)="delete()"></dfps-button>
+        </div>
+        <div class="{{safetyPlansResponse?.showDeleteButton ? 'col-md-6' : 'col-md-12'}} d-flex justify-content-end" 
+            *ngIf="safetyPlansResponse?.showAddButton">
+            <dfps-button _id="add" label="Add" (click)="add()"></dfps-button>
+        </div>
+    </div>
+
+</div>

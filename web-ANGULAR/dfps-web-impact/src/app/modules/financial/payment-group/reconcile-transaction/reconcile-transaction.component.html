@@ -1,0 +1,214 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Reconcile Transactions</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <p class="requiredDisplay text-right mt-2"><span class="sr-only">Red asterisk is</span>required field</p>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <dfps-form-validation
+                [shouldCheckDirty]="true"
+                [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength"
+            >
+            </dfps-form-validation>
+            <div class="alert alert-primary" *ngIf="infoMessageDisplay">
+                <p>Attention:</p>
+                <div>
+                    <ul>
+                        <li>{{ reconciledTranSuccessMsg }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <form [formGroup]="reconcileTransactionForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-10 pt-0">
+                            <label
+                                for="transactionTypes"
+                                class="col-sm-3 col-form-label col-form-label-sm requiredDisplay"
+                                tabindex="0" style="outline: none"
+                                >Transaction Types:
+                                <span class="sr-only">Transaction types is required</span></label
+                            >
+
+                        <div class="col-sm-2">
+                            <dfps-checkbox
+                                _id="checks"
+                                ariaLabel="Checks"
+                                label="Checks"
+                                [formControl]="reconcileTransactionForm.controls['checks']"
+                                inputName="checks"
+                            >
+                            </dfps-checkbox>
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-checkbox
+                                _id="ach"
+                                ariaLabel="ACH"
+                                label="ACH"
+                                [formControl]="reconcileTransactionForm.controls['ach']"
+                                inputName="ach"
+                            >
+                            </dfps-checkbox>
+                        </div>
+                        <div class="col-sm-3">
+                            <dfps-checkbox
+                                _id="deposits"
+                                ariaLabel="Deposits or Debits"
+                                label="Deposits/Debits"
+                                [formControl]="reconcileTransactionForm.controls['deposits']"
+                                inputName="deposits"
+                            >
+                            </dfps-checkbox>
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-checkbox
+                                _id="transfers"
+                                ariaLabel="Transfers"
+                                label="Transfers"
+                                [formControl]="reconcileTransactionForm.controls['transfers']"
+                                inputName="transfers"
+                            >
+                            </dfps-checkbox>
+                        </div>
+                       </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label
+                                for="accountNumber"
+                                class="col-sm-6 col-form-label col-form-label-sm requiredDisplay"
+                            >
+                                Account No:</label
+                            >
+                            <div class="col-sm-6">
+                                <dfps-select
+                                    _id="accountNo"
+                                    formControlName="accountNo"
+                                    ariaLabel="Account Number is required."
+                                    [dropDownValues]="accountNos"
+                                    (change)="refreshForm()"
+                                ></dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-3 pt-4">
+                            <label for="checkNo" class="col-sm-6 col-form-label col-form-label-sm"> Check No.:</label>
+                            <div class="col-sm-6">
+                                <dfps-input
+                                    _id="checkNo"
+                                    formControlName="checkNo"
+                                    maxlength="10"
+                                    ariaLabel="Check Number"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+
+                        <div class="d-flex col-md-5 pt-4">
+                            <label for="achNumber" class="col-sm-6 col-form-label col-form-label-sm"> ACH No.:</label>
+                            <div class="col-sm-6">
+                                <dfps-input
+                                    _id="achNumber"
+                                    formControlName="achNumber"
+                                    maxlength="15"
+                                    ariaLabel="ACH Number"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="agencyAccountId" class="col-sm-6 col-form-label col-form-label-sm"
+                                >Agency Account ID:</label
+                            >
+                            <div class="col-sm-6">
+                                <dfps-input
+                                    _id="agencyAccountId"
+                                    formControlName="agencyAccountId"
+                                    maxlength="10"
+                                    ariaLabel="Agency Account ID"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-3 pt-4"></div>
+                        <div class="d-flex col-md-5 pt-4">
+                            <label for="beginReconciledBalance" class="col-sm-6 col-form-label col-form-label-sm">
+                                Beginning Reconciled Balance:</label
+                            >
+                            {{ beginReconBalance | currency: 'USD' }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="payeePersonId" class="col-sm-6 col-form-label col-form-label-sm"
+                                >Payee Person ID:</label
+                            >
+                            <div class="col-sm-6">
+                                <dfps-input
+                                    _id="payeePersonId"
+                                    formControlName="payeePersonId"
+                                    maxlength="10"
+                                    ariaLabel="Payee Person ID"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-3 pt-4"></div>
+                        <div class="d-flex col-md-5 pt-4">
+                            <label for="runningReconciledBalance" class="col-sm-6 col-form-label col-form-label-sm">
+                                Running Reconciled Balance:</label
+                            >
+                            {{ runningReconBalance | currency: 'USD' }}
+                        </div>
+                    </div>
+                    <br /><br />
+                    <div class="row">
+                      <div class="d-flex col-md-11 justify-content-end pt-4">
+                        <dfps-button _id="reconcileSearchButton" label="Search" (click)="doSearch()"
+                        >Search</dfps-button>
+                      </div>
+                      <div class="d-flex col-md-1 justify-content-end pt-4">
+                          <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                      </div>
+                </div>
+                <ng-container *ngIf="displayTable">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+                    </div>
+                </ng-container>
+                    <div class="col-md-12 pt-12">
+                        <dfps-data-table
+                            *ngIf="displayTable"
+                            [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                            sortField="dtReconTran"
+                            [sortOrder]="-1"
+                            (handleClickEvent)="handleRouting($event)"
+                            [dataTable]="reconcileTransactionsTable"
+                            (selectedData)="setSelectedRow($event)"
+                        >
+                        </dfps-data-table>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end pl-1">
+                    <dfps-button
+                        _id="reconcileButton"
+                        label="Reconcile Selected Items"
+                        (click)="reconcile()"
+                        *ngIf="
+                            displayResponse?.pageMode == 'EDIT' &&
+                            displayTable &&
+                            reconcileTransactionsTable &&
+                            reconcileTransactionsTable.tableBody?.length
+                        "
+                        >Reconcile Selected Items</dfps-button
+                    >
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

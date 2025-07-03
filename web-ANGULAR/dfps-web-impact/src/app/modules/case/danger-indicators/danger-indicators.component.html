@@ -1,0 +1,378 @@
+<div class="container-fluid bodycolor"  *ngIf="dangerIndicatorsResponse">
+    <div class="row">
+        <h1>Danger Indicators</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2">{{dangerIndicatorsResponse.stageName}}</div>
+        <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2">{{dangerIndicatorsResponse.caseId}}</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+                    [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+
+    <form [formGroup]="dangerIndicatorsForm">
+        <div class="form-group mt-5">
+            <div class="row">
+                <h2>Danger Indicators Information</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgSerPhHarm" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >1. Caregiver caused serious physical harm to the child or made a plausible threat to cause serious physical harm in the current investigation, as indicated by:</label
+                >
+                <dfps-radio-button
+                    id="indCgSerPhHarm"
+                    formControlName="indCgSerPhHarm"
+                    name="indCgSerPhHarm"
+                    ariaLabel="Care giver caused serious physical harm radio button"
+                    (click)="indicator1Updated()"
+                    [data]="yesNo"
+                    [horizontal]="true"
+                >
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indCgSerPhHarmInj" ariaLabel="Serious injury or abuse to the child other than accidental" 
+                    label="Serious injury or abuse to the child other than accidental."
+                    [formControl]="dangerIndicatorsForm.controls['indCgSerPhHarmInj']" inputName="indCgSerPhHarmInj">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indCgSerPhHarmThr" ariaLabel="Substantial or unreasonable use of physical force" 
+                    label="Substantial or unreasonable use of physical force."
+                    [formControl]="dangerIndicatorsForm.controls['indCgSerPhHarmThr']" inputName="indCgSerPhHarmThr">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indCgSerPhHarmPhForce" ariaLabel="Threat to cause harm or retaliate against the child" 
+                    label="Threat to cause harm or retaliate against the child."
+                    [formControl]="dangerIndicatorsForm.controls['indCgSerPhHarmPhForce']" inputName="indCgSerPhHarmPhForce">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indChSexAbSus" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >2. Child sexual abuse is suspected to have been committed by:</label
+                >
+                <dfps-radio-button
+                    id="indChSexAbSus"
+                    formControlName="indChSexAbSus"
+                    name="indChSexAbSus"
+                    ariaLabel="Child sexual abuse is suspected radio button"
+                    (click)="indicator2Updated()"
+                    [data]="yesNo"
+                    [horizontal]="true"
+                >
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indChSexAbSusCg" ariaLabel="Caregiver" label="Caregiver."
+                        [formControl]="dangerIndicatorsForm.controls['indChSexAbSusCg']" inputName="indChSexAbSusCg">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indChSexAbSusOh" ariaLabel="Other household member" label="Other household member."
+                        [formControl]="dangerIndicatorsForm.controls['indChSexAbSusOh']" inputName="indChSexAbSusOh">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-1 pt-4">
+            </div>
+            <div class="d-flex col-lg-11 pt-4">
+                <dfps-checkbox _id="indChSexAbSusUnk" ariaLabel="Unknown person and caregiver or other household member cannot be ruled out, and circumstances suggest that the child’s safety may be of immediate concern." 
+                        label="Unknown person and caregiver or other household member cannot be ruled out, and circumstances suggest that the child’s safety may be of immediate concern."
+                        [formControl]="dangerIndicatorsForm.controls['indChSexAbSusUnk']" inputName="indChSexAbSusUnk">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgAwPotHarm" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >3. Caregiver is aware of the potential harm and unwilling/unable, to protect the child from serious harm or threatened harm by others. This may  include physical abuse, emotional abuse, sexual abuse, or neglect. (Domestic violence behaviors should be captured under danger indicator  #9):</label
+                >
+                <dfps-radio-button
+                    id="indCgAwPotHarm"
+                    formControlName="indCgAwPotHarm"
+                    name="indCgAwPotHarm"
+                    ariaLabel="Caregiver is aware of the potential harm radio button"
+                    [data]="yesNo"
+                    [horizontal]="true"
+                >
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgNoExpForInj" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >4. Caregiver’s explanation or lack of explanation for the injury to the child is questionable or inconsistent with the type of injury, and the nature of the injury suggests that the child’s safety may be of immediate concern:</label
+                >
+                <dfps-radio-button
+                    id="indCgNoExpForInj"
+                    formControlName="indCgNoExpForInj"
+                    name="indCgNoExpForInj"
+                    ariaLabel="Caregiver’s explanation or lack of explanation for the injury to the child is questionable radio button"
+                    [data]="yesNo"
+                    [horizontal]="true"
+                >
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgDnMeetChNeedsFc" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >5. Caregiver does not meet the child’s immediate needs for supervision, food, and/or clothing:
+                </label>
+                <dfps-radio-button
+                    id="indCgDnMeetChNeedsFc"
+                    formControlName="indCgDnMeetChNeedsFc"
+                    name="indCgDnMeetChNeedsFc"
+                    ariaLabel="Caregiver does not meet the child’s immediate needs for supervision, food radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgDnMeetChNeedsMed" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >6. Caregiver does not meet the child’s immediate needs for medical or critical mental health care (e.g. child is experiencing suicidal/homicidal ideation):
+                </label>
+                <dfps-radio-button
+                    id="indCgDnMeetChNeedsMed"
+                    formControlName="indCgDnMeetChNeedsMed"
+                    name="indCgDnMeetChNeedsMed"
+                    ariaLabel="Caregiver does not meet the child’s immediate needs for medical or critical mental health care radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indBadLivConds" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >7. Physical living conditions are hazardous and immediately threatening to the health and/or safety of the child:
+                </label>
+                <dfps-radio-button
+                    id="indBadLivConds"
+                    formControlName="indBadLivConds"
+                    name="indBadLivConds"
+                    ariaLabel="Physical living conditions are hazardous radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgSubAbCantSupCh" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >8. Caregiver’s current substance abuse seriously impairs his/her ability to supervise, protect, or care for the child:
+                </label>
+                <dfps-radio-button
+                    id="indCgSubAbCantSupCh"
+                    formControlName="indCgSubAbCantSupCh"
+                    name="indCgSubAbCantSupCh"
+                    ariaLabel="Caregiver’s current substance abuse seriously impairs his/her ability to supervise radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indDomVioDan" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >9. Domestic violence exists in the household and poses an imminent danger of serious physical and/or emotional harm to the child:
+                </label>
+                <dfps-radio-button
+                    id="indDomVioDan"
+                    formControlName="indDomVioDan"
+                    name="indDomVioDan"
+                    ariaLabel="Domestic violence exists in the household radio button"
+                    [data]="yesNo"
+                    [horizontal]="true" >
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgDesChNeg" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >10. Caregiver persistently describes the child in predominantly negative terms or acts toward the child in negative ways, and these actions make the child a danger to self or others, suicidal, act out aggressively, or severely withdrawn:
+                </label>
+                <dfps-radio-button
+                    id="indCgDesChNeg"
+                    formControlName="indCgDesChNeg"
+                    name="indCgDesChNeg"
+                    ariaLabel="Caregiver persistently describes the child in predominantly negative terms radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgDisCantSupCh" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >11. Caregiver’s emotional stability, developmental status, or cognitive deficiency seriously impairs his/her current ability to supervise, protect, or care for the child:
+                </label>
+                <dfps-radio-button
+                    id="indCgDisCantSupCh"
+                    formControlName="indCgDisCantSupCh"
+                    name="indCgDisCantSupCh"
+                    ariaLabel="Caregiver’s emotional stability radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgRefAccChToInv" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >12. Currently refuses access to or hides the child and/or seeks to hinder an investigation:
+                </label>
+                <dfps-radio-button
+                    id="indCgRefAccChToInv"
+                    formControlName="indCgRefAccChToInv"
+                    name="indCgRefAccChToInv"
+                    ariaLabel="Currently refuses access to or hides the child radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indCgPrMalTrtHist" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >13. Current circumstances, combined with information that the caregiver has or may have previously maltreated a child in his/her care, suggest that the child’s safety may be of immediate concern based on the severity of the previous maltreatment or the caregiver’s response to the previous incident:
+                </label>
+                <dfps-radio-button
+                    id="indCgPrMalTrtHist"
+                    formControlName="indCgPrMalTrtHist"
+                    name="indCgPrMalTrtHist"
+                    ariaLabel="Current circumstances, combined with information that the caregiver has or may have previously maltreated a child radio button"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <label for="indOtherDangers" class="col-md-10 col-form-label col-form-label-sm requiredDisplay"
+                    >14. Other (Specify):
+                </label>
+                <dfps-radio-button
+                    id="indOtherDangers"
+                    formControlName="indOtherDangers"
+                    name="indOtherDangers"
+                    ariaLabel="Other radio button"
+                    (click)="indicator14Updated()"
+                    [data]="yesNo"
+                    [horizontal]="true">
+                </dfps-radio-button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-lg-12 pt-4">
+                <dfps-textarea class="col-sm-6 col-md-6 col-2" id="txtOtherDangers" formControlName="txtOtherDangers"
+                    maxLength="2000" ariaLabel="Other Dangers"></dfps-textarea>
+            </div>
+        </div>
+
+        <div class="pt-4">
+            <hr aria-hidden="true">
+        </div>
+    
+        <div class="form-group mt-5">
+            <div class="row">
+                <h2>Safety Decision</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="cdSftyDcsn" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Safety Decision:</label>
+                <div class="col-md-6">
+                    <dfps-select _id="cdSftyDcsn" formControlName="cdSftyDcsn" ariaLabel="Safety Decision is required"
+                    (change)="safetyDecisionUpdated()" [dropDownValues]="dangerIndicatorsResponse.safetyDecisions">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row" *ngIf="!hideComments">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="txtComments" class="col-md-2 col-form-label col-form-label-sm conReqDisplay">Comments:</label>
+                <div class="col-md-6">
+                    <dfps-textarea class="col-sm-6 col-md-6 col-4" style="padding: 0;" _id="txtComments" formControlName="txtComments"
+                        maxLength="2000" ariaLabel="Comments"></dfps-textarea>
+                </div>
+        </div>
+    </div>
+
+        <div class="pt-4">
+            <hr aria-hidden="true">
+        </div>
+
+        <div class="d-flex justify-content-end w-100 mt-3" *ngIf="!isReadOnly">
+            <dfps-button label="Save" _id="danIndSave" (click)="save()"></dfps-button>
+        </div>
+
+    </form>
+    
+</div>
+
+

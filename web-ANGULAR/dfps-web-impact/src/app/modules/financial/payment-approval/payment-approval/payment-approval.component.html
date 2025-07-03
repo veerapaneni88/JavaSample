@@ -1,0 +1,36 @@
+<div class="container-fluid bodycolor" *ngIf="paymentApprovalRes">
+    <div class="row">
+        <h1>Payment Approval</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="paymentApprovalForm">
+        <div class="col-md-12 pt-12">
+            <dfps-data-table-lazyload-1 class="data-table dataTableConfig" [dataTable]="dataTable"
+                (lazyLoadEvent)="loadDataLazy($event)" [sortField]="sortField" [sortOrder]="sortOrder" (handleClickEvent)="handleInvoiceLinkClick($event)" 
+                [rowsPerPageOptions]="[10, 25, 50, 100, 500]" [selectedRowOption] ="DEFAULT_PAGE_SIZE" [currentPage]="currentPageNumber" (selectRowEvent)= "selectedRowEvent($event)" >
+            </dfps-data-table-lazyload-1>
+        </div>
+        <div class="row col-md-12 pt-12 justify-content-end">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Approve" (click)="approve()">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Disapprove" (click)="disapprove()">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Reset" (click)="reset()">
+                </dfps-button>
+            </div>
+        </div>
+
+    </form>
+</div>

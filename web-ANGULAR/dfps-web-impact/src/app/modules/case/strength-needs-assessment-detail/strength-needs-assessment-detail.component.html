@@ -1,0 +1,309 @@
+<div class="container-fluid bodycolor" *ngIf="displayApsSNADetails">
+    <div class="row">
+        <h1>{{displayApsSNADetails.pageTitle}}</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="(displayApsSNADetails.incompleteDomainsCL && (displayApsSNADetails.incompleteDomainsCL.length > 0))||( displayApsSNADetails.incompleteDomainsPC && (displayApsSNADetails.incompleteDomainsPC.length > 0))
+        || ( displayApsSNADetails.informationalMessages && displayApsSNADetails.informationalMessages.length > 0 )">
+        <p>Attention:</p>
+        <div *ngIf="displayApsSNADetails.informationalMessages">
+            <div *ngFor="let data of displayApsSNADetails.informationalMessages">
+                <li>{{data}}</li>
+            </div>
+        </div>
+        <div *ngIf="displayApsSNADetails.incompleteDomainsCL && (displayApsSNADetails.incompleteDomainsCL.length > 0)">
+            <ul class="pl-0">
+                <li>
+                    The following domains in Client section have not been completed:
+                </li>
+            </ul>
+            <ul *ngFor="let message of displayApsSNADetails.incompleteDomainsCL" class="ml-2 mt-2">
+                <li>{{message}}</li>
+            </ul>
+        </div>
+        <div *ngIf="displayApsSNADetails.incompleteDomainsPC && (displayApsSNADetails.incompleteDomainsPC.length > 0)">
+            <ul class="pl-0">
+                <li>
+                    The following domains in Primary Caretaker section have not been completed:
+                </li>
+            </ul>
+            <ul *ngFor="let message of displayApsSNADetails.incompleteDomainsPC" class="ml-2">
+                <li>{{message}}</li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="apsSNADetailsForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name: {{displayApsSNADetails.caseName}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case ID: {{displayApsSNADetails.caseId}}</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-4 pt-2">
+                <a target="_blank" href="{{environment}}/grnds-docs/html/Shield_Definitions/SNA/CultAndEcoCon_v1.html">
+                    Cultural and Economic Considerations </a>
+            </div>
+        </div>
+        <dfps-collapsable-section>
+            <accordion>
+                <accordion-group class="accordion-group pt-2" aria-controls="sectionClient"
+                    (isOpenChange)="updateClientSectionSection($event)"
+                    [isOpen]="apsSNADetailsForm.get('clientSectionExpanded').value" aria-expanded="false">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Section 1: Client</h2>
+                        <span *ngIf="displayApsSNADetails.sectionCompleteCL" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row" id="sectionClient" #sectionClient>
+                        <div class="col-md-4"> <b>Domain</b>
+                        </div>
+                        <div class="col-md-8"> <b>Answers</b>
+                        </div>
+                    </div>
+                    <div class="row" formArrayName="responses"
+                        *ngFor="let data of apsSNADetailsForm.get('responses')['controls']; let i = index">
+                        <div [formGroupName]="i" class="row d-flex flex-row col-12 pt-2 mt-2"
+                            *ngIf="data.controls['sectionCode'].value === 'CL'">
+                            <fieldset class="row d-flex flex-row col-12 pt-2 mt-2">
+                                <div class="col-md-4 col-sm-4">
+                                    <legend *ngIf="data.controls['definitionName'].value">
+                                        <a target="_blank"
+                                            href="{{environment}}{{data.controls['definitionName'].value}}">{{data.controls.domainText.value}}</a>
+                                    </legend>
+                                    <legend *ngIf="!data.controls['definitionName'].value">
+                                        <label>{{data.controls.domainText.value}}</label>
+                                    </legend>
+                                </div>
+                                <div class="col-md-8 col-sm-8">
+                                    <dfps-radio-button formControlName="apsSnaAnswerLookupId"
+                                        name="{{data.controls.domainText.value}}" _id="apsSnaAnswerLookupId"
+                                        [data]="data.controls['answers'].value" [horizontal]="false">
+                                    </dfps-radio-button>
+                                </div>
+                            </fieldset>
+                            <div class="row d-flex flex-row col-12 pt-2 mt-2"
+                                *ngIf="data.controls['apsSnaDomainLookupId'].value === 12">
+                                <div class="d-flex col-md-8 pt-4">
+                                    <span class="sr-only">Double dagger</span>
+                                    <label class="col-sm-6 conReqDisplay" for="{{'txtOtherDescription' + i}}">
+                                        Description:</label>
+                                    <dfps-textarea class="col-sm-6 col-md-12 col-2" _id="{{'txtOtherDescription' + i}}"
+                                        name="txtOtherDescription" inputName="txtOtherDescription"
+                                        formControlName="txtOtherDescription" ariaLabel="Description" maxLength="4000">
+                                    </dfps-textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group class="accordion-group pt-2" (isOpenChange)="updatePCSectionSection($event)"
+                    [isOpen]="apsSNADetailsForm.get('pcsectionExpanded').value" aria-controls="sectionPC"
+                    aria-expanded="false">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Section 2: Primary Caretaker</h2>
+                        <span *ngIf="displayApsSNADetails.sectionCompletePC" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row" id="sectionPC" #sectionPC>
+                        <div class="d-flex mt-2 col-md-6 p-field-checkbox">
+                            <dfps-checkbox _id="indPrimaryCaretaker"
+                                [formControl]="apsSNADetailsForm.controls['indPrimaryCaretaker']"
+                                inputName="indPrimaryCaretaker" (click)="caretakerSelected()">
+                            </dfps-checkbox>
+                            <label for="indPrimaryCaretaker" class="conReqDisplay mt-1">Not applicable-there is no
+                                primary caretaker.</label>
+                        </div>
+                        <div class="d-flex flex mt-2 col-md-6">
+                            <div class="col-md-4">
+                                <a target="_blank"
+                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/SNA/PrimaryCaretaker_v1.html"
+                                    class="col-md-3 col-form-label col-form-label-sm conReqDisplay">Primary
+                                    Caretaker: </a>
+                            </div>
+                            <div class="col-md-5">
+                                <dfps-select _id="caretakerId" formControlName="caretakerId"
+                                    [disabled]="disableCaretakerDropdown" ariaLabel="Primary Caretaker"
+                                    [dropDownValues]="displayApsSNADetails.caretakerList">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 pt-2">
+                        <div class="col-md-4">
+                            <b>Domain</b>
+                        </div>
+                        <div class="col-md-8"> <b>Answers</b>
+                        </div>
+                    </div>
+                    <div class="row" formArrayName="responses"
+                        *ngFor="let data of apsSNADetailsForm.get('responses')['controls']; let i = index">
+                        <div [formGroupName]="i" class="row d-flex flex-row col-12 pt-2 mt-2"
+                            *ngIf="data.controls['sectionCode'].value === 'PC'">
+                            <fieldset class="row d-flex flex-row col-12 pt-2 mt-2">
+                                <div class="col-md-4 col-sm-4">
+                                    <legend *ngIf="data.controls['definitionName'].value">
+                                        <a target="_blank"
+                                            href="{{environment}}{{data.controls['definitionName'].value}}">{{data.controls.domainText.value}}</a>
+                                    </legend>
+                                    <legend *ngIf="!data.controls['definitionName'].value">
+                                        <label>{{data.controls.domainText.value}}</label>
+                                    </legend>
+                                </div>
+                                <div class="col-md-8 col-sm-8">
+                                    <dfps-radio-button _id="apsSnaAnswerLookupId" formControlName="apsSnaAnswerLookupId"
+                                        name="{{data.controls.domainText.value}}" [disabled]="disableCaretakerDropdown"
+                                        [data]="data.controls['answers'].value" [horizontal]="false">
+                                    </dfps-radio-button>
+                                </div>
+                            </fieldset>
+                            <div class="row d-flex flex-row col-12 pt-2 mt-2"
+                                *ngIf="data.controls['apsSnaDomainLookupId'].value === 19">
+                                <div class="d-flex col-md-8 pt-4">
+                                    <span class="sr-only">Double dagger</span>
+                                    <label class="col-sm-6 conReqDisplay" for="{{'txtOtherDescription' + i}}">
+                                        Description:</label>
+                                    <dfps-textarea class="col-sm-6 col-md-12 col-2" _id="{{'txtOtherDescription' + i}}"
+                                        inputName="txtOtherDescription" [disabled]="disableCaretakerDropdown"
+                                        formControlName="txtOtherDescription" name="txtOtherDescription"
+                                        ariaLabel="Description" maxLength="4000">
+                                    </dfps-textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group class="accordion-group pt-2" (isOpenChange)="updateRootCausesSectionSection($event)"
+                    [isOpen]="apsSNADetailsForm.get('rootCausesSectionExpanded').value"
+                    aria-controls="ConsiderationOfRC" aria-expanded="false">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Consideration Of Root Causes</h2>
+                        <span *ngIf="displayApsSNADetails.eventStatus === 'COMP'" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row" id="ConsiderationOfRC" #ConsiderationOfRC>
+                        <div>When considering root causes,consider conditions that contributed to current dangers or
+                            that appear to be the underlying cause of abuse, neglect, or exploitation.
+                        </div>
+                        <div> Consider the client's and caretaker's areas of strength (i.e.,domains identified as "a").
+                            Include strengths that can be used to address needs in the "actions" area of the service
+                            plan.
+                        </div>
+                        <div> Consider the client's and caretaker's areas of need (i.e., domains identified as "b" or
+                            "c"). Any domain assessed as "c" must be included in the service plan. Any domain assessed
+                            as "b" may be included in the service plan if the caseworker, client, and/or caretaker
+                            believe that the need is the root cause of abuse, neglect, or exploitation.
+                        </div>
+                    </div>
+                    <div class="row mt-2 pt-2">
+                        <div class="col-md-12 pl-0 mt-2">
+                            <div class="col-md-12 pl-0"> <b>
+                                    Areas of Strength (assessed as "a") </b>
+                            </div>
+                            <div *ngFor="let list of displayApsSNADetails.strengthsAssessedA">
+                                {{list}}
+                            </div>
+                        </div>
+                        <div class="col-md-12 pl-0 mt-2 pt-2">
+                            <div class="row mt-2">
+                                <div class="col-md-8"> <b>Areas of Moderate Need (assessed as "b")</b> </div>
+                                <div class="col-md-4"> <b>Include in service plan?</b> </div>
+                            </div>
+                            <div class="col-md-12"
+                                *ngFor="let data of apsSNADetailsForm.get('responses')['controls']; let i=index">
+                                <div class="row"
+                                    *ngIf="data.controls['responseCode'].value && data.controls['responseCode'].value.indexOf('B') > -1">
+                                    <div class="row col-12"
+                                        *ngIf="data.controls['responseCode'].value === 'CL12B' || data.controls['responseCode'].value === 'PC7B'">
+                                        <label class="col-md-8" for="indIncludeServicePlan{{i}}"
+                                            style="font-weight: normal;">
+                                            {{data.controls.domainCode.value}} -
+                                            {{data.controls.txtOtherDescription.value}}
+                                        </label>
+                                        <div class="col-md-4">
+                                            <dfps-checkbox _id="indIncludeServicePlan{{i}}"
+                                                ariaLabel="Include in service plan?"
+                                                [formControl]="data.controls['indIncludeServicePlan']" label=""
+                                                inputName="indIncludeServicePlan">
+                                            </dfps-checkbox>
+                                        </div>
+                                    </div>
+                                    <div class="row col-12"
+                                        *ngIf="(data.controls['responseCode'].value !== 'PC7B') && (data.controls['responseCode'].value !== 'CL12B')">
+                                        <label class="col-md-8" for="indIncludeServicePlan{{i}}"
+                                            style="font-weight: normal;">
+                                            {{data.controls.domainCode.value}} -
+                                            {{data.controls.answerText.value}}
+                                        </label>
+                                        <div class="col-md-4">
+                                            <dfps-checkbox _id="indIncludeServicePlan{{i}}"
+                                                ariaLabel="Include in service plan?"
+                                                [formControl]="data.controls['indIncludeServicePlan']" label=""
+                                                inputName="indIncludeServicePlan">
+                                            </dfps-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 pl-0 mt-2 pt-2">
+                            <div class="col-md-12 pl-0 mt-2"> <b>Areas of Significant Need (assessed as "c")</b>
+                            </div>
+                            <div *ngFor="let list of displayApsSNADetails.needsAssessedC">
+                                {{list}}
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </dfps-collapsable-section>
+        <div class="d-flex justify-content-end mt-2">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save" (click)="save()" [hidden]="!isEditMode">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save And Complete" (click)="saveCompelte()"
+                    [hidden]="!isEditMode"> </dfps-button>
+            </div>
+        </div>
+        <div class="card formPanel" *ngIf="!isMPSEnvironment">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h3>Forms Launch</h3>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                        [createEvent]='true'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12"> Created Date: <span
+                    *ngIf="displayApsSNADetails.dateCreated">{{displayApsSNADetails.dateCreated | date: 'MM/dd/yyyy'}}
+                    at
+                    {{displayApsSNADetails.dateCreated | date:'shortTime'}} by
+                    {{displayApsSNADetails.lastUpdatedUserName}}</span> </div>
+            <div class="col-md-12"> Updated Date: <span *ngIf="displayApsSNADetails.dateLastUpdate">
+                    {{displayApsSNADetails.dateLastUpdate | date: 'MM/dd/yyyy'}} at
+                    {{displayApsSNADetails.dateLastUpdate | date:'shortTime'}} by
+                    {{displayApsSNADetails.lastUpdatedUserName}}</span></div>
+            <div class="col-md-12">Version: {{displayApsSNADetails.versionNumber}}.0</div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,81 @@
+<div class="container-fluid bodycolor" *ngIf="investigationLetterListRes">
+    <div class="row">
+        <h1>Letter List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="investigationLetterListForm">
+        <div class="row">
+          <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+          <div class="col-4 mt-2 pl-4">{{investigationLetterListRes.stageName}}</div>
+        </div>
+        <div class="row">
+          <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+          <div class="text-left col-4 mt-2 pl-4">{{investigationLetterListRes.caseId}}</div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div class="row">
+            <div class="col-md-auto">
+                <dfps-data-table [dataTable]="investigationLetterListDataTable" class="data-table dataTableConfig"
+                    (selectedData)="setSelectedInvLetter($event)" (handleClickEvent)="handleRouting($event)">
+                </dfps-data-table>
+            </div>
+        </div>
+
+        <div class="row">
+            <br />
+        </div>
+
+        <div class="d-flex col-md-5">
+            <dfps-button #downloadButton download-button size="small" label="Download" _id="downloadButtonId" (click)="download()"
+                *ngIf="!hideDownloadButton">
+            </dfps-button>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+
+        <div>
+            <hr aria-hidden="true">
+        </div>
+        <div class="row">
+            <br />
+        </div>
+
+        <div class="row">
+            <h2>Add a Letter</h2>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-5 pt-1">
+                <label for="addLetterType" class="col-sm-3 col-form-label col-form-label-sm">Letter Type:</label>
+                <div class="col-md-8">
+                    <dfps-select _id="addLetterType" ariaLabel="Letter Type is Required" formControlName="addLetterType"
+                                 [disabled]="disableAddLetterType"  [dropDownValues]="investigationLetterListRes.letterTypes">
+                    </dfps-select>
+                </div>
+                <div class="col-md-1">
+                    <dfps-button add-button size="small" label="Add" _id="addButtonId" (click)="add()"
+                        *ngIf="!hideAddButton">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div>
+            <hr aria-hidden="true">
+        </div>
+    </form>
+</div>

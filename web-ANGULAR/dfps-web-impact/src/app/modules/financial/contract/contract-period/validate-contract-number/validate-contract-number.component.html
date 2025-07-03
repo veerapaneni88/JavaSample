@@ -1,0 +1,83 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Contract Number Link Validation</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()" id="cancelButton"
+    (keydown)="preventTabbing($event)">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p *ngIf="contractValidated">The HHS Contract Number entered will link the current Agency Account to the CAPPS/SCOR
+    contract for the following provider. </p>
+  <div class="row leftPadThirdLevel" id="errorMessageBody" *ngIf="!contractValidated">
+    <div class="col-xs-12 pl-0 rowPadding">
+      <p class="col-xs-12 pl-0 noMarginBottom boldBody errorText">
+        The Contract Number you have entered is invalid.
+      </p>
+    </div>
+  </div>
+  <div *ngIf="contractValidated">
+    <div class="row leftPadThirdLevel rowPadding">
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        Contract Number:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="cityValidation">
+        {{contractNumber}}
+      </p>
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        Contract Manager:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="stateValidation">
+        {{contractManager}}
+      </p>
+    </div>
+    <div class="row leftPadThirdLevel rowPadding">
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        Legal Entity Name:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="cityValidation">
+        {{legalEntityName}}
+      </p>
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        TIN:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="stateValidation">
+        {{tin}}
+      </p>
+    </div>
+    <div class="row leftPadThirdLevel rowPadding">
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        Contract Mail Address 1:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="cityValidation">
+        {{address}}
+      </p>
+      <p class="col-sm-2 col-md-2 col-2 pl-0 noMarginBottom boldBody">
+        Procurement Number:
+      </p>
+      <p class="col-sm-4 col-md-4 col-4 pl-0 noMarginBottom boldBody" id="stateValidation">
+        {{procurement}}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <div class="col-xs-12 col-sm-12 col-md-12 errorText" *ngIf="contractValidated">
+    <p class="pl-0">Do you wish to link this Contract Number to the current Contract Period? </p>
+  </div>
+  <div *ngIf="contractValidated" class="col-xs-12 col-sm-12 col-md-12 alignLeft">
+    <small>Press 'Yes' to use this contract Number.
+    </small>
+  </div>
+  <div *ngIf="contractValidated" class="col-xs-12 col-sm-12 col-md-12 alignLeft">
+    <small>Press 'No' to enter a different Contract Number..</small>
+  </div>
+
+  <dfps-button *ngIf="contractValidated" _id="yesButton" size="small" data-dismiss="modal" value="Submit"
+    (click)="validationAcceptance(true);" (keydown)="preventTabbing($event)" label="Yes"></dfps-button>
+  <dfps-button *ngIf="contractValidated" (keydown)="preventTabbing($event)" _id="noButton" size="small"
+    data-dismiss="modal" value="Submit" (click)="validationAcceptance(false);" label="No"></dfps-button>
+  <dfps-button *ngIf="!contractValidated" (keydown)="preventTabbing($event)" _id="closeButton" size="small"
+    data-dismiss="modal" value="Submit" (click)="closeModal()" label="Close"></dfps-button>
+
+</div>

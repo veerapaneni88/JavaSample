@@ -1,0 +1,281 @@
+<div class="container-fluid bodycolor" *ngIf="contractHeaderResponse">
+    <div class="row">
+        <h1>Contract Header</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-danger" *ngIf="errorNoDataMessage">
+        {{errorNoDataMessage}}
+    </div>
+    <form [formGroup]="contractHeaderForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Contract #:{{ contractNumber !== '0' ? contractNumber : '' }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Agency Acct ID :{{ contractId !== '0' ? contractId : '' }}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Resource Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="resourceId" class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Resource
+                        ID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="resourceId" formControlName="resourceId" maxlength="10"
+                            ariaLabel="Resource Id is required"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <dfps-button class="mr-2" size="extraSmall" _id="selectResource" label="Select Resource"
+                        (click)="selectResource()" [hidden]="hideResourceButton">
+                    </dfps-button>
+                    <dfps-button size="extraSmall" label="Validate" (click)="validateResourceId()"
+                        _id="validateResource" [hidden]="hideResourceValidateButton"></dfps-button>
+                    <div *ngIf="isResourceIdValidated">
+                        <div id="resourceValidated" tabindex="0" #resourceIdSpan class="sr-only">
+                            Resource Id Validated
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                    <label for="resourceName" class="col-form-label col-form-label-sm col-sm-3"> Resource Name: </label>
+                    <span id="resourceName" class="col-sm-9">
+                        {{ contractHeaderResponse.contract ? contractHeaderResponse.contract.resourceName : '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4" tabindex="0">
+                    <label for="resourceLegalName" class="col-sm-3 col-form-label col-form-label-sm conReqDisplay">Legal
+                        Name:
+                    </label>
+                    <span id="resourceLegalName" class="col-sm-9">
+                        {{ contractHeaderResponse.contract ? contractHeaderResponse.contract.resourceLegalName : '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <dfps-data-table *ngIf="isVendorInfo" [dataTable]="vendorDataTable" [allowRowSelection]="disbaleVendorInfo"
+            [selectedRowData]="setSelectedResourceAddress()" (selectedData)="getSelectedResourceAddress($event)">
+        </dfps-data-table>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="form-group mt-5">
+            <h2>Contract Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="contractManager"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Contract Manager:</label>
+                    <div class="col-sm-6">
+                        {{ contractHeaderResponse.contract ? contractHeaderResponse.contract.contractManager : '' }}
+                    </div>
+                </div>
+                <div class="d-flex col-md-2 pt-4">
+                    <dfps-button _id="contractManagerId" size="extraSmall" ariaLabel="Select Staff" label="Select Staff"
+                        [hidden]="hideStaffButton" (click)="selectContractManager()">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="procurementType"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Procurement Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="procurementType"
+                            ariaLabel="Select Procurement Type Dropdown is required field"
+                            formControlName="procurementType"
+                            [dropDownValues]="contractHeaderResponse?.procurementType">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="functionType" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Function
+                        Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="functionType" ariaLabel="Select Function Type Dropdown is required field"
+                            formControlName="functionType" [dropDownValues]="contractHeaderResponse?.functionTypes">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="region"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Region:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="region" ariaLabel="Select Region Type Dropdown is required field"
+                            formControlName="region" [dropDownValues]="contractHeaderResponse?.regions">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="programType" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Program
+                        Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="programType" ariaLabel="Select Program Type Dropdown is required field"
+                            formControlName="programType" [dropDownValues]="contractHeaderResponse?.programTypes">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4 pl-0">
+                    <div>
+                        <dfps-checkbox _id="backgroundCheck" ariaLabel="Background Check Account Indicator"
+                            label="Background Check Account Indicator"
+                            [formControl]="contractHeaderForm.controls['backgroundCheck']" inputName="backgroundCheck">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div>
+                        <dfps-checkbox _id="budgetLimit" ariaLabel="Budget Limit" label="Budget Limit"
+                            [formControl]="contractHeaderForm.controls['budgetLimit']" inputName="budgetLimit">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4" *ngIf="isSponsorInfo">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="mt-5" *ngIf="isSponsorInfo">
+            <h2>Sponsor Information</h2>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-5">
+                    <label for="ein" class="conReqDisplay">EIN: </label>
+                    <div class="d-flex col-sm-6">
+                        <span id="ein">{{
+                            contractHeaderResponse.contract ? contractHeaderResponse.contract.organizationEIN : ''
+                        }}</span>
+                    </div>
+                </div>
+                <div class="d-flex col-md-5">
+                    <label for="organizationLegalName" class="conReqDisplay">Legal Name: </label>
+                    <div class="col-sm-8">
+                        <span id="organizationLegalName">{{
+                                contractHeaderResponse.contract
+                                    ? contractHeaderResponse.contract.organizationLegalName
+                                    : ''
+                            }}
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2">
+                    <dfps-button size="extraSmall" _id="organizationId" label="Select Org" (click)="selectOrg()"
+                        [hidden]="hideOrgButton">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-10">
+                    <label for="sponsorPerson" class="conReqDisplay">Sponsor Name: </label>
+                    <div class="col-sm-8">
+                        <span id="sponsorPerson">{{
+                            contractHeaderResponse.contract ? contractHeaderResponse.contract.sponsorName : ''
+                        }}</span>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1">
+                    <dfps-button size="extraSmall" _id="sponsorPersonId" label="Select Staff" (click)="selectSponser()"
+                        [hidden]="hideOrgStaffButton">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex col-md-5">
+                    <label for="email" class="conReqDisplay">Email: </label>
+                    <div class="col-sm-8">
+                        <span
+                            id="email">{{ contractHeaderResponse.contract ? contractHeaderResponse.contract.sponsorEmail : '' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex col-md-5">
+                    <label for="phone" class="conReqDisplay">Phone: </label>
+                    <div class="col-sm-8">
+                        <span
+                            id="phone">{{ contractHeaderResponse.contract ? contractHeaderResponse.contract.sponsorPhone : '' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3">
+            <dfps-button label="Save" _id="contractSave" [hidden]="hideSaveButton" (click)="doSave()"></dfps-button>
+        </div>
+        <dfps-collapsable-section *ngIf="contractHeaderResponse?.pageMode !== 'NEW'">
+            <accordion *ngIf="isCpInfo" aria-class="bodycolor">
+                <accordion-group class="accordion-group" aria-controls="cpTable" aria-expanded="false"
+                    heading="Contract Period List" (isOpenChange)="displayContractPeriods($event)">
+                    <div class="row" id="cpTable" #cpTable>
+                        <div class="col-md-12">
+                            <dfps-data-table *ngIf="cpDataTable" [dataTable]="cpDataTable"
+                                [selectedRowData]="setSelectedContractPeriod()"
+                                (selectedData)="getContractVersion($event)"></dfps-data-table>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="justify-content-start mr-auto p-2">
+                            <dfps-button add-button size="small" *ngIf="
+                                    contractHeaderResponse?.pageMode == 'EDIT' &&
+                                    cpDataTable &&
+                                    cpDataTable.tableBody?.length
+                                " label="Delete" tabindex="0" [disabled]="!isContractPeriodSelected"
+                                (click)="deletePeriod()" _id="cpDeleteButtonId">
+                            </dfps-button>
+                        </div>
+                        <div class="justify-content-end p-2">
+                            <dfps-button add-button size="small"  *ngIf="
+                                    contractHeaderResponse?.pageMode == 'EDIT' &&
+                                    cpDataTable &&
+                                    !isAnyContractPeriodClosed
+                                " label="Add" (click)="addPeriod()" _id="cpAddButtonId">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group class="accordion-group" *ngIf="isCvInfo" aria-controls="cvTable" aria-expanded="false"
+                    heading="Contract Version List" [isOpen]="isCvInfo">
+                    <div class="row" id="cvTable" #cvTable>
+                        <div class="col-md-12">
+                            <dfps-data-table [dataTable]="cvDataTable"
+                                (selectedData)="getSelectedContractVersion($event)"></dfps-data-table>
+                            <div class="d-flex justify-content-end mt-2">
+                                <dfps-button add-button size="small" _id="addVersion"
+                                    *ngIf="contractHeaderResponse?.pageMode == 'EDIT' && cvDataTable" label="Add"
+                                    (click)="addVersion()"></dfps-button>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </dfps-collapsable-section>
+        <div class="d-flex justify-content-start w-100 mt-3">
+            <div class="col-xs-1 col-md-1" *ngIf="showServicesHyperLink">
+                <dfps-button add-button size="small" label="Services" (click)="navigateToServices()"> </dfps-button>
+            </div>
+            <div class="col-xs-1 col-md-1" *ngIf="contractHeaderResponse?.pageMode == 'EDIT' && showTransferHyperLink">
+                <dfps-button add-button size="small" label="Transfer" (click)="navigateToTransfer()"> </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,55 @@
+.case-management-left-pad-second-level {
+    padding-left: 30px;
+}
+
+.case-management-left-pad-third-level {
+    padding-left: 50px;
+}
+
+.case-management-left-pad-fourth-level {
+    padding-left: 70px;
+}
+
+.case-management-h2 {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 32px;
+    color: #212121;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.case-management-row-padding {
+    padding-top: 16px !important;
+}
+
+.case-management-heading {
+    padding-left: 0px;
+}
+
+.case-management-heading > h1{
+    padding-left: 0px !important;
+}
+
+.case-management-body-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #212121;
+}
+
+.middle-align {
+    vertical-align: middle;
+}
+
+.character-text {
+    color: #595959;
+}
+
+.items-baseline {
+    align-items: baseline;
+}
+
+.items-center {
+    align-items: center;
+}

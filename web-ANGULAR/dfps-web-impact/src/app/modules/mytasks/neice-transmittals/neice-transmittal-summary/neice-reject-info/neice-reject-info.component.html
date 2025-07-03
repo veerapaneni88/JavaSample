@@ -1,0 +1,75 @@
+<div class="modal-header">
+    <h3 class="modal-title pull-left">Request Reject Information</h3>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()" id="closeButton"
+        (keydown)="preventTabbing($event)">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="neiceRejectInfoForm" enctype="multipart/form-data">
+       
+        <div class="row pl-4">
+            <div class="d-flex col-md-12 pt-3 pb-3">
+                <label class="col-sm-3 col-2 requiredDisplay"
+                    for="comments"> Comments:</label>
+                <dfps-textarea class="col-sm-8 col-md-8 col-2" _id="comments" formControlName="comments" maxLength="4000"
+                    ariaLabel="Comments"></dfps-textarea>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-12 pt-3 pb-3">
+                <label class="col-sm-3 col-form-label col-form-label-sm" for="documentType"> Document Type:</label>
+                <div class="col-sm-8">
+                    <dfps-select _id="documentType" ariaLabel="Document Type" formControlName="documentType"
+                        [dropDownValues]="documentTypes">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-12 pt-3 pb-3">
+                <label class="col-sm-3 col-2" for="description"> Description:</label>
+                <dfps-textarea class="col-sm-8 col-md-8 col-2" _id="description" formControlName="description" maxLength="250"
+                    ariaLabel="Description"></dfps-textarea>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-10 pt-3 pb-3">
+                <label class="col-sm-3 col-2" for="file"> File Name:</label>
+                <ng-template ngFor let-file [ngForOf]="files">
+                    <!-- <div class="col-sm-6 px-0">
+                        <a class="anchorTagColor" [href]="downloadFile(file)" [attr.aria-label]="'Select ' + file.data.name + ' to download'">
+                            {{file.data.name}}</a>                            
+                    </div> -->
+                    <p id="file-label" class="col-sm-6 px-0">
+                        {{file.data.name}}
+                    </p>
+                </ng-template>
+            </div>           
+            <div class="d-flex col-md-2 pt-3 pb-3">
+                <dfps-button class="float-right" _id="browseButton" size="small" label="Browse" (click)="onUploadClick()"></dfps-button>
+                <input type="file" #fileUpload formControlName="file" id="fileUpload" name="fileUpload" accept=".pdf" style="display:none;" />
+            </div>
+        </div>
+        <div class="row pl-4" *ngIf="fileSizeError">
+            <div class="d-flex col-md-12 pt-3 pb-3">
+                <p class="noMarginBottom fileError">Maximum space available for PDF files (10MB) has been exceeded.</p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div class="col-sm-12">
+        <dfps-button (keydown)="preventTabbing($event)" class="float-left" _id="cancelButton" size="small"
+            data-dismiss="modal" value="Submit" (click)="closeModal()" label="Cancel"></dfps-button>
+        <dfps-button (keydown)="preventTabbing($event)" class="float-right" _id="sendButton" size="small"
+            data-dismiss="modal" value="Submit" (click)="sendRequest()" label="Send"></dfps-button>
+    </div>
+</div>

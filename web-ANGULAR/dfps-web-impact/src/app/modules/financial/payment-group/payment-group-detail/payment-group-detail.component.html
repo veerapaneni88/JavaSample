@@ -1,0 +1,219 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>{{title}}</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="paymentGroupForm">
+        <div>
+            <p class="requiredDisplay text-right mt-2" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field</p>
+            <p class="conReqDisplay text-right mt-2"><span class="sr-only">Double dagger is </span>conditionally
+                required field
+            </p>
+        </div>
+        <div class="formGroup mt-5">
+            <h2>
+                Payment Group General Information
+            </h2>
+            <br />
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="paymentGroupCategory"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay"
+                        tabindex="0" style="outline: none">Payment Group
+                        Category :<span class="sr-only">Payment Group Category is required</span></label>
+                    <dfps-radio-button formControlName="categoryCode" name="categoryCode" ariaLabel="Payment Group Category radio button"
+                        [data]="paymentGroupCategory" [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="paymentMode" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay"
+                    tabindex="0" style="outline: none">Payment
+                        Mode: <span class="sr-only">Payment Mode is required</span></label>
+                    <dfps-radio-button formControlName="paymentMode" name="paymentMode" ariaLabel="Payment Mode radio button"
+                        [data]="paymentModeList" [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="resourceOrPerson" class="col-form-label col-form-label-sm col-sm-4">
+                        Resource/Person:
+                    </label>
+                    <span id="resourceOrPerson" class="col-sm-9"
+                        *ngIf="newPaymentInfo">{{newPaymentInfo.paymentReceiptName? newPaymentInfo.paymentReceiptName: ' '}}</span>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="payeeName" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Payee
+                        Name:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="payeeName" formControlName="payeeName" maxlength=30
+                            ariaLabel="Payee Name is conditionally required">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="agencyAccountIdOrPersonId"
+                        class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Agency
+                        Account ID/Person ID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="agencyAccountIdOrPersonId" formControlName="contractPersonId"
+                            ariaLabel="Agency Account ID/Person ID is conditionally required.   " maxlength="10">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="accountNumber" class="col-form-label col-form-label-sm col-sm-4 requiredDisplay">
+                        Account No:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="accountNumber" formControlName="accountNumber"
+                            [dropDownValues]="acctNumList" ariaLabel="Account Number is required">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="addressLn1" class="col-sm-4 col-form-label col-form-label-sm">Address Ln 1:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="addressLn1" formControlName="receiptAddress1" ariaLabel="Address Ln 1">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="addressLn2" class="col-sm-4 col-form-label col-form-label-sm">Address Ln 2:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="addressLn2" formControlName="receiptAddress2" ariaLabel="Address Ln 2">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="city" class="col-sm-4 col-form-label col-form-label-sm">City:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="city" formControlName="receiptCity" ariaLabel="city">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="state" class="col-sm-4 col-form-label col-form-label-sm">State:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="state" formControlName="receiptState" ariaLabel="State">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="zip" class="col-sm-4 col-form-label col-form-label-sm">Zip:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="zip" formControlName="receiptZipCode" ariaLabel="Zip">
+                        </dfps-input>
+                    </div>
+                    <div class="col-sm-6" *ngIf="showValidateBtn">
+                        <dfps-button class="col-md-4" label="Validate" _id="validate" size="extraSmall"
+                            (click)="validatePaymentGrpDetails()">
+                        </dfps-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="formGroup mt-5" *ngIf="newPaymentInfo">
+            <h2>
+                Payment Group Detail Information
+            </h2>
+            <br />
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label class="col-sm-4 col-form-label col-form-label-sm" for="checkMemo">
+                        Check Memo:</label>
+                    <dfps-textarea class="col-sm-6 col-md-6 col-2" id="checkMemo" formControlName="checkMemo"
+                    maxLength="80" ariaLabel="Check Memo" [disabled]="false"></dfps-textarea>
+                </div>
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="status" class="col-form-label col-form-label-sm col-sm-6">
+                        Status:
+                    </label>
+                    <span id="status"
+                        class="col-sm-9">{{newPaymentInfo.paymentGroupStatus?newPaymentInfo.paymentGroupStatus:''}}</span>
+                </div>
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="paymentGroupId" class="col-form-label col-form-label-sm col-sm-6">
+                        Payment Group ID:
+                    </label>
+                    <span id="paymentGroupId"
+                        class="col-sm-9">{{newPaymentInfo.financialPaymentGrpId? newPaymentInfo.financialPaymentGrpId: ''}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4" tabindex="0">
+                </div>
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="totalPayment" class="col-form-label col-form-label-sm col-sm-6">
+                        Total Payment:
+                    </label>
+                    <span id="totalPayment"
+                        class="col-sm-9">{{newPaymentInfo.totalAmount? (newPaymentInfo.totalAmount| currency):(0 | currency) }}</span>
+                </div>
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="checkNumber" class="col-form-label col-form-label-sm col-sm-6">
+                        Check No.:
+                    </label>
+                    <dfps-input _id="checkNumber" maxlength=10 formControlName="checkNumber" ariaLabel="Check Number">
+                    </dfps-input>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4" tabindex="0">
+                </div>
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="issueDate" class="col-form-label col-form-label-sm col-sm-6">
+                        Issue Date:
+                    </label>
+                    <span id="issueDate"
+                        class="col-sm-9">{{newPaymentInfo.issuedDate?newPaymentInfo.issuedDate: ''}}</span>
+                </div>
+
+                <div class="d-flex col-md-3 pt-4" tabindex="0">
+                    <label for="transactionsCount" class="col-form-label col-form-label-sm col-sm-6">
+                        Transactions Count:
+                    </label>
+                    <span id="transactionsCount"
+                        class="col-sm-9">{{newPaymentInfo.noOfTransactions? newPaymentInfo.noOfTransactions:0 }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" class="row justify-content-end pr-3 pt-2">
+            <div *ngIf="hideAddTransactionBtn" class="pr-3">
+                <dfps-button label="Add Transaction To Group" _id="addTransactionToGrp" (click)="addTransactionToGrp()">
+                </dfps-button>
+            </div>
+            <div *ngIf="hideSaveBtn">
+                <dfps-button label="Save" _id="Save" (click)="savePaymentGrpDetails()"></dfps-button>
+            </div>
+        </div>
+    </form>
+    <div class="row" id="pBillingDataTable" *ngIf="finTransactionTable">
+        <div class="col-md-12">
+            <dfps-data-table [dataTable]="dataTable" (selectedData)="setSelectedRow($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" justify-content-end w-25" *ngIf="showDeleteBtn">
+            <dfps-button label="Delete Selected From Group" _id="deleteTransaction" (click)="deleteTransaction()">
+            </dfps-button>
+        </div>
+    </div>
+</div>

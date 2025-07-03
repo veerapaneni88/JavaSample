@@ -1,0 +1,182 @@
+<div class="container-fluid bodycolor" *ngIf="costReimbursement">
+    <div class="row">
+        <h1>Cost Reimbursement Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+
+    <div class="row">
+        <div class="text-left col-6 mt-2">Invoice ID: {{ invoiceId }}</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Invoice Phase: {{ costReimbursement.phase }}</div>
+    </div>
+    <form [formGroup]="costReimbursementDetailForm">
+        <dfps-form-validation
+            [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength"
+        ></dfps-form-validation>
+        <div class="form-group mt-5">
+            <h2>Service Information</h2>
+            <div class="row pl-2">
+                <div class="d-flex col-md-4 pt-2">
+                    <div class="col-sm-4">Service :</div>
+                    <div class="col-sm-4">{{ service }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-2">
+                    <div class="col-sm-4">CSLI :</div>
+                    <div class="col-sm-4">{{ lineItem }}</div>
+                </div>
+                <div class="d-flex col-md-4 pt-2">
+                    <div class="col-sm-4">Quantity :</div>
+                    <div class="col-sm-4">{{ lineItemServicesQuantity | number:'.2' }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Expenditure Information</h2>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="salaries" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Salaries:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="salaries"
+                            formControlName="salaries"
+                            maxlength="11"
+                            ariaLabel="Salaries"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="benefits" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Benefits:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="benefits"
+                            formControlName="benefits"
+                            maxlength="11"
+                            ariaLabel="Benefits"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="travels" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Travel:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="travels"
+                            formControlName="travel"
+                            maxlength="11"
+                            ariaLabel="Travel"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="supplies" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Supplies:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="supplies"
+                            formControlName="supplies"
+                            maxlength="11"
+                            ariaLabel="Supplies"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="equipments" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Equipment:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="equipments"
+                            formControlName="equipment"
+                            maxlength="11"
+                            ariaLabel="Equipment"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="others" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Other: </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="others"
+                            formControlName="other"
+                            maxlength="11"
+                            ariaLabel="Other"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="administrative" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                        >Administrative:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="administrative"
+                            formControlName="administrative"
+                            maxlength="11"
+                            ariaLabel="Administrative"
+                            currency="true"
+                        >
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="offset" class="col-sm-4 col-form-label col-form-label-sm">Offset: </label>
+                    <div class="col-sm-6" curreny="true">
+                        {{ costReimbursement.offsetItemReimbursement || 0 | currency:'USD'}}
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end w-100 mt-3">
+                <dfps-button
+                    label="Save"
+                    _id="contractSave"
+                    [hidden]="costReimbursement.pageMode === 'VIEW'"
+                    (click)="saveDetail()"
+                ></dfps-button>
+            </div>
+        </div>
+        <input
+            type="hidden"
+            aria-hidden="true"
+            id="lineItemServicesQuantity"
+            formControlName="lineItemServicesQuantity"
+        />
+        <input
+            type="hidden"
+            aria-hidden="true"
+            id="offsetItemReimbursement"
+            formControlName="offsetItemReimbursement"
+        />
+        <input type="hidden" aria-hidden="true" id="lineItemType" formControlName="lineItemType" />
+    </form>
+</div>

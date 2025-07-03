@@ -1,0 +1,458 @@
+<div class="container-fluid bodycolor" *ngIf="quickFindData">
+    <div class="row">
+        <h1 aria-level="1">Quick Find</h1>
+    </div>
+
+    <div class="rowpadding">
+        <hr />
+    </div>
+    <div #errors>
+        <dfps-form-validation
+            [shouldCheckDirty]="true"
+            [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength"
+        >
+        </dfps-form-validation>
+    </div>
+
+    <p class="noMarginBottom"><b>Purpose:</b> Staff use this form to request the following types of searches:</p>
+    <div class="ulist">
+        <ul>
+            <li>Obtain address and phone history for the subject</li>
+            <li>Obtain address and phone history for possible relatives</li>
+            <li>Locate absent or missing parents</li>
+            <li>Obtain out of state criminal history</li>
+            <li>Locate neighbors and associates</li>
+            <li>All special investigator requests</li>
+            <li>All APS requests</li>
+        </ul>
+    </div>
+
+    <p class="noMarginBottom">
+        Submit Form 2277 Request for Diligent Search to locate relatives for the purpose of placement options related to
+        new removals and children without placements (CWOP).
+    </p>
+    <p class="noMarginBottom">
+        <b>Directions:</b> Complete as much of the form as possible ensuring correct spelling and thorough information
+        is provided. An asterisk (*) indicates that the information is <b>required</b>. If you have any problems
+        completing this form, email <a href="mailto:FINDRS@dfps.texas.gov">FINDRS</a> or call (800) 252-3223 and select
+        option #4. After completing this form, email it to <a href="mailto:FINDRS@dfps.texas.gov">FINDRS</a> and include
+        "2004: Quick Find" in the subject line.
+    </p>
+
+    <div>
+        <hr />
+    </div>
+
+    <form [formGroup]="quickFindForm">
+        <div class="row leftPadSecondLevel">
+            <h2 class="pt-4">Request Information</h2>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="requestersName" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                    >Requester's Name:</label
+                >
+                <div class="col-md-4 col-sm-4">
+                    <dfps-input _id="requestersName" formControlName="requestersName" ariaLabel="Requester Name" disabled="true">
+                    </dfps-input>
+                </div>
+                <div class="">
+                    <dfps-button _id="Search" class="btn-sm" label="Search" ariaLabel="Search"
+                        [disabled]="disableSearchButton" (click)="selectStaff()"
+                        >Search
+                    </dfps-button>
+                </div>
+                <input type="hidden" name="requestersPersonId" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="requestersPhone" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                >Requester's Phone Number:</label
+                >
+                <div class="col-md-4 col-sm-4">
+                    <dfps-input
+                      _id="requestersPhone"
+                      maxlength="30"
+                      formControlName="requestersPhone"
+                      ariaLabel="Requester Phone Number"
+                    >
+                    </dfps-input>
+                  <p style="font-size: x-small">Eg: XXX-XXX-XXXX</p>
+                </div>
+            </div>
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="requestersPhoneExtension" class="col-md-4 col-form-label col-form-label-sm"
+                >Extension</label
+                >
+                <div class="col-md-4 col-sm-4">
+                    <dfps-input
+                      _id="requestersPhoneExtension"
+                      formControlName="requestersPhoneExtension"
+                      type="text"
+                      ariaLabel="Requester Phone Number Extension"
+                      maxlength="4"
+                    >
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="caseId" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                    >IMPACT Case ID:</label
+                >
+                <div class="col-md-4 col-sm-4">
+                    <dfps-input _id="caseId" formControlName="caseId" type="text" disabled="true"></dfps-input>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="requestersRegion" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                    >Region:</label
+                >
+                <div class="col-md-4 col-sm-4">
+                  <dfps-input _id="requestersRegion" formControlName="requestersRegion" type="text" disabled="true"></dfps-input>
+                </div>
+            </div>
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="requestersCounty" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                    >County:</label
+                >
+                <div class="col-md-4 col-sm-4">
+                  <dfps-input _id="requestersCounty" formControlName="requestersCounty" type="text" disabled="true"></dfps-input>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <label for="cps" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Select Program:</label>
+                <div class="col-md-4 col-sm-4">
+                    <dfps-checkbox
+                        _id="cps"
+                        ariaLabel="CPS, CPI, or CCI"
+                        label="CPS, CPI, or CCI"
+                        [formControl]="quickFindForm.controls['cps']"
+                        isBinary="true"
+                    ></dfps-checkbox>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <dfps-checkbox
+                        _id="cpsNytd"
+                        label="CPS - NYTD"
+                        [formControl]="quickFindForm.controls['cpsNytd']"
+                        isBinary="true"
+                    >
+                    </dfps-checkbox>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <dfps-checkbox
+                        _id="accounting"
+                        label="Accounting"
+                        [formControl]="quickFindForm.controls['accounting']"
+                        isBinary="true"
+                    >
+                    </dfps-checkbox>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <dfps-checkbox
+                        _id="legal"
+                        label="Special Investigations"
+                        [formControl]="quickFindForm.controls['legal']"
+                        isBinary="true"
+                    >
+                    </dfps-checkbox>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-6 col-sm-6 pt-4">
+                <div class="col-md-4 col-sm-4"></div>
+                <div class="col-md-6 col-sm-6">
+                    <dfps-checkbox
+                        _id="aps"
+                        label="Adult Protective Services"
+                        [formControl]="quickFindForm.controls['aps']"
+                        isBinary="true"
+                    >
+                    </dfps-checkbox>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <dfps-checkbox
+                        _id="emr"
+                        label="HHSC (Provider Investigations or EMR)"
+                        [formControl]="quickFindForm.controls['emr']"
+                        isBinary="true"
+                    >
+                    </dfps-checkbox>
+                </div>
+            </div>
+        </div>
+
+        <div class="rowrowPadding">&nbsp;</div>
+        <div class="rowrowPadding">
+            <hr />
+        </div>
+
+        <div class="row leftPadSecondLevel">
+            <h2 aria-level="2" class="pt-4">Search Subject Information</h2>
+        </div>
+
+        <div formArrayName="subjects">
+            <div *ngFor="let subject of getSubjects(quickFindForm); let i = index">
+                <div [formGroupName]="i">
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="fullName" class="col-md-4 col-form-label col-form-label-sm requiredDisplay"
+                                >Name:</label
+                            >
+                            <div class="col-md-4 col-sm-4">
+                                <dfps-select
+                                    _id="{{ 'fullName' + i }}"
+                                    formControlName="fullName"
+                                    ariaLabel="Name"
+                                    (change)="updateSubDetails(i)"
+                                    [dropDownValues]="personList"
+                                >
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="pdfFullName" />
+                        <div class="d-flex col-md-6 col-sm-6 pt-4"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="addressLine1" class="col-sm-4 col-form-label col-form-label-sm"
+                                >Address Ln 1:</label
+                            >
+
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'addressLine1' + i }}"
+                                    formControlName="addressLine1"
+                                    ariaLabel="Address Line 1"
+                                    disabled="true"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="addressLine2" class="col-sm-4 col-form-label col-form-label-sm">Apt:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'addressLine2' + i }}"
+                                    formControlName="addressLine2"
+                                    ariaLabel="Address Line 2"
+                                    disabled="true"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="city" class="col-sm-4 col-form-label col-form-label-sm">City:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'city' + i }}"
+                                    formControlName="city"
+                                    ariaLabel="City"
+                                    disabled="true"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="state" class="col-sm-4 col-form-label col-form-label-sm">State: </label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'state' + i }}"
+                                    formControlName="state"
+                                    ariaLabel="State"
+                                    disabled="true"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="zip" class="col-sm-4 col-form-label col-form-label-sm">Zip:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input _id="{{ 'zip' + i }}" ariaLabel="Zip" formControlName="zip" disabled="true">
+                                </dfps-input>
+                            </div>
+                        </div>
+
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="county" class="col-md-4 col-form-label col-form-label-sm">County:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input _id="{{ 'county' + i }}" formControlName="county" ariaLabel="County" disabled="true">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="phone" class="col-md-4 col-form-label col-form-label-sm">Phone Number:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'phone' + i }}"
+                                    ariaLabel="Phone Number"
+                                    maxlength="30"
+                                    formControlName="phone"
+                                    disabled="true"
+                                >
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="dateOfBirth" class="col-xs-3 col-md-4 col-sm-4 noLeftPad"
+                                >Date of Birth or Approximate Age:</label
+                            >
+                            <div class="col-md-6 col-sm-3">
+                                <dfps-input
+                                    _id="{{ 'dateOfBirth' + i }}"
+                                    formControlName="dateOfBirth"
+                                    ariaLabel="dateOfBirth"
+                                    disabled="true"
+                                ></dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="ethnicity" class="col-xs-3 col-sm-4 noLeftPad">Ethnicity:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'ethnicity' + i }}"
+                                    formControlName="ethnicity"
+                                    ariaLabel="Ethnicity"
+                                    disabled="true"
+                                ></dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex flex-row col-md-6 col-sm-6 pt-4">
+                            <label>
+                                <dfps-checkbox
+                                    _id="{{'approximateDateOfBirth' + i }}"
+                                    [formControl]="subject.controls['approximateDateOfBirth']"
+                                    ariaLabel="Select this Box when providing an approximate date of birth or age"
+                                    label="Select this Box when providing an approximate date of birth or age"
+                                    isBinary="true" disabled="true"
+                                >
+                                </dfps-checkbox>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="ssn" class="col-sm-4 col-form-label col-form-label-sm">SSN:</label>
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'ssn' + i }}"
+                                    formControlName="ssn"
+                                    ariaLabel="SSN"
+                                    disabled="true"
+                                ></dfps-input>
+                            </div>
+                        </div>
+
+                        <div class="d-flex col-md-6 col-sm-6 pt-4">
+                            <label for="personId" class="col-xs-3 col-md-4 col-sm-4 noLeftPad" ariaLabel="PID"
+                                >PID:</label
+                            >
+                            <div class="col-md-6 col-sm-6">
+                                <dfps-input
+                                    _id="{{ 'personId' + i }}"
+                                    formControlName="personId"
+                                    ariaLabel="PID"
+                                    disabled="true"
+                                ></dfps-input>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-11 col-sm-8">
+                            <label for="comments" class="noLeftPad reqField">
+                                Additional details that may assist with this search, including historical addresses, cities,
+                                phone numbers, alias names, and any known associates, relatives, or friends:</label
+                            >
+                            <p style="font-size: x-small">
+                                If additional details exceed the maximum character limit, please include any additional
+                                information in your email to FINDRS&#64;dfps.texas.gov, along with your completed
+                                request form.
+                            </p>
+                            <div class="col-sm-8 col-md-12">
+                                <dfps-textarea
+                                    _id="{{ 'comments' + i }}"
+                                    formControlName="comments"
+                                    maxLength="2000"
+                                    [customStyleTextArea]="getCustomStyles()"
+                                    ariaLabel="Additional details that may assist with this search, including historical addresses, cities,
+                                    phone numbers, alias names, and any known associates, relatives, or friends"
+                                ></dfps-textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rowrowPadding">&nbsp;</div>
+                    <div class="row">
+                        <div
+                            class="col-md-12 col-sm-12 d-flex justify-content-end"
+                            *ngIf="isEditMode && subjectsControlCount > 0 && i > 0"
+                        >
+                            <dfps-button _id="deleteSub" label="Delete" (click)="deleteSub(i)"></dfps-button>
+                        </div>
+                    </div>
+                    <div class="rowrowPadding">
+                        <hr />
+                    </div>
+                    <div class="rowrowPadding">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 d-flex justify-content-end" *ngIf="isEditMode">
+                <dfps-button _id="Add" label="Add" (click)="addSubject()" [disabled]="subjectsControlCount > 2">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+    <div class="rowrowPadding">&nbsp;</div>
+    <div class="rowrowPadding">
+        <hr />
+    </div>
+    <div class="rowrowPadding">&nbsp;</div>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 d-flex justify-content-begin" *ngIf="isEditMode">
+            <dfps-button
+                _id="delete"
+                label="Delete"
+                (click)="delete()"
+                class="background-white"
+                [disabled]="disableDeleteButton"
+            ></dfps-button>
+        </div>
+        <div class="col-md-6 col-sm-6 d-flex justify-content-end" *ngIf="isEditMode">
+            <dfps-button _id="saveStay" label="Save and Stay" (click)="saveAndStay()"> </dfps-button>
+            &nbsp;
+            <dfps-button _id="save" label="Save" (click)="save()"> </dfps-button>
+            &nbsp;
+            <dfps-button _id="complete" label="Complete" (click)="complete()"></dfps-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+.resource-search-heading {
+    padding-left: 0px;
+}
+.resource-search-heading > h1{
+    padding-left: 0px !important;
+}
+.resource-search-sub-heading{
+    color: #212121;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: #c1d5ec;
+    line-height: 3em;
+    padding-left: 1em;
+}
+.resource-search-sub-container{
+    border-style: solid; 
+    border-color: #c1d5ec;
+}
+.resource-search-body-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #212121;
+}
+
+.resource-search-left-pad-third-level {
+    padding-left: 50px;
+}
+.resource-search-left-pad-second-level {
+    padding-left: 30px;
+}
+
+.resource-search-row-padding {
+    padding-top: 16px !important;
+}
+
+
+.resource-search-h2 {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 32px;
+    color: #212121;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+

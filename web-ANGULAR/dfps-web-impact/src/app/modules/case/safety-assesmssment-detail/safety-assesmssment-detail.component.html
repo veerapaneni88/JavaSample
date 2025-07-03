@@ -1,0 +1,608 @@
+<div class="container-fluid bodycolor" *ngIf="displaySafetyAssmntDetails">
+    <div class="row">
+        <h1>{{displaySafetyAssmntDetails.pageTitle}}</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Case Name:{{displaySafetyAssmntDetails.caseName}}</div>
+        <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Case ID: {{displaySafetyAssmntDetails.caseId}}</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <div class="alert alert-primary" id="attentionMsgs"
+        *ngIf="((displaySafetyAssmntDetails.incompleteSectionMessages && (displaySafetyAssmntDetails.incompleteSectionMessages.length > 0))
+        || ( displaySafetyAssmntDetails.informationalMessages && displaySafetyAssmntDetails.informationalMessages.length > 0) )">
+        <p>Attention:</p>
+        <div *ngIf="displaySafetyAssmntDetails.informationalMessages">
+            <div *ngFor="let data of displaySafetyAssmntDetails.informationalMessages">
+                <li>{{data}}</li>
+            </div>
+        </div>
+        <div *ngIf="(displaySafetyAssmntDetails.incompleteSectionMessages.length > 0)">
+            <div *ngFor="let data of displaySafetyAssmntDetails.incompleteSectionMessages">
+                <li>{{data}}</li>
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="safetyAssmntDetailsForm" *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto != null">
+        <div class="row">
+            <div class="text-left col-6 mt-4 pt-2">
+                <a target="_blank"
+                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_3/CulturalEconomicConsiderations_v1.html">
+                    Cultural and Economic Considerations </a>
+            </div>
+        </div>
+        <dfps-collapsable-section>
+            <div class="row">
+                <div class="text-left col-6 mt-4 pt-2 requiredDisplay">
+                    Caretaker Name(s)
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex mt-2 col-md-12 p-field-checkbox">
+                    <dfps-checkbox _id="indCaretakerNotApplicable"
+                        [formControl]="safetyAssmntDetailsForm.get('apsSafetyAssessmentDto.indCaretakerNotApplicable')"
+                        ariaLabel="Not applicable; no caretaker(s)" label="Not applicable; no caretaker(s)"
+                        inputName="indCaretakerNotApplicable" (click)="noCaretakerSelected()">
+                    </dfps-checkbox>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <dfps-data-table [dataTable]="caretakerListDataTable" [allowRowSelection]="disbaleCaretakersInfo"
+                        (selectedData)="getSelectedCaretaker($event)">
+                    </dfps-data-table>
+                </div>
+            </div>
+            <accordion>
+                <accordion-group *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.assmtTypeCode != 'REAS'"
+                    class="accordion-group pt-0" [isOpen]="isCIExpanded">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Case Initiation</h2>
+                        <span *ngIf="displaySafetyAssmntDetails.caseInitiationSectionComplete"
+                            class="float-right pull-right"><i class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row col-12 pt-0"><b>Section 1: Case Initiation</b></div>
+                    <div class="row col-12">Complete the Case Initiation by making contacts with appropriate persons who
+                        have current and reliable information (e.g., reporter, collateral, alleged victim) and answering
+                        the items below based on best available knowledge and information.</div>
+
+                    <div class="row" formArrayName="apsSafetyContacts"
+                        *ngFor="let x of safetyAssmntDetailsForm.get('apsSafetyContacts')['controls']; let index = index">
+                        <div [formGroupName]="index" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                            *ngIf="x.controls['contactType'].value === 'CI'">
+                            <div class="row d-flex flex-row col-md-12 pt-2 mt-2">
+                                <div class="d-flex flex-row col-md-6">
+                                    <div class="col-sm-3">
+                                        <label for="ContactedBy">Contacted
+                                            By : </label>
+                                    </div>
+                                    <div>
+                                        {{x.controls['contactWorkerFullName'].value}}
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-4" *ngIf="hideSelectStaffBtn">
+                                    <dfps-button _id="staffSearch" size="extraSmall" ariaLabel="Select Staff"
+                                        [attr.disabled]="displaySafetyAssmntDetails.apsSafetyAssessmentDto.indCiCompleted"
+                                        (click)="staffSearchNavPath()" label="Select Staff">
+                                    </dfps-button>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="Case Initiation Date"
+                                    class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Case Initiation
+                                    Date:</label>
+                                <div class="col-sm-6">
+                                    <dfps-date-picker _id="{{'contactOccurredDate' + index}}"
+                                        formControlName="contactOccurredDate" name="contactOccurredDate" maxlength="15"
+                                        ariaLabel="Case Initiation
+                                        Date required field"></dfps-date-picker>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="Time"
+                                    class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Time:</label>
+                                <div class="col-sm-6">
+                                    <dfps-input _id="{{'contactOccurredTime' + index}}"
+                                        formControlName="contactOccurredTime" name="contactOccurredTime"
+                                        inputName="contactOccurredTime" maxlength="8" ariaLabel="Case Initiation
+                                        Time required field"></dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row col-md-12 pt-2 mt-2">
+                        <div class="col-md-2">
+                            <label for="Assigned Priority"
+                                class="col-sm-12 col-md-12 col-form-label col-form-label-sm">Assigned
+                                Priority:</label>
+                        </div>
+                        <div class="col-md-10">{{displaySafetyAssmntDetails.apsSafetyAssessmentDto.initialPriority}}
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row col-12 mt-2 pt-2">
+                        <div class="col-md-2">
+                            <label for="Increase priority if there is new information that indicates"
+                                class="ol-sm-12 col-md-12 col-form-label col-form-label-sm conReqDisplay">Increase
+                                priority if
+                                there
+                                is new information that indicates: </label>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row" formArrayName="safetyResponses"
+                                *ngFor="let data of safetyAssmntDetailsForm.get('safetyResponses')['controls']; let i = index">
+                                <div [formGroupName]="i" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                                    *ngIf="data.controls['sectionCode'].value === 'SA1A'">
+                                    <input type="checkbox" class="checkboxStyling"
+                                        id="{{data.controls['questionText'].value}}{{i}}"
+                                        (change)="changeIncreasePrtySelection($event)"
+                                        [formControl]="data.controls['responseCode']"
+                                        name="{{data.controls['responseCode'].value}}" />
+                                    <label *ngIf="data.controls['nmDefinition'].value"
+                                        for="{{data.controls['questionText'].value}}{{i}}">
+                                        <a target="_blank"
+                                            href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/{{data.controls['nmDefinition'].value}}">{{data.controls.questionText.value}}</a>
+                                    </label>
+                                    <label *ngIf="!data.controls['nmDefinition'].value"
+                                        for="{{data.controls['questionText'].value}}{{i}}">
+                                        {{data.controls.questionText.value}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row col-12 mt-2 pt-2">
+                        <div class="col-md-2">
+                            <label for="Decrease priority if there is new information that indicates"
+                                class="ol-sm-12 col-md-12 col-form-label col-form-label-sm conReqDisplay">Decrease
+                                priority if there is new information that indicates: </label>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row" formArrayName="safetyResponses"
+                                *ngFor="let data of safetyAssmntDetailsForm.get('safetyResponses')['controls']; let i = index">
+                                <div [formGroupName]="i" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                                    *ngIf="data.controls['sectionCode'].value === 'SA1B'">
+                                    <input type="checkbox" id="{{data.controls['questionText'].value}}{{i}}"
+                                        class="checkboxStyling" [formControl]="data.controls['responseCode']"
+                                        (change)="changeDecreasePrtySelection($event)"
+                                        name="{{data.controls['responseCode'].value}}" />
+                                    <div *ngIf="data.controls['nmDefinition'].value">
+                                        <label for="{{data.controls['questionText'].value}}"> <a target="_blank"
+                                                href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/{{data.controls['nmDefinition'].value}}">
+                                                {{data.controls.questionText.value}}</a>
+                                        </label>
+                                    </div>
+                                    <label *ngIf="!data.controls['nmDefinition'].value"
+                                        for="{{data.controls['questionText'].value}}">
+                                        {{data.controls.questionText.value}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row col-12 mt-2 pt-2">
+                        <div class="col-md-2">
+                            <label for="Not Applicable"
+                                class="ol-sm-12 col-md-12 col-form-label col-form-label-sm conReqDisplay">Not
+                                Applicable:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row" formArrayName="safetyResponses"
+                                *ngFor="let data of safetyAssmntDetailsForm.get('safetyResponses')['controls']; let i = index">
+                                <div [formGroupName]="i" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                                    *ngIf="data.controls['sectionCode'].value === 'SA1C'">
+                                    <input type="checkbox" id="{{data.controls['questionText'].value}}"
+                                        class="checkboxStyling" (change)="changeNotApplicablePrtySelection($event)"
+                                        [formControl]="data.controls['responseCode']"
+                                        name="data.controls['responseCode']" />
+                                    <label
+                                        for="{{data.controls['questionText'].value}}">{{data.controls.questionText.value}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div formGroupName="apsSafetyAssessmentDto">
+                        <div class="row d-flex flex-row col-12 mt-2 pt-2">
+                            <div class="col-md-2">
+                                <label for="Final Priority"
+                                    class="ol-sm-12 col-md-12 col-form-label col-form-label-sm conReqDisplay">Final
+                                    Priority:</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="col-md-1 ml-0 p-0">
+                                    <dfps-select _id="currentPriority" formControlName="currentPriority"
+                                        name="currentPriority" [blankOption]="false"
+                                        [dropDownValues]="displaySafetyAssmntDetails.priorityCodes"
+                                        (change)="priorityChanged($event)" ariaLabel="Final Priority"></dfps-select>
+                                </div>
+                                <label for="If priority has been changed, document a brief reason for that decision."
+                                    class="ol-sm-12 col-md-12 col-form-label col-form-label-sm conReqDisplay">If
+                                    priority
+                                    has been changed, document a brief reason for that decision.</label>
+                                <dfps-textarea class="col-sm-12 col-md-12" id="priorityComments" name="priorityComments"
+                                    maxLength="80" formControlName="priorityComments" ariaLabel="Priority Comments">
+                                </dfps-textarea>
+                            </div>
+                        </div>
+                        <div class="row d-flex flex-row col-12 mt-2 pt-2">
+                            <dfps-checkbox _id="indCiImmediateIntervention"
+                                [formControl]="safetyAssmntDetailsForm.get('apsSafetyAssessmentDto.indCiImmediateIntervention')"
+                                inputName="indCiImmediateIntervention">
+                            </dfps-checkbox>
+                            <label for="indCiImmediateIntervention"
+                                class="col-sm-10 col-md-10 col-form-label col-form-label-sm">Check this box if
+                                <a target="_blank"
+                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_1/ImmediateInterventions_v1.html">
+                                    immediate interventions </a> were provided during Case Initiation.
+                                Do not select this checkbox when Case Initiation and Face to Face Contacts occurred at
+                                the
+                                same date and time.</label>
+                        </div>
+                    </div>
+                    <div class="p-2 mb-2 card-body">
+                        <div class="row">
+                            <div class="d-flex col-md-6 pt-6">
+                                <dfps-button label="Narrative" _id="narrative" (click)="generateContactNarrative()">
+                                </dfps-button>
+                                <div *ngIf="displaySafetyAssmntDetails.contactNarrativeDto?.documentTemplateId">
+                                    <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2"
+                        *ngIf="isEditMode && !displaySafetyAssmntDetails.caseInitiationSectionComplete">
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" label="Save And Continue" (click)="saveContinue()">
+                            </dfps-button>
+                        </div>
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" label="Save" (click)="save()">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group class="accordion-group pt-2"
+                    *ngIf="displaySafetyAssmntDetails.caseInitiationSectionComplete">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Face to Face Contact</h2>
+                        <span *ngIf="displaySafetyAssmntDetails.face2FaceSectionComplete"
+                            class="float-right pull-right"><i class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row" formArrayName="apsSafetyContacts"
+                        *ngFor="let x of safetyAssmntDetailsForm.get('apsSafetyContacts')['controls']; let index = index">
+                        <div [formGroupName]="index" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                            *ngIf="x.controls['contactType'].value === 'F2F'">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="Case Initiation Date" [class.conReqDisplay]="index === 0"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Face-to-Face Contact
+                                    Date:</label>
+                                <div class="col-sm-6">
+                                    <dfps-date-picker _id="{{'contactOccurredDate' + index}}"
+                                        formControlName="contactOccurredDate" name="contactOccurredDate" maxlength="15"
+                                        ariaLabel="Face-to-Face Contact Date conditionally required"></dfps-date-picker>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="Time" [class.conReqDisplay]="index === 0"
+                                    class="col-sm-2 col-form-label col-form-label-sm">Time:</label>
+                                <div class="col-sm-6">
+                                    <dfps-input _id="{{'contactOccurredTime' + index}}"
+                                        formControlName="contactOccurredTime" ariaLabel="Face-to-Face Contact Time"
+                                        name="contactOccurredTime" inputName="contactOccurredTime" maxlength="8">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <dfps-checkbox _id="contactAttempted" [formControl]="x.controls['contactAttempted']"
+                                    name="contactAttempted" inputName="contactAttempted" ariaLabel="Attempted"
+                                    label="Attempted">
+                                </dfps-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12"><b>Section 2:
+                                Factors Affecting Vulnerability</b> </div>
+                        <div class="col-12">
+                            Assess for each of the following characteristics that may affect the alleged victim/client's
+                            vulnerability to the danger factors in Section 3(mark all that apply to the alleged
+                            victim/client).
+                        </div>
+                    </div>
+                    <div class="row" formArrayName="safetyResponses"
+                        *ngFor="let data of safetyAssmntDetailsForm.get('safetyResponses')['controls']; let i = index">
+                        <div [formGroupName]="i" class="row d-flex flex-row col-md-12 pt-0 mt-0 ml-0"
+                            *ngIf="data.controls['sectionCode'].value === 'SA2'">
+                            <div class="col-md-0 col-sm-0 pt-0 mt-0">
+                                <dfps-checkbox _id="{{data.controls['questionText'].value}}"
+                                    ariaLabel="{{data.controls.questionText.value}}"
+                                    [formControl]="data.controls['responseCode']"
+                                    inputName="data.controls['responseCode']">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-md-11 col-sm-11 pt-0 mt-0">
+                                <label for="{{data.controls['questionText'].value}}">
+                                    <a target="_blank" [innerHTML]="data.controls.questionText.value"
+                                        href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/{{data.controls['nmDefinition'].value}}"></a>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12"><b>Section 3:
+                                Current Danger Factors</b>
+                        </div>
+                        <div class="col-12">
+                            Assess for each of the following factors that indicate the presence of a threat to the life
+                            or physical safety of the alleged victim/client, based on all information known and
+                            available at the time of the assessment (select all that apply).
+                            <a target="_blank"
+                                href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_3/CurrentDanger_v1.html"><i>Current
+                                    Danger Definition</i></a>
+                        </div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <ol>
+                            <div formArrayName="safetyResponses"
+                                *ngFor="let data of safetyAssmntDetailsForm.get('safetyResponses')['controls']; let i = index;">
+                                <div [formGroupName]="i" class="justify-content-start pb-2 pt-2"
+                                    *ngIf="data.controls['sectionCode'].value === 'SA3'">
+                                    <li>
+                                        <div class="row ml-2">
+                                            <div class="col-md-auto col-sm-auto mt-1">
+                                                <dfps-radio-button formControlName="responseCode" arrayIndex={{i}}
+                                                    name="responseCode"
+                                                    (click)="onInputChange(data.controls['answerCode'].value, data.controls['responseCode'], i)"
+                                                    ariaLabel="{{data.controls.questionText.value}}" [data]="getData"
+                                                    [horizontal]="true">
+                                                </dfps-radio-button>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10">
+                                                <a target="_blank"
+                                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/{{data.controls['nmDefinition'].value}}">{{data.controls.questionText.value}}</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </div>
+                            </div>
+                        </ol>
+                    </div>
+                    <div class="p-2 mb-2 card-body">
+                        <div class="row">
+                            <div class="d-flex col-md-6 pt-6">
+                                <dfps-button label="Narrative" _id="narrative" (click)="generateNarrative()">
+                                </dfps-button>
+                                <div
+                                    *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentNarrativeDto?.documentTemplateId">
+                                    <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2" *ngIf="isEditMode">
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" label="Save" (click)="save()">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group *ngIf="displaySafetyAssmntDetails.caseInitiationSectionComplete"
+                    class="accordion-group pt-2" (isOpenChange)="updateStatusOfIISection($event)"
+                    [isOpen]="safetyAssmntDetailsForm.controls['iisectionExpanded'].value">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Immediate Interventions</h2>
+                        <span *ngIf="displaySafetyAssmntDetails.immedIntervenSectionComplete"
+                            class="float-right pull-right"><i class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <immediate-interventions></immediate-interventions>
+                </accordion-group>
+                <accordion-group *ngIf="displaySafetyAssmntDetails.isDFSectionComplete" class="accordion-group pt-2"
+                     (isOpenChange)="updateStatusOfSDSection($event)"
+                    [isOpen]="safetyAssmntDetailsForm.controls['safetyDecisionExpanded'].value">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Safety Decision</h2>
+                        <span *ngIf="displaySafetyAssmntDetails.safetyDecisionSectionComplete"
+                            class="float-right pull-right"><i class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row">
+                        <div class="col-12"><b>Section 5:
+                                Safety Decision</b>
+                        </div>
+                        <div class="col-12">
+                            The safety decision is determined based on Current Danger Factors identified during Case
+                            Initiation or Face to Face Contact and whether the alleged victim/client accepts the
+                            recommended interventions and agrees to participate in an Immediate Intervention agreement
+                            to mitigate identified danger.
+                        </div>
+                    </div>
+                    <div formGroupName="apsSafetyAssessmentDto">
+                        <div class="row d-flex flex-row mt-2"
+                            *ngIf="!(displaySafetyAssmntDetails.apsSafetyAssessmentDto.safetyDecisionCode === 'SAFE')">
+                            <div class="col-md-6">Are there immediate interventions in place to sufficiently mitigate
+                                all
+                                danger factors?
+                            </div>
+                            <dfps-radio-button _id="indInterventionsInPlace" formControlName="indInterventionsInPlace"
+                                name="indInterventionsInPlace"
+                                ariaLabel="Are there immediate interventions in place to sufficiently mitigate all danger factors?"
+                                [data]="safetyDecision" [horizontal]="true">
+                            </dfps-radio-button>
+                        </div>
+                        <div class="row d-flex flex-row mt-2"
+                            *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.safetyDecisionCode">
+                            <div class="col-md-2">
+                                Safety Decision:
+                            </div>
+                            <div class="col-md-10"
+                                *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.safetyDecisionCode === 'SAFE'">
+                                <a target="_blank"
+                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_5/SafetyDecision_Safe_v1.html">
+                                    Safe - No current danger factors were identified at this time. </a>
+                            </div>
+                            <div class="col-md-10"
+                                *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.safetyDecisionCode === 'UNSAFE'">
+                                <a target="_blank"
+                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_5/SafetyDecision_Unsafe_v1.html">
+                                    Unsafe - Alleged victim/client chooses not to accept sufficient services to ensure
+                                    safety. </a>
+                            </div>
+                            <div class="col-md-10"
+                                *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.safetyDecisionCode === 'CONDSAFE'">
+                                <a target="_blank"
+                                    href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_5/SafetyDecision_CondSafe_v1.html">
+                                    Conditionally Safe - Alleged victim/client accepts sufficient services to ensure
+                                    safety.
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row d-flex flex-row mt-2">
+                            <a target="_blank"
+                                href="{{environment}}/grnds-docs/html/Shield_Definitions/sa/Section_5/ReferraltoInvestigatoryAgency_v1.html">Is
+                                referral to another investigatory agency (including law enforcement) required?
+                            </a>
+                            <dfps-radio-button _id="indReferralRequired" formControlName="indReferralRequired"
+                                name="indReferralRequired"
+                                ariaLabel="Is referral to another investigatory agency (including law enforcement) required?"
+                                [data]="safetyDecision" [horizontal]="true">
+                            </dfps-radio-button>
+                        </div>
+                    </div>
+                    <div *ngIf="((displaySafetyAssmntDetails.stageCode === 'INV') && (displayContactStandardsSection))">
+                        <div class="row"><b>Contact Standards</b> </div>
+                        <div class="col-12" *ngIf="!displaySafetyAssmntDetails.preSingleStage">
+                            <div class="row">
+                                <div class="col-3">
+                                    Number of Safety Contacts:
+                                </div>
+                                <div class="col-9"
+                                    *ngIf="displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan">
+                                    {{displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan.numberOfFaceToFaceContacts
+                                    +
+                                    displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan.numberOfContactsReqd}}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    Number of Face-to-Face Contacts:
+                                </div>
+                                <div class="col-9"
+                                    *ngIf="displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan">
+                                    {{displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan.numberOfFaceToFaceContacts}}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    Number of Other Contacts:
+                                </div>
+                                <div class="col-9"
+                                    *ngIf="displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan">
+                                    {{displaySafetyAssmntDetails.apsServicePlanDto.assessmentMonitoringPlan.numberOfContactsReqd}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12" *ngIf="displaySafetyAssmntDetails.preSingleStage">
+                            <div formGroupName="apsServicePlanDto">
+                                <div formGroupName="assessmentMonitoringPlan">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            Number of Safety/Service Contacts:
+                                        </div>
+                                        <div class="col-9">
+                                            {{updatedNumberOfContactsReqd + updatedNumberOfFaceToFaceContacts}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-3" for="Number of Face-to-Face Contacts">
+                                            Number of Face-to-Face Contacts:
+                                        </label>
+                                        <dfps-select _id="numberOfFaceToFaceContacts"
+                                            ariaLabel="Number of Face-to-Face Contacts" class="col-md-6 col-sm-6"
+                                            formControlName="numberOfFaceToFaceContacts"
+                                            [dropDownValues]="displaySafetyAssmntDetails.contactStandardsCodeDtos">
+                                        </dfps-select>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-3" for="Number of Other Contacts">
+                                            Number of Other Contacts:
+                                        </label>
+                                        <dfps-select _id="numberOfContactsReqd" ariaLabel=" Number of Other Contacts"
+                                            class="col-md-6 col-sm-6" formControlName="numberOfContactsReqd"
+                                            [dropDownValues]="displaySafetyAssmntDetails.contactStandardsCodeDtos">
+                                        </dfps-select>
+                                    </div>
+                                    <div class="row d-flex flex-row col-12">
+                                        <label class="col-sm-2 col-md-2 col-form-label" for="problemDescription">
+                                            Problem Description:</label>
+                                        <dfps-textarea class="col-md-10 col-sm-10" id="planDescription"
+                                            formControlName="planDescription" ariaLabel="Description" maxLength="1000">
+                                        </dfps-textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2" *ngIf="isEditMode">
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" label="Save" (click)="save()">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </dfps-collapsable-section>
+        <div class="d-flex justify-content-end mt-2"
+            *ngIf="isEditMode && displaySafetyAssmntDetails.caseInitiationSectionComplete">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save" (click)="save()">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save And Complete" (click)="saveAndComplete()">
+                </dfps-button>
+            </div>
+        </div>
+        <div class="card formPanel" *ngIf="!isMPSEnvironment">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h3>Forms Launch</h3>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                        [createEvent]='true'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12"> Created Date: <span
+                    *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.createdDate">{{displaySafetyAssmntDetails.apsSafetyAssessmentDto.createdDate
+                    | date: 'MM/dd/yyyy'}}
+                    at
+                    {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.createdDate | date:'shortTime'}} by
+                    {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.createdPersonName}}</span> </div>
+            <div class="col-md-12"> Updated Date: <span
+                    *ngIf="displaySafetyAssmntDetails.apsSafetyAssessmentDto.lastUpdatedDate">
+                    {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.lastUpdatedDate | date: 'MM/dd/yyyy'}} at
+                    {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.lastUpdatedDate | date:'shortTime'}} by
+                    {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.updatedPersonName}}</span></div>
+            <div class="col-md-12">Version: {{displaySafetyAssmntDetails.apsSafetyAssessmentDto.versionNumber}}.0</div>
+        </div>
+    </form>
+</div>

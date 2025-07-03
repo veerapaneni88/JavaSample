@@ -1,0 +1,79 @@
+<div class="container-fluid bodycolor" *ngIf="displayPhoneDetail">
+    <div class="row">
+        <h1>Phone Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="phoneDetailForm">
+        <div class="row">
+            <div class="requiredDisplay text-right mt-2 col-12" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="conReqDisplay text-right mt-2 col-12" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Phone Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="phoneType"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="phoneType" ariaLabel="Select Type dropdown" formControlName="phoneType"
+                            [dropDownValues]="displayPhoneDetail.phoneType">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="phoneNumber"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Phone:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="phoneNumber" formControlName="phoneNumber" ariaLabel="Phone is required field">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="phoneExtension" class="col-sm-6 col-form-label col-form-label-sm">Ext:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="phoneExtension" formControlName="phoneExtension" ariaLabel="Extention field"
+                            maxlength="8">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label class="col-sm-6" for="comments">
+                        Comments:</label>
+                    <dfps-textarea class="col-sm-6 col-md-12 col-2" id="comments" formControlName="comments"
+                        maxLength="80" ariaLabel="Comments"></dfps-textarea>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-6 justify-content-start w-100 pt-4">
+                    <dfps-button add-button size="small" label="Delete" (click)="delete()"
+                        [hidden]="phoneDeleteButtonHide"> </dfps-button>
+                </div>
+                <div class="d-flex col-md-6 justify-content-end w-100 pt-4">
+                    <dfps-button add-button size="small" label="Save" (click)="doSave()"> </dfps-button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+</div>

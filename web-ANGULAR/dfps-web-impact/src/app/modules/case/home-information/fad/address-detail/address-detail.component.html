@@ -1,0 +1,149 @@
+<div class="container-fluid bodycolor" *ngIf="displayAddressDetail">
+    <div class="row">
+        <h1>Address Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="addressDetailForm">
+        <div class="row">
+            <div class="requiredDisplay text-right mt-2 col-12" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="conReqDisplay text-right mt-2 col-12" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="form-group mt-">
+            <h2>Address Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="addressType"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="addressType" ariaLabel="Type is Required" formControlName="addressType"
+                            [dropDownValues]="displayAddressDetail.addressType">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="vendorId" class="col-sm-6 col-form-label col-form-label-sm">VendorID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="vendorId" formControlName="vendorId" maxlength="14" ariaLabel="Vendor Id"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="attention" class="col-sm-6 col-form-label col-form-label-sm">Attention:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="attention" formControlName="attention" maxlength="30" ariaLabel="Attention">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="addressLine1" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Address
+                        Ln
+                        1:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="addressLine1" formControlName="addressLine1"
+                            ariaLabel="Address Line 1 is Required" (change)="onAddressChange()">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="addressLine2" class="col-sm-6 col-form-label col-form-label-sm">Address Ln 2:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="addressLine2" formControlName="addressLine2" ariaLabel="Address Line 2"
+                            (change)="onAddressChange()">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="city" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">City:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="city" formControlName="city" ariaLabel="City is Required" maxlength="20"
+                            (change)="onAddressChange()">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="state" class="col-sm-6 col-form-label col-form-label-sm">State:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="state" ariaLabel="State" formControlName="state"
+                            [dropDownValues]="displayAddressDetail.state" (change)="stateChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4 align-items-center">
+                    <label for="zip" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Zip:</label>
+                    <div class="col-sm-5 col-md-3 pr-0">
+                        <dfps-input _id="zip" ariaLabel="Zip is Required" formControlName="zip" maxlength="5" (change)="onAddressChange()">
+                        </dfps-input>
+                    </div>
+                    <label for="zipExt" class="text-center px-0"><span>&nbsp;-&nbsp;</span></label>
+                    <div class="d-flex col-sm-2 pl-0 pr-0">
+                        <dfps-input _id="zipExt" formControlName="zipExt" maxlength="4" ariaLabel="Zip Extension"
+                            (change)="onAddressChange()"></dfps-input>
+                    </div>
+                    <div class="d-flex btn-sm">
+                        <dfps-address-validator _id="validateAddress" label="Validate" class="pr-1" size="extraSmall"
+                            (click)="validateAdressFields()" (validatedAddressEvent)="updateAdressFields($event)">
+                        </dfps-address-validator>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="county"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">County:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="county" ariaLabel="County is Required" formControlName="county"
+                            (change)="loadSchoolDistricts()" [dropDownValues]="displayAddressDetail.county">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="schoolDistrict" class="col-sm-6 col-form-label col-form-label-sm">School
+                        District:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="schoolDistrict" ariaLabel="School District"
+                            formControlName="schoolDistrict" [dropDownValues]="schoolDistricts">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label class="col-sm-6" for="comments">
+                        Comments:</label>
+                    <dfps-textarea class="col-sm-6 col-md-12 col-2" id="comments" formControlName="comments"
+                        ariaLabel="Comments" maxLength="80"></dfps-textarea>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="offset-sm-9 col-sm-3 btn-sm">
+                    <dfps-button add-button size="small" label="Save" (click)="doSave()"> </dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

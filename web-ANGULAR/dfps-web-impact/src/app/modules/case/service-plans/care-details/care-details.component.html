@@ -1,0 +1,254 @@
+<div class="container-fluid bodycolor" *ngIf="displayCareDetails">
+    <div class="row">
+        <h1>Client Assessment and Risk Evaluation </h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <form [formGroup]="apsCareDetailsForm" *ngIf="displayCareDetails">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name: {{displayCareDetails.caseName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2 mb-4">Case ID: {{displayCareDetails.caseId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-4 pt-2">
+                <a target="_blank"
+                    href="{{impactP2WebUrl}}/resources/help/Quick_Reference_guides/Client_Assessment___Risk_Evaluation_(CARE)_Rating_Examples.htm">
+                    CARE Rating Examples </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"> <b>Life or Health Threatening</b>
+            </div>
+            <div class="flex d-flex align-items-center ml-4">
+                <div class="mr-2">1.</div>
+                <input type="radio"
+                    id="A life or health threatening condition exists. The situation is extremely serious, and 9-1-1, police, client's immediate removal, or other appropriate action is needed within 24 hours. (Once the situation/client has been stabilized, complete all assessment domains.)"
+                    value="Y" name="lifeThreateningCode" formControlName="lifeThreateningCode">
+                <label class="d-flex pt-2 ml-2"
+                    for="A life or health threatening condition exists. The situation is extremely serious, and 9-1-1, police, client's immediate removal, or other appropriate action is needed within 24 hours. (Once the situation/client has been stabilized, complete all assessment domains.)">A
+                    life or health threatening condition exists. The situation is extremely serious, and 9-1-1,
+                    police,
+                    client's immediate removal, or other appropriate action is needed within 24 hours. (Once the
+                    situation/client has been stabilized, complete all assessment domains.)</label>
+            </div>
+            <div class="col-12">
+                <div class="d-flex col-md-12 pt-2">
+                    <label class="col-sm-1 col-md-1 conReqDisplay" for="comment">
+                        Comments:</label>
+                    <dfps-textarea class="col-sm-10 col-md-10 col-2" id="comment" formControlName="comment"
+                        ariaLabel="Comments" maxLength="80"></dfps-textarea>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex col-md-12 pt-2">
+                    <label class="col-sm-1 col-md-1 conReqDisplay" for="action">
+                        Actions:</label>
+                    <dfps-textarea class="col-sm-10 col-md-10 col-2" id="action" formControlName="action"
+                        ariaLabel="Actions" maxLength="80"></dfps-textarea>
+                </div>
+            </div>
+            <div class="flex d-flex align-items-center ml-4">
+                <div class="mr-2">2.</div>
+                <input type="radio"
+                    id="A life or health threatening condition does not exist. (Proceed with client assessment.) "
+                    value="N" name="lifeThreateningCode" formControlName="lifeThreateningCode">
+                <label class="d-flex pt-2 ml-2"
+                    for="A life or health threatening condition does not exist. (Proceed with client assessment.) ">A
+                    life or health threatening condition does not exist. (Proceed with client assessment.) </label>
+            </div>
+        </div>
+        <dfps-collapsable-section *ngIf="displayData">
+            <accordion>
+                <accordion-group class="accordion-group pt-0" heading="Risk Review">
+                    <div class="row">
+                        <div class="col-md-6"> <b>Domain</b>
+                        </div>
+                        <div class="col-md-6"> <b>Focus of Allegation?</b>
+                        </div>
+                    </div>
+                    <div formArrayName="domains" *ngFor="let data of domainsList; let taskIndex = index">
+                        <div [formGroupName]="taskIndex">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div>{{data.controls['txtDomain'].value}}</div>
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <div>{{data.controls['cdAllegationFocus'].value}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div *ngIf="data.controls['noneFlag'].value" class="ml-4">None</div>
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                </div>
+                            </div>
+                            <div *ngIf="!data.controls['noneFlag'].value">
+                                <div formArrayName="apsCareCategoryDtoList"
+                                    *ngFor="let category of getCareCategoryList(taskIndex);let categoryIndex=index;">
+                                    <div [formGroupName]="categoryIndex">
+                                        <div formArrayName="apsCareFactorDtoList"
+                                            *ngFor="let factor of getCareFactorList(taskIndex, categoryIndex);let factorIndex=index;">
+                                            <div [formGroupName]="factorIndex" class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="ml-4"
+                                                        *ngIf="((factor.controls['cdCareFactorResponse'].value === 'M')||(factor.controls['cdCareFactorResponse'].value === 'G') ||(factor.controls['cdCareFactorResponse'].value === 'H'))">
+                                                        {{ factor.controls['txtFactor'].value.substring(3) }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div
+                                                        *ngIf="(factor.controls['cdCareFactorResponse'].value === 'M')||(factor.controls['cdCareFactorResponse'].value === 'G') ||((factor.controls['cdCareFactorResponse'].value === 'H'))">
+                                                        {{factor.controls['cdCareFactorResponse'].value === 'M' ?
+                                                        'Problem': (factor.controls['cdCareFactorResponse'].value
+                                                        ===
+                                                        'G'? 'Managed Risk' : 'Severe Problem')}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+                <div formArrayName="domains" *ngFor="let data of domainsList; let taskIndex = index;">
+                    <div [formGroupName]="taskIndex">
+                        <accordion-group class="accordion-group pt-0" heading="{{data.controls['txtDomain'].value}}">
+                            <div *ngIf="data.controls['isComplete'].value" accordion-heading class="float-right">
+                                <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                            </div>
+                            <div class="row">
+                                <div class="col-12"><b>A. Summary Assessment</b></div>
+                                <div class="row col-12">
+                                    <div class="col-md-5 ml-2">A1. Were any items in this domain mentioned in the intake
+                                        report?
+                                    </div>
+                                    <div class="col-md-5">
+                                        <dfps-radio-button _id="cdAllegationFocus" formControlName="cdAllegationFocus"
+                                            [disabled]="disableRadioBtns" name="{{getData.label}}"
+                                            arrayIndex={{taskIndex}}
+                                            ariaLabel="Were any items in this domain mentioned in the intake report? "
+                                            [data]="getData" [horizontal]="true">
+                                        </dfps-radio-button>
+                                    </div>
+                                </div>
+                                <div class="row col-12" *ngIf="data.controls['cdAllegationFocus'].value === 'N'">
+                                    <div class="col-md-12 ml-4"> A2. Based on worker observation, the client's
+                                        statements, and all other
+                                        evidence, is there reason to believe there are problems in the following aspects
+                                        of {{data.controls['txtDomain'].value}}? </div>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="data.controls['cdAllegationFocus'].value === 'N'">
+                                <div class="col-12 ml-2 mt-2" formArrayName="apsCareCategoryDtoList"
+                                    *ngFor="let category of getCareCategoryList(taskIndex);let categoryIndex=index;">
+                                    <div class="col-12 ml-2" [formGroupName]="categoryIndex">
+                                        <div class="row d-flex pt-2">
+                                            <div class="col-md-4">
+                                                <div><b>{{category.controls['txtCategory'].value}}</b></div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <dfps-radio-button _id="cdReasonBelieve" [disabled]="disableRadioBtns"
+                                                    [formControl]="category.controls['cdReasonBelieve']"
+                                                    arrayIndex={{categoryIndex}}{{taskIndex}} name="{{category.controls['txtCategory'].value}}"
+                                                    inputName="category.controls['cdReasonBelieve']"
+                                                    ariaLabel="{{category.controls.txtCategory.value}}"
+                                                    [data]="summaryAssmntOptions" [horizontal]="true">
+                                                </dfps-radio-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row"
+                                *ngIf="data.controls['cdAllegationFocus'].value === 'Y' || data.controls['reasonBelieveFlag'].value === true">
+                                <div class="col-12 pt-2"><b>B. Detailed Assessment</b></div>
+                                <div class="col-12 ml-2 mt-2" formArrayName="apsCareCategoryDtoList"
+                                    *ngFor="let category of getCareCategoryList(taskIndex);let categoryIndex=index;">
+                                    <div class="col-12 ml-2" [formGroupName]="categoryIndex">
+                                        <div class="row d-flex pt-2">
+                                            <div class="col-md-4">
+                                                <div><b>{{category.controls['txtCategory'].value}}</b></div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-2">No Problem</div>
+                                                    <div class="col-md-2">Managed Risk</div>
+                                                    <div class="col-md-2">Problem</div>
+                                                    <div *ngIf="displayCareDetails.bshowSevereColumn" class="col-md-2">
+                                                        Severe Problem</div>
+                                                    <div class="col-md-2">NA</div>
+                                                    <div class="col-md-2">UTD</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <fieldset>
+                                        <div class="row">
+                                            <div formArrayName="apsCareFactorDtoList" class="col-12 ml-2 mt-2"
+                                                *ngFor="let factor of getCareFactorList(taskIndex, categoryIndex);let factorIndex=index;">
+                                                <div [formGroupName]="factorIndex" class="col-12 ml-2">
+                                                    <div class="row d-flex pt-2">
+                                                        <div class="col-md-4">
+                                                            <div>{{factor.controls['txtFactor'].value}}</div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <dfps-radio-button _id="cdCareFactorResponse"
+                                                                arrayIndex={{categoryIndex}}{{factorIndex}}
+                                                                [disabled]="disableRadioBtns"
+                                                                [customStyle]="customStyle"
+                                                                [customStyleLabel]="customStyleLabel"
+                                                                [formControl]="factor.controls['cdCareFactorResponse']"
+                                                                name="{{factor.controls.txtFactor.value}}"
+                                                                inputName="factor.controls['cdCareFactorResponse']"
+                                                                ariaLabel="{{factor.controls.txtFactor.value}}"
+                                                                [data]="options" [horizontal]="true">
+                                                            </dfps-radio-button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </accordion-group>
+                    </div>
+                </div>
+            </accordion>
+        </dfps-collapsable-section>
+        <div class="p-2 mb-2 card-body" *ngIf="displayData  || displayCareDetails.formTagDto.docExists">
+            <div class="row">
+                <div class="d-flex col-md-6 pt-6">
+                    <dfps-button label="Narrative" _id="narrative" (click)="generateNarrative()"></dfps-button>
+                    <div *ngIf="displayCareDetails.formTagDto.docExists" class="float-right">
+                        <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card formPanel" *ngIf="displayData  || displayCareDetails.formTagDto.docExists">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Forms Launch</h2>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+    </form>
+</div>

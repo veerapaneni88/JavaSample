@@ -1,0 +1,233 @@
+<div class="container-fluid bodycolor" *ngIf="injuryDetailDisplayRes">
+    <div class="row">
+        <h1>Injury Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2">{{injuryDetailDisplayRes.stageName }}</div>
+        <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2">{{injuryDetailDisplayRes.caseId }}</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <form [formGroup]="injuryDetailForm">
+        <div class="form-group mt-5">
+            <div class="row">
+                <h2>Injury Information</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="victim" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Victim:</label>
+                <div class="col-md-3">
+                    <dfps-select _id="victim" formControlName="victim" ariaLabel="Victim is required"
+                        [dropDownValues]="injuryDetailDisplayRes?.victims">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryType" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Type of
+                    Injury:</label>
+                <div class="col-md-10 col-lg-8 col-xl-8">
+                    <dfps-multi-select id="injuryType" [multiSelectValues]="injuryDetailDisplayRes.injuryTypes"
+                        formControlName="injuryType" inputName="injuryType" [preSelectedValues]="selectedInjuryTypes"
+                        (selectedValues)="updateSelectedInjuryType($event)" [multiSelectDisabled]="isReadOnly" ariaLabel="Type of Injury">
+                    </dfps-multi-select>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="displayOtherTypeOfInjury">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="otherTypeInjury" class="col-md-2 col-form-label col-form-label-sm conReqDisplay">Other Type
+                    of Injury:</label>
+                <div class="col-md-3">
+                    <dfps-input _id="otherTypeInjury" formControlName="otherTypeInjury" ariaLabel="otherTypeInjury"
+                        maxlength="50"></dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryCausedBy" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Caused
+                    By:</label>
+                <div class="col-md-3">
+                    <dfps-select _id="injuryCausedBy" formControlName="injuryCausedBy"
+                        ariaLabel="Injury caused by is required" (change)="populateInjuryRelatedTo($event)"
+                        [dropDownValues]="injuryDetailDisplayRes.injuryCausedByPersons">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="injuryRelatedTo?.length > 0">
+            <div class="d-flex col-md-12 pt-4">
+                <label class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Related To:</label>
+                <input type="hidden" id="injuryRelatedTo">
+                <div class="col-md-10 col-lg-8 col-xl-8">
+                    <dfps-multi-select id="injuryRelatedTo" [multiSelectValues]="injuryRelatedTo"
+                        formControlName="injuryRelatedTo" inputName="injuryRelatedTo"
+                        [preSelectedValues]="selectedInjuryRelatedTo"
+                        (selectedValues)="updateSelectedInjuryRelatedTo($event)" [multiSelectDisabled]="isReadOnly" ariaLabel="Injury Related To">
+                    </dfps-multi-select>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="displayOtherInjuryRelatedTo">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="otherInjuryRelatedTo" class="col-md-2 col-form-label col-form-label-sm conReqDisplay">Other
+                    Injury Related To:</label>
+                <div class="col-md-3">
+                    <dfps-input _id="otherInjuryRelatedTo" formControlName="otherInjuryRelatedTo"
+                        ariaLabel="otherInjuryRelatedTo" maxlength="50"></dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryDate" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Date:</label>
+                <div class="col-md-2 mr-4">
+                    <dfps-date-picker _id="injuryDate" formControlName="injuryDate" placeholder="injuryDate"
+                        ariaLabel="Injury date is required field"></dfps-date-picker>
+                </div>
+                <div class="col-md-5 ml-4">
+                    <dfps-checkbox _id="approximateDate" ariaLabel="Approximate Injury Date"
+                        label="Approximate Injury Date" [formControl]="injuryDetailForm.controls['approximateDate']"
+                        inputName="approximateDate">
+                    </dfps-checkbox>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryTime" class="col-md-2 mt-4 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Time:</label>
+                <div class="col-md-2 mr-4">
+                    <dfps-time _id="injuryTime" formControlName="injuryTime" placeholder="injuryTime"
+                        ariaLabel="Injury Time is required field"></dfps-time>
+                </div>
+                <div class="col-md-3 pt-4 ml-4">
+                    <dfps-checkbox _id="approximateTime" ariaLabel="Approximate Injury Time"
+                        label="Approximate Injury Time" [formControl]="injuryDetailForm.controls['approximateTime']"
+                        inputName="approximateTime"></dfps-checkbox>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryLocation" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Location:</label>
+                <div class="col-md-3">
+                    <dfps-select _id="injuryLocation" formControlName="injuryLocation"
+                        ariaLabel="Injury location is required"
+                        [dropDownValues]="injuryDetailDisplayRes.injuryLocations">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="injuryDetermination"
+                    class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Determination:</label>
+                <div class="col-md-3">
+                    <dfps-select _id="injuryDetermination" formControlName="injuryDetermination"
+                        ariaLabel="Injury determination is required"
+                        [dropDownValues]="injuryDetailDisplayRes.injuryDeterminations">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="abuseNeglect" class="col-md-3 col-form-label col-form-label-sm requiredDisplay">Injury
+                    Related to Abuse/Neglect:</label>
+                <div class="col-md-3">
+                    <dfps-radio-button id="abuseNeglect" formControlName="abuseNeglect" name="abuseNeglect"
+                        (click)="displaySelectAllegation()" (keyright)="displaySelectAllegation()"
+                        (keyleft)="displaySelectAllegation()" (keyup)="displaySelectAllegation()"
+                        (keydown)="displaySelectAllegation()" 
+                        ariaLabel="Injury related standard to abuse/neglect is required" [data]="abuseNeglect"
+                        [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="displayAllegedPerpetrator">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="allegedPerpetrator" class="col-md-2 col-form-label col-form-label-sm conReqDisplay">Alleged
+                    Perpetrator:</label>
+                <div class="col-md-3">
+                    <dfps-select _id="allegedPerpetrator" formControlName="allegedPerpetrator" ariaLabel="Alleged
+                    Perpetrator is conditionally required"
+                        [dropDownValues]="injuryDetailDisplayRes.allegedPerpetrators">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="displayAllegationTable">
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <label for="allegedPerpetrator"
+                        class="col-md-2 col-form-label col-form-label-sm conReqDisplay">Allegation
+                      List:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <dfps-data-table 
+                        [dataTable]="allegationTable" 
+                        (handleClickEvent)="handleAllegationTableLinkRouting($event)">
+                    </dfps-data-table>
+                </div>
+            </div>
+            <div class="row" *ngIf="!isReadOnly">
+                <div class="d-flex col-md-12 justify-content-end mt-2">
+                    <dfps-button label="Select Allegation" _id="selectAllegations" (click)="selectAllegations()">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label class="col-md-2 col-form-label col-form-label-sm" for="injuryDescription">
+                    Injury Description:</label>
+                <div class="col-md-10">
+                    <dfps-textarea _id="injuryDescription" formControlName="injuryDescription" maxLength="500"
+                        ariaLabel="injuryDescription"></dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <hr aria-hidden="true">
+        </div>
+
+        <div class="row mt-2" *ngIf="!isReadOnly">
+            <div class="col-md-6  d-flex  justify-content-begin" *ngIf="showDeleteButton">
+                <dfps-button size="small" label="Delete" (click)="delete()" _id="deleteButtonId">
+                </dfps-button>
+            </div>
+
+            <div class="{{showDeleteButton ? 'col-md-6' : 'col-md-12'}} d-flex justify-content-end">
+                <dfps-button size="small" label="Save" (click)="save()">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

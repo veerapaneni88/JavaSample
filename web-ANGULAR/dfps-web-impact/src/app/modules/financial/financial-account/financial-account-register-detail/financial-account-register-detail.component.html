@@ -1,0 +1,200 @@
+<div class="container-fluid bodycolor" *ngIf="financialTransactionRes">
+    <div class="row">
+        <h1>Financial Account Register Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="requiredDisplay text-right col-md-12 mt-2">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-md-12 mt-2">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <form [formGroup]="financialAcctRegisterDetailForm">
+        <div class="row">
+            <h2>Resource Information</h2>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-start col-md-6 mt-2">
+                <div>
+                    Current Balance:
+                </div>
+                <div class="col-sm-2">
+                    {{financialTransactionRes.financialAccount.balance | currency:'USD'}}
+                </div>
+            </div>
+            <div class="d-flex justify-content-end col-md-6 mt-2">
+                <div>
+                    Current Available Balance:
+                </div>
+                <div class="col-sm-2">
+                    {{financialTransactionRes.financialAccount.availableBalance | currency:'USD'}}
+                </div>
+            </div>
+        </div>
+        <div>
+            <br>
+            <hr aria-hidden="true">
+        </div>
+        <div class="form-group mt-5">
+            <div class="row">
+                <h2>Transaction Details</h2>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="type" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Type:</label>
+                    <div class="col-sm-8" tabindex="0" *ngIf="financialTransactionRes.pageMode === 'NEW'">
+                        <dfps-radio-button id="type" formControlName="type" name="type" ariaLabel="Search Type radio button is required"
+                            [data]="types" (click)="selected()" [horizontal]="true"></dfps-radio-button>
+                    </div>
+                    <div class="col-sm-8" *ngIf="financialTransactionRes.pageMode !== 'NEW'">
+                        <dfps-radio-button id="type" formControlName="type" name="type" ariaLabel="Search Type radio button is required"
+                            [data]="types" (click)="selected()" [horizontal]="true"></dfps-radio-button>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="category"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Category:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="category" formControlName="category" ariaLabel="Category is required"
+                            [dropDownValues]="categoryDropDown" (change)="setHoldDate()">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="program == 'CPS'">
+                    <label for="accountNo" class="col-sm-4 col-form-label col-form-label-sm">Account
+                        #:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="accountNo" formControlName="accountNo" ariaLabel="Account Number"
+                        [dropDownValues]="accountNumbers">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="checkNumber" *ngIf="isCpsCheckAccount"
+                        class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Check/ACH
+                        No:</label>
+                    <label for="warrantNumber" *ngIf="!isCpsCheckAccount"
+                        class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Check Number:</label>
+                    <div class="col-sm-5">
+                        <dfps-input _id="warrantNumber" *ngIf="!isCpsCheckAccount" formControlName="warrantNumber"
+                            ariaLabel="Check Number is conditionally required" maxlength="5" (focusout)="disableAch($event)">
+                        </dfps-input>
+                        <span *ngIf="isCpsCheckAccount">{{financialTransactionRes.financialTransaction.warrantNumber}}
+                        </span>
+                    </div>
+                    <div class="col-sm-3" *ngIf="program == 'CPS'">
+                        <dfps-checkbox _id="ach" [formControl]="financialAcctRegisterDetailForm.controls['ach']"
+                            ariaLabel="ACH is conditionally required" label="ACH">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="subcategory" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Sub
+                        category:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="subcategory" formControlName="subcategory" ariaLabel="Sub category is conditionally required"
+                            [dropDownValues]="subCategoryDropDown">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="program =='CPS'">
+                    <label for="accountHoldDate" class="col-sm-4 col-form-label col-form-label-sm">Hold Date</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="accountHoldDate" formControlName="accountHoldDate" ariaLabel="Hold Date">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="transactionDate"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Transaction Date:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="transactionDate" formControlName="transactionDate"
+                            placeholder="transactionDate" ariaLabel="Transaction Date is required"></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="amount"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Amount:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="amount" formControlName="amount" currency=true ariaLabel="Amount is required"
+                        (change)=amountUpdated() maxlength="12">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label *ngIf="program === 'APS' || !isCpsCheckAccount" for="payeeName"
+                        class="col-sm-4 col-form-label col-form-label-sm">Payee:</label>
+                    <label *ngIf="program === 'CPS' && isCpsCheckAccount" for="payeeName"
+                        class="col-sm-4 col-form-label col-form-label-sm">Payee Name:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="payeeName" formControlName="payeeName" ariaLabel="Payee Name" maxlength="30">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="isCpsCheckAccount">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="invoiceId" class="col-sm-4 col-form-label col-form-label-sm">Invoice
+                        ID:</label>
+                    <div class="col-sm-6">
+                        {{financialTransactionRes.financialTransaction ? financialTransactionRes.financialTransaction.invoiceId: ''}}
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="dateIssue" class="col-sm-4 col-form-label col-form-label-sm">Date
+                        Issued:</label>
+                    <div class="col-sm-6">
+                        {{financialTransactionRes.financialTransaction ? financialTransactionRes.financialTransaction.issuedDate : ''}}
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="modifiedBy" class="col-sm-4 col-form-label col-form-label-sm">Modified
+                        By:</label>
+                    <div class="col-sm-6">
+                        {{financialTransactionRes.financialTransaction ? financialTransactionRes.financialTransaction.workerName : ''}}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-8 pt-4">
+                    <label for="description"
+                        class="col-sm-2 col-form-label col-form-label-sm conReqDisplay">Description:</label>
+                    <div class="col-sm-10">
+                        <dfps-textarea _id="description" formControlName="description" maxLength="300" ariaLabel="Description is conditionally required"></dfps-textarea>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="isCpsCheckAccount">
+                    <label for="status" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Status:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="status" formControlName="status" ariaLabel="Status is conditionally required" [blankOption] = "financialTransactionRes.disableStatus"
+                            [dropDownValues]="financialTransactionRes.status">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 d-flex justify-content-start mt-3">
+                    <dfps-button add-button size="small" label="Delete" (click)="delete()" *ngIf="displayDeleteButton">
+                    </dfps-button>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end mt-3">
+                    <dfps-button add-button size="small" label="Save" (click)="save()" *ngIf="displaySaveButton">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,82 @@
+<div class="container-fluid bodycolor" *ngIf="unitRateDetails">
+    <div class="row">
+        <h1>Unit Rate Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Contract #:
+            {{unitRateDetails.contractNumber ? unitRateDetails.contractNumber : '' }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Agency Acct ID :
+            {{unitRateDetails.contractId?unitRateDetails.contractId : '' }}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Period : {{unitRateDetails.period?unitRateDetails.period : '' }}</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <div #errors>
+                <dfps-form-validation [validationErrors]="validationErrors" [shouldCheckDirty]="true"
+                    [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            </div>
+            <form [formGroup]="unitRateDetailsForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4 align-items-center">
+                            <label for="version" class="col-form-label col-form-label-sm col-sm-4">
+                                Version:
+                            </label>
+                            <span id="version" class="col-sm-9">{{unitRateDetails.version}} </span>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center">
+                            <label for="lineItem" class="col-form-label col-form-label-sm col-sm-4">
+                                CSLI:
+                            </label>
+                            <span id="lineItem" class="col-sm-9">{{unitRateDetails.lineItem}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="unitRateAmount" class="col-sm-4 col-form-label col-form-label-sm">Line Item
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="unitRateAmount" ariaLabel="Line Item Amount" formControlName="unitRateAmount" currency=true
+                                    (change)=formInputUpdated($event) maxlength=11>
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" >
+                            <label for="unitRateUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Amount Used:
+                            </label>
+                            <span id="unitRateUsedAmount"
+                                class="col-sm-9">{{unitRateDetails.unitRateUsedAmount?(unitRateDetails.unitRateUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4" >
+                            <label for="totalUnits" class="col-sm-4 col-form-label col-form-label-sm">Total
+                                Units:</label>
+                            <span *ngIf='!totalVal' class="col-sm-9">{{unitRateDetails.totalUnits}}</span>
+                            <span *ngIf='totalVal' class="col-sm-9">{{totalVal}}</span>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center">
+                            <label for="usedUnits" class="col-form-label col-form-label-sm col-sm-4">
+                                Used Units:
+                            </label>
+                            <span id="usedUnits" class="col-sm-9">{{unitRateDetails.usedUnits}}</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" aria-hidden="true" id="totalUnits" formControlName="totalUnits">
+                <div class="d-flex justify-content-end w-100 mt-3" *ngIf="saveURTInfo">
+                    <dfps-button label="Save" _id="crmSave" (click)="saveCRMDetails()"></dfps-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

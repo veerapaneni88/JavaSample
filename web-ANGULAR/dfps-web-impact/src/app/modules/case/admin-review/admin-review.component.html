@@ -1,0 +1,339 @@
+<div class="alert alert-danger" *ngIf="errorNoDataMessage">
+    <p>Attention:</p>
+    <div>
+        {{errorNoDataMessage}}
+    </div>
+</div>
+
+<div class="container-fluid bodycolor" *ngIf="displayAdminReviewInformation">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="displayAdminReviewInformation?.attentionMessages && !hideAttentionMessage">
+        <p>Attention:</p>
+        <div *ngIf="displayAdminReviewInformation?.attentionMessages">
+            <ul *ngFor="let message of displayAdminReviewInformation?.attentionMessages">
+                <li>{{message}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <h1 aria-level="1">Administrative Review and Appeal</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+
+    <div class="row pl-3">
+        <div class="text-left col-3 col-form-label pt-3">
+            <b> Stage Name:</b>
+        </div>
+        <div class="text-left col-3 pt-3">
+            {{displayAdminReviewInformation.adminReviewDto.stageName}}
+        </div>
+        <div class="requiredDisplay col-6 text-right">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row pl-3">
+        <div class="text-left col-3 col-form-label pt-3">
+            <b> Case Id:</b>
+        </div>
+        <div class="text-left col-3 pt-3">
+            {{displayAdminReviewInformation.adminReviewDto.caseId}}
+        </div>
+        <div class="conReqDisplay text-right  col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <form [formGroup]="adminReviewForm" class="mt-2">
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div class="col-md-12 row pt-4">
+            <h2>Review and Appeal</h2>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <b>Person Reviewed:</b>
+            </div>
+            <div class="text-left col-3 pt-3">
+                {{displayAdminReviewInformation?.adminReviewDto?.personReviewed}}
+            </div>
+            <div class="text-left col-3 pt-3">
+                <div for="originalinvstage" class="col-md-5 col-form-label col-form-label-sm">
+                    <b>Original
+                        INV
+                        Stage:</b>
+                </div>
+            </div>
+            <div class="text-left col-3 pt-3">
+                {{displayAdminReviewInformation?.adminReviewDto?.relatedStageId}}
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="type" class="col-md-5 col-form-label col-form-label-sm requiredDisplay">
+                    Type:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-select _id="type" formControlName="type" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.type' ariaLabel="type is required">
+                </dfps-select>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <label for="status" class="col-md-5 col-form-label col-form-label-sm requiredDisplay">
+                    Status:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-select _id="status" formControlName="status" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.status' placeholder="status"
+                    ariaLabel="status is required"></dfps-select>
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="authority" class="col-md-5 col-form-label col-form-label-sm requiredDisplay">
+                    Authority:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-select _id="authority" formControlName="authority" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.authority' ariaLabel="authority is required" (change)="authorityChange()">
+                </dfps-select>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <label for="appealRequestDate" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Request
+                    Received Date:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="appealRequestDate" formControlName="appealRequestDate"
+                    (ngModelChange)="updateConductDate()">
+                </dfps-date-picker>
+            </div>
+        </div>
+        <div class="row pl-3" *ngIf="adminReviewForm.controls['authority'].value === '080'">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="otherAuthority" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Other Authority:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-textarea _id="otherAuthority" formControlName="otherAuthority" maxLength="40"
+                    ariaLabel="other authority" >
+                </dfps-textarea>
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label [ngClass]="{'requiredDisplay': displayAdminReviewInformation.program === 'AFC'}"
+                    for="requestedBy" class="col-md-5 col-form-label col-form-label-sm">
+                    Requested By:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-select _id="requestedBy" formControlName="requestedBy" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.requestedBy' (change) = 'requestedByChange()'>
+                </dfps-select>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <label for="reviewDate" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Review Date:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="reviewDate" formControlName="reviewDate">
+                </dfps-date-picker>
+            </div>
+        </div>
+
+        <div class="row pl-3" *ngIf="adminReviewForm.controls['requestedBy'].value === 'XXX' ">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="otherRequestedBy" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Other Requested By:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-textarea _id="otherRequestedBy" formControlName="otherRequestedBy" maxLength="40" rows="5"
+                    ariaLabel="other Requested By">
+                </dfps-textarea>
+            </div>
+
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label [ngClass]="{'requiredDisplay': displayAdminReviewInformation.program === 'AFC'}"
+                    for="requestedByName" class="col-md-5 col-form-label col-form-label-sm">
+                    Requester Name:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-input _id="requestedByName" formControlName="requestedByName">
+                </dfps-input>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <label for="dueDate">
+                    Conduct Review By:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="dueDate" formControlName="dueDate">
+                </dfps-date-picker>
+            </div>
+        </div>
+
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div class="col-md-12 row pt-4">
+            <h4>Result</h4>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="result" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Result:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-select _id="result" formControlName="result" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.result' (change)="validateResultSP()">
+                </dfps-select>
+            </div>
+            <div class="text-left col-3 col-form-label pt-3" *ngIf="adminReviewForm.controls['result'].value === '090' ">
+                <label for="delayedReason" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Delayed Reason:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3" *ngIf="adminReviewForm.controls['result'].value === '090' ">
+                <dfps-select _id="delayedReason" formControlName="delayedReason" [blankOption]="true"
+                    [dropDownValues]='displayAdminReviewInformation?.delayedReason' (change) = 'delayedReasonByChange()'>
+                </dfps-select>
+            </div>
+        </div>
+        <div class="row pl-3" *ngIf="adminReviewForm.controls['result'].value === '090' && adminReviewForm.controls['delayedReason'].value === '040' ">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="otherDelayedReason" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Other Delayed Reason:
+                </label>
+            </div>
+            <div class="text-left col-9 pt-3">
+                <dfps-textarea _id="otherDelayedReason" formControlName="otherDelayedReason" maxLength="80" rows="5"
+                    ariaLabel="other Delayed Reason">
+                </dfps-textarea>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="notificationDate" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                    Reviewed Person Notifed On:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="notificationDate" formControlName="notificationDate">
+                </dfps-date-picker>
+            </div>
+            <div class="text-left col-3 pt-3" *ngIf="displayAdminReviewInformation.stageCode === 'ARI'">
+                <dfps-checkbox _id="changeRoleToSp" ariaLabel="change Role to Sustained Perpetrator"
+                    label="Change Role to Sustained Perpetrator"
+                    [formControl]="adminReviewForm.controls['changeRoleToSp']" inputName="changeRoleToSp"
+                    [disabled]="displayAdminReviewInformation?.disableChangeSecurity" (click)="validateResultSP()">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div class="col-md-12 row pt-4">
+            <h4>Release Process</h4>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 pt-3">
+                <dfps-checkbox _id="emergencyRelease" ariaLabel="Emergency Release" label="Emergency Release"
+                    [formControl]="adminReviewForm.controls['emergencyRelease']" inputName="emergencyRelease">
+                </dfps-checkbox>
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="emergencyReleaseDate">
+                    Release Date:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="emergencyReleaseDate" formControlName="emergencyReleaseDate">
+                </dfps-date-picker>
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="text-left col-3 col-form-label pt-3">
+                <label for="hearingDate">
+                    Hearing Date:
+                </label>
+            </div>
+            <div class="text-left col-3 pt-3">
+                <dfps-date-picker _id="hearingDate" formControlName="hearingDate"></dfps-date-picker>
+            </div>
+        </div>
+
+        <div *ngIf="!hidesavesection" class="row d-flex justify-content-end">
+            <div class="col d-flex justify-content-end">
+                <dfps-button _id="saveandclose" (click)="submit()" label="Save and Close">
+                </dfps-button>
+            </div>
+            <div class="col-md-1 d-flex justify-content-end">
+                <dfps-button (click)="save()" label="Save"></dfps-button>
+            </div>
+        </div>
+        <div class="row" *ngIf="!this.displayAdminReviewInformation.eventApproved || this.displayAdminReviewInformation.blobExists">
+            <div class="col-md-1 d-flex justify-content-begin">
+                <dfps-narrative _id="narrative" label="Narrative" [narrativeData]="getNarrative()" createEvent='true'>
+                </dfps-narrative>
+                <div *ngIf="displayAdminReviewInformation.blobExists">
+                    <span class="fa fa-check ml-1 mt-2"></span>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row" *ngIf="showPersonList">
+            <div class="col-md-12">
+                <h2>Person List</h2>
+            </div>
+            <hr>
+            <div class="col-md-12">
+                <dfps-data-table [dataTable]="personTableData" (selectedData)="getSelectedPerson($event)">
+                </dfps-data-table>
+                <div class="row justify-content-end">
+                    <dfps-button (click)="continue()" label="Continue"></dfps-button>
+                </div>
+            </div>
+        </div>
+        <div class="card formPanel" *ngIf="displayAdminReviewInformation.adminReviewDto.status == '040'">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Forms Launch</h2>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-7 pt-4 pb-4">
+                    <dfps-form-launch formId="formsLaunch" (change)="getSelectedlaunchValue($event)"
+                        buttonId="formLaunch" [createEvent]='true' [formValues]='formValues'>
+                    </dfps-form-launch>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

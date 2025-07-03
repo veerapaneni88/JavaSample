@@ -1,0 +1,46 @@
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: #212121;
+}
+
+h3 {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: #212121;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 30px;
+}
+
+.leftPadThirdLevel {
+    padding-left: 50px;
+}
+
+.rowPadding{
+    padding-top: 16px !important;
+}
+.noMarginBottom {
+    margin-bottom: 0px;
+}
+
+.boldBody{
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: #161616;
+    word-wrap: break-word;
+}
+.modal-footer {
+    padding: 15px;
+    text-align: left;
+    border-top: 1px solid #e5e5e5;
+}
+
+.errorText {
+    color: #cd0000;
+}

@@ -1,0 +1,47 @@
+<div class="container-fluid bodycolor" *ngIf = "resourceHistoryResponse">
+    <div class="row" >
+        <h1 *ngIf="isFadHomeHistory">F/A Home History</h1>
+        <h1 *ngIf="!isFadHomeHistory">Home History</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <form [formGroup]="resourceHistoryForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name #: {{resourceHistoryResponse.caseName}}</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource ID : {{resourceHistoryResponse.resourceId}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <dfps-data-table [dataTable]="resourceHistoryDataTable" (selectedData)="getSelectedResourceHistory($event)" (handleClickEvent)="handleRouting($event)"></dfps-data-table>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="justify-content-start mr-auto p-2" *ngIf="isEditMode()">
+                <dfps-button add-button size="small" 
+                label="Delete" tabindex="0"
+                    (click)="deleteResourceHistory()" _id="deleteButtonId">
+                </dfps-button>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div class="card formPanel" *ngIf="resourceHistoryResponse.resourceHistory && showForm">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Reports</h2>
+            </div>
+            <div class="p-2 mb-2 card-body">
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-6">
+                        <dfps-report-launch reportId="reportsLaunch" [reportsValues]='reports'
+                        buttonId='reportLaunch' [createEvent]='true'>
+                        </dfps-report-launch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>-

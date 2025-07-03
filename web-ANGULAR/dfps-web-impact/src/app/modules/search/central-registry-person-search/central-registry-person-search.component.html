@@ -1,0 +1,87 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Central Registry Person Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right mt-2 col-12" tabindex="0">
+            <span class="sr-only">Double dagger is </span>one or more fields required for search
+        </div>
+    </div>
+    <form [formGroup]="centralRegistryPersonSearchForm">
+        <div class="form-group">
+            <div class="row pl-4">Enter your search Criteria below:</div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="firstName" class="col-sm-4 col-form-label col-form-label-sm">First Name:</label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="firstName" formControlName="firstName" ariaLabel="First Name" maxlength="12"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="lastName" class="col-sm-4 col-form-label col-form-label-sm">Last Name:</label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="lastName" formControlName="lastName" ariaLabel="Last Name" maxlength="22"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="dob" class="col-sm-4 col-form-label col-form-label-sm">DOB:</label>
+                    <div class="col-sm-8">
+                        <dfps-date-picker _id="dob" formControlName="dob" placeholder="dob"
+                            ariaLabel="Date of Birth" [maxDate]="maxDate" [minDate]="minDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="ssn" class="col-sm-4 col-form-label col-form-label-sm">SSN:</label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="ssn" formControlName="ssn" ariaLabel="SSN" maxlength="11"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="requestId" class="col-sm-4 col-form-label col-form-label-sm">Request ID:</label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="requestId" formControlName="requestId" ariaLabel="Request ID"
+                            maxlength="16"></dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="paymentGroupCategory" class="col-sm-4 col-form-label col-form-label-sm">Search
+                        Type:</label>
+                    <dfps-radio-button formControlName="searchType" name="searchType"
+                        ariaLabel="Search Type radio button" [data]="searchType" [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 justify-content-end pt-4">
+                    <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <accordion>
+        <accordion-group class="accordion-group pt-2" heading="Search Results" [isOpen]="isSearch" *ngIf="displaySearchResults">
+            <div class="row">
+                <div class="col-md-12 pt-12">
+                    <dfps-data-table-lazyload class="data-table dataTableConfig" [dataTable]="dataTable"
+                        [scrollable]="true"  [currentPage]="currentPageNumber"
+                        [sortOrder] = "sortOrder" [sortField] = "sortField"
+                        (handleClickEvent)="handleRouting($event)" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                        (lazyLoadEvent)="loadDataLazy($event)">
+                    </dfps-data-table-lazyload>
+                </div>
+            </div>
+        </accordion-group>
+    </accordion>
+</div>

@@ -1,0 +1,214 @@
+<div class="container-fluid bodycolor" *ngIf="displayStaffSearchResponse">
+  <div class="row resource-search-heading">
+    <h1 aria-level="1">Staff Search</h1>
+  </div>
+  <div>
+    <hr />
+  </div>
+  <div class="row">
+    <div class="col-sm-12 pt-0">
+      <div class="pl-3 pt-2">
+        <dfps-form-validation [validationErrors]="validationErrors" [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+      </div>
+      <form [formGroup]="staffSearchForm">
+        <div class="form-group">
+          <div class="row resource-search-left-pad-second-level ml-0">
+            <h2 class="resource-search-h2" aria-level="2">
+              Basic Search
+            </h2>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding"  tabindex="0">
+            <div class="d-flex flex-row">
+              <label for="searchType" class="pl-3 pr-2"  style="outline-color: white;" ariaLabel="Search Type radio button">Search
+                Type:</label>
+              <dfps-radio-button formControlName="searchType" name="searchTypeData" ariaLabel="Search Type radio button"
+                [data]="searchTypeData" [horizontal]="true"></dfps-radio-button>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="first" class="col-sm-12 col-md-4">First:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="first" formControlName="first" ariaLabel="First" maxlength="12"></dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="middle" class="col-sm-12 col-md-4">Middle:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="middle" formControlName="middle" ariaLabel="Middle" maxlength="12"></dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="last" class="col-sm-12 col-md-4">Last:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="last" formControlName="last" ariaLabel="Last" maxlength="22"></dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="personId" class="col-sm-12 col-md-4">Person ID:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="personId" formControlName="personId" ariaLabel="Person ID" maxlength="10"
+                  (keyup)="personIdSSNChanged($event)" (blur)="personIdSSNChanged($event)"></dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="ssn" class="col-sm-12 col-md-4">SSN:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="ssn" formControlName="ssn" ariaLabel="SSN" maxlength="11"
+                  (keyup)="personIdSSNChanged($event)" (blur)="personIdSSNChanged($event)"></dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="otherIdType" class="col-sm-12 col-md-4">Other ID Type:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-select _id="otherIdType" formControlName="otherIdType"
+                  [dropDownValues]="displayStaffSearchResponse?.otherIdTypes" ariaLabel="Other ID Type"></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-4">
+              <label for="otherId" class="col-sm-12 col-md-4">Other ID:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="otherId" formControlName="otherId" ariaLabel="Ohter ID" maxlength="11"></dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex flex-row">
+              <label for="Status" class="pl-3 pr-2 pt-1" style="outline-color: white;">Status:</label>
+              <dfps-radio-button _id="status" class="pt-1" formControlName="status" name="status" ariaLabel=" Status radio button"
+                [data]="statusData" [horizontal]="true"></dfps-radio-button>
+              <dfps-checkbox id="externalStaff" label="External Staff" class="pl-3"
+                [formControl]="staffSearchForm.controls.externalStaff" tabindex="-1" ariaLabel="External Staff">
+              </dfps-checkbox>
+            </div>
+          </div>
+          <div class="resource-search-left-pad-second-level resource-search-row-padding">
+            <hr />
+          </div>
+          <div class="row resource-search-left-pad-second-level ml-0">
+            <h2 class="resource-search-h2" aria-level="2">
+              Advance Search
+            </h2>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-3">
+              <label for="program" class="col-sm-12 col-md-4">Program:</label>
+              <div class="col-sm-6 col-md-5 pl-0">
+                <dfps-select _id="program" formControlName="program"
+                  [dropDownValues]="displayStaffSearchResponse?.programs" ariaLabel=" Program "></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-6">
+              <label for="regDiv" class="col-sm-12 col-md-3">Reg/Div:</label>
+              <div class="col-sm-6 col-md-9 pl-0">
+                <dfps-select _id="regDiv" formControlName="regDiv"
+                  [dropDownValues]="displayStaffSearchResponse?.regions" [codeDecode]="true" ariaLabel=" Region ">
+                </dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-3">
+              <label for="unit" class="col-sm-12 col-md-5">Unit:</label>
+              <div class="col-sm-6 col-md-5 pl-0">
+                <dfps-input _id="unit" maxlength=2 formControlName="unit" ariaLabel=" Unit "></dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-3">
+              <label for="county" class="col-sm-12 col-md-4">County:</label>
+              <div class="col-sm-6 col-md-7 pl-0">
+                <dfps-select _id="county" formControlName="county"
+                  [dropDownValues]="displayStaffSearchResponse?.counties" ariaLabel=" County "></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-6">
+              <label for="officeCity" class="col-sm-12 col-md-3">Office City:</label>
+              <div class="col-sm-6 col-md-6 pl-0">
+                <dfps-input _id="officeCity" formControlName="officeCity" ariaLabel=" office city " maxlength="20">
+                </dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-3">
+              <label for="mailCode" class="col-sm-12 col-md-5">Mail Code:</label>
+              <div class="col-sm-6 col-md-5 pl-0">
+                <dfps-input _id="mailCode" formControlName="mailCode" ariaLabel=" Mail code " maxlength="4">
+                </dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-7 col-lg-5">
+              <label for="unitSpecialization" class="col-sm-12 col-md-4 ">Unit Specialization:</label>
+              <div class="col-sm-6 col-md-8 pl-0">
+                <dfps-select _id="unitSpecialization" formControlName="unitSpecialization"
+                  [dropDownValues]="displayStaffSearchResponse?.unitSpecializations" ariaLabel=" Unit Specialization ">
+                </dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-5 col-lg-4">
+              <label for="externalStaffType" class="col-sm-12 col-md-5">External Staff Type:</label>
+              <div class="col-sm-6 col-md-7 pl-0">
+                <dfps-select _id="externalStaffType" formControlName="externalStaffType"
+                  [dropDownValues]="displayStaffSearchResponse?.externalStaffTypes" ariaLabel=" External Staff Type ">
+                </dfps-select>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-sm-12 col-md-7 col-lg-5">
+              <label for="organizationName" class="col-sm-12 col-md-4">Organization Name:</label>
+              <div class="col-sm-6 pl-0">
+                <dfps-input _id="organizationName" formControlName="organizationName" maxlength="100"
+                  ariaLabel=" Organization Name ">
+                </dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-sm-12 col-md-5 col-lg-4">
+              <label for="organizationEin" class="col-sm-12 col-md-5">Organization EIN:</label>
+              <div class="col-sm-6 col-md-5 pl-0">
+                <dfps-input _id="organizationEin" formControlName="organizationEin" maxlength="9"
+                  ariaLabel=" Organization EIN ">
+                </dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="resource-search-left-pad-second-level resource-search-row-padding">
+            <hr />
+          </div>
+          <div class="row">  
+            <div class="d-flex col-md-1 justify-content-start pt-4" *ngIf="displayCancel">
+              <dfps-button label="Cancel" _id="staffCancel" (click)="cancel()"></dfps-button>   
+            </div>
+            <div class="d-flex col-md-10 justify-content-end pt-4">
+              <dfps-button _id="staffSearchButton" label="Search" (click)="searchStaff()">Search</dfps-button>
+            </div>
+            <div class="d-flex col-md-1 justify-content-end pt-4">
+              <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="showStaffSearchTable">
+          <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+          </div>
+      </ng-container>
+      </form>
+    </div>
+  </div>
+  <div class="row" *ngIf="showStaffSearchTable">
+    <div class="col-md-12 pt-12">
+      <div class="resource-search-left-pad-second-level ml-0">
+        <dfps-data-table-lazyload class="data-table" [dataTable]="staffSearchDataTable"
+          (lazyLoadEvent)="loadDataLazy($event)" [allowRowSelection]="" (selectRowEvent)="getSelectedStaff($event);">
+        </dfps-data-table-lazyload>
+      </div>
+      <div class="d-flex justify-content-end w-100 mt-4">
+        <dfps-button label="Continue" _id="staffContinue" (click)="continue()"></dfps-button>
+      </div>
+    </div>
+  </div>
+</div>

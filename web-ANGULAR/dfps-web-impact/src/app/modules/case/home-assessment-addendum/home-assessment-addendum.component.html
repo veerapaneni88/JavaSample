@@ -1,0 +1,33 @@
+<div class="container-fluid bodycolor" *ngIf="displayHomeAssessmentListAdd">
+    <div class="row">
+        <h1>Home Assessment/Addendum Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <form [formGroup]="homeAddendumForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Stage Name: {{displayHomeAssessmentListAdd.stageName}}</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Stage ID: {{displayHomeAssessmentListAdd.stageId}}</div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Home Assessment/Addendum//Kinship Safety Evaluation</h2>
+            <div class="row pl-4 pt-4">
+                <div class="d-flex flex-row col-12">
+                    <dfps-radio-button _id="addendumDetail" formControlName="addendumDetail" name="addendumDetail"
+                        ariaLabel="Addendum Detail Radio Button" [data]="addendumDetailTypes" [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 mb-2 card-body">
+            <div class="row">
+                <div class="d-flex col-md-6 pt-6">
+                    <dfps-button label="Document" _id="narrative" (click)="generateNarrative()"></dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

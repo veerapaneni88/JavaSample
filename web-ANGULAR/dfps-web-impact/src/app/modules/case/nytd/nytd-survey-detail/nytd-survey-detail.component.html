@@ -1,0 +1,690 @@
+<div class="container-fluid bodycolor"  *ngIf="nytdSurveyDetailResponse">
+    <div class="row pl-4">
+        <h1>NYTD Survey - Staff</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+
+    <form [formGroup]="nytdSurveyDetailForm" *ngIf="nytdSurveyDetailResponse.nytdSurveyDetail">
+        <div class="row">
+            <div class="text-left col-3 col-md-4 col-lg-3 col-xl-2 col-xxl-3 mt-2 pl-4"><b>Stage Name:</b></div>
+            <div class="col-4 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 pl-2">{{nytdSurveyDetailResponse.stageName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-5 col-md-4 col-lg-5 col-xl-6 col-xxl-5" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-3 col-md-4 col-lg-3 col-xl-2 col-xxl-3 mt-2 pl-4"><b>Stage ID:</b></div>
+            <div class="col-4 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 pl-2">{{nytdSurveyDetailResponse.nytdPopulationList.stage.stageId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-5 col-md-4 col-lg-5 col-xl-6 col-xxl-5" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <div class="row pl-4">
+                <h2>NYTD Survey Information</h2>
+            </div>
+        </div>
+
+        <div>
+            <div>
+
+                <div class="row pl-3">
+                    <div class="d-flex col-md-8">
+                        <label class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Survey Date Due:</label>
+                        <div class="col-sm-4">
+                            {{nytdSurveyDetailResponse.nytdSurveyDetail.nytdSurveyHeader.dtSurveyDue}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row pl-3">
+                    <div class="d-flex col-md-8 pt-2">
+                        <label tabindex="0" for="dtYouthResponded" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Date Youth Responded:</label>
+                        <div class="col-sm-4">
+                            <dfps-date-picker _id="dtYouthResponded"
+                                    formControlName="dtYouthResponded" name="dtYouthResponded"
+                                    ariaLabel="Date Youth Responded" [maxDate]="maxDate" [minDate]="minDate">
+                            </dfps-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row pl-3">
+                    <div class="d-flex col-md-8 pt-2">
+                        <label tabindex="0" for="cdMethodReceived" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Method:</label>
+                        <div class="col-sm-4">
+                            <dfps-select _id="cdMethodReceived" ariaLabel="cdMethodReceived" formControlName="cdMethodReceived"
+                            (change)="methodUpdated()" [dropDownValues]="nytdSurveyDetailResponse.contactMethod">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row pl-3">
+                    <div class="d-flex col-md-8 pt-2">
+                        <label tabindex="0" for="nbrInterviewMinutes" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Interview Length (minutes):</label>
+                        <div class="col-sm-4">
+                            <dfps-input _id="nbrInterviewMinutes" ariaLabel="Interview Length"
+                                maxlength="3" formControlName="nbrInterviewMinutes">
+                            </dfps-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row pl-3">
+                    <div class="d-flex col-md-8 pt-2">
+                        <label tabindex="0" for="indSpecAccomodation" class="col-sm-4 col-form-label col-form-label-sm">Special Accommodation:</label>
+                        <div class="col-sm-4">
+                            <dfps-checkbox _id="indSpecAccomodation" ariaLabel="Special Accommodation"
+                                [formControl]="nytdSurveyDetailForm.controls['indSpecAccomodation']">
+                            </dfps-checkbox>
+                       </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+
+            <div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdFullEmploy" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >1. Currently are you employed full-time?
+                            <button type="button" tabindex="0"  class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q1hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q1hlp" role="tooltip">'Full-time' means working at least 35 hours per week at one or multiple jobs.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="pl-4 pt-2"
+                            id="cdFullEmploy"
+                            formControlName="cdFullEmploy"
+                            name="cdFullEmploy"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdPartEmploy" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >2. Currently are you employed part-time?
+                            <button tabindex="0" type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q2hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q2hlp" role="tooltip">'Part-time' means working at least 1-34 hours per week at one or multiple jobs</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="pl-4 pt-2"
+                            id="cdPartEmploy"
+                            formControlName="cdPartEmploy"
+                            name="cdPartEmploy"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdSkillsEmploy" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >3. In the past year, did you complete an apprenticeship, internship, or other on-the-job training,
+                            either paid or unpaid?
+                            <button tabindex="0" type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q3hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q3hlp" role="tooltip">This means apprenticeships, internships, or other on-the-job trainings, either paid or unpaid,
+                                    that helped the youth acquire employment-related skills (which can include specific trade skills such as
+                                    carpentry or auto mechanics, or office skills such as word processing or use of office equipment).</div>
+                                </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="pl-4 pt-2"
+                            id="cdSkillsEmploy"
+                            formControlName="cdSkillsEmploy"
+                            name="cdSkillsEmploy"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdSocialSecurity" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >4. Currently are you receiving social security payments (Supplemental Security Income (SSI), Social
+                            Security Disability Insurance (SSDI), or dependent's payments)?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q4hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q4hlp" role="tooltip">These are payments from the government to meet basic needs for food, clothing, and shelter of a
+                                    person with a disability. A youth may be receiving these payments because of a parent or
+                                    guardian's disability, rather than his/her own.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdSocialSecurity"
+                            formControlName="cdSocialSecurity"
+                            name="cdSocialSecurity"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdEducAid" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >5. Currently are you using a scholarship, grant, stipend, student loan, voucher, or other type of
+                            educational financial aid to cover any educational expenses?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q5hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q5hlp" role="tooltip">Scholarships, grants, and stipends are funds awarded for
+                                    spending on expenses related to gaining an education. 'Student loan' means a government-guaranteed,
+                                    low-interest loan for students in post-secondary education.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdEducAid"
+                            formControlName="cdEducAid"
+                            name="cdEducAid"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showWellfareSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdAssistFin" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >5A. Currently are you receiving ongoing welfare payments from the government to support your
+                            basic needs?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q5ahlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q5ahlp" role="tooltip">This refers to ongoing welfare payments from the government to support
+                                    your basic needs. Do not consider payments or subsidies for specific purposes,
+                                    such as unemployment insurance, child care subsidies education assistance,
+                                    food stamps or housing assistance in this category.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdAssistFin"
+                            formControlName="cdAssistFin"
+                            name="cdAssistFin"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showWellfareSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdAssistFood" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >5B. Currently are you receiving public food assistance?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q5bhlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q5bhlp" role="tooltip">Public food assistance includes food stamps, which are government-issued
+                                    coupons of debit cards that recipients can use to buy eligible food at authorized stores.
+                                    Public food assistance also includes assistance from the Women, Infants and
+                                    Children (WIC) program.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdAssistFood"
+                            formControlName="cdAssistFood"
+                            name="cdAssistFood"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showWellfareSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdAssistHousing" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >5C. Currently are you receiving any sort of housing assistance from the government, such as living
+                            in public housing or receiving a housing voucher?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q5chlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q5chlp" role="tooltip">Public housing is rental housing provided by the government to keep rents
+                                    affordable for eligible individuals and families, and a housing voucher allows
+                                    participants to choose their own housing while the government pays part of the housing costs.
+                                    This does not include payments from the child welfare agency for room and board payments.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdAssistHousing"
+                            formControlName="cdAssistHousing"
+                            name="cdAssistHousing"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdOtherFinAid" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >6. Currently are you receiving any periodic and/or significant financial resources or support from
+                            another source not previously indicated and excluding paid employment?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q6hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q6hlp" role="tooltip">This means periodic and/or significant financial support from a spouse or
+                                    family member (biological, foster or adoptive), child support that the youth receives or
+                                    funds from a legal settlement. This does not include occasional gifts, such as birthday or
+                                    graduation checks or small donations of food or personal incidentals, child care subsidies,
+                                    child support for a youth's child or other financial help that does not benefit the
+                                    youth directly in supporting himself or herself.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdOtherFinAid"
+                            formControlName="cdOtherFinAid"
+                            name="cdOtherFinAid"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdEducCert" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >7. What is the highest educational degree or certification that you have received?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q7hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q7hlp" role="tooltip">'Vocational certificate' means a document stating that a person has
+                                    received education or training that qualifies him or her for a particular job
+                                    e.g., auto mechanics or cosmetology. 'Vocational license' means a document that indicates
+                                    that the State or local government recognizes an individual as a qualified professional
+                                    in a particular trade or business. An Associate's degree is generally a two-year degree
+                                    from a community college, and a Bachelor's degree is a four-year degree from a college or university.
+                                    'Higher degree' indicates a graduate degree, such as a Masters or Doctorate degree.
+                                    'None of the above' means that the youth has not received any of the above educational certifications.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-8 pt-2 pl-4">
+                        <dfps-radio-button
+                            id="cdEducCert"
+                            formControlName="cdEducCert"
+                            name="cdEducCert"
+                            [data]="highestDegree"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdEducEnroll" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >8. Currently are you enrolled in and attending high school, GED classes, post-high school
+                            vocational training, or college?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q8hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q8hlp" role="tooltip">This means both enrolled in and attending high school, GED classes, or
+                                    postsecondary vocational training or college. A youth is still considered enrolled in
+                                    and attending school if the youth would otherwise be enrolled in and attending a school
+                                    that is currently out of session (e.g., Spring break, summer vacation, etc.).</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdEducEnroll"
+                            formControlName="cdEducEnroll"
+                            name="cdEducEnroll"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdConnAdult" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >9. Currently is there at least one adult in your life, other than your caseworker, to whom you can go
+                            for advice or emotional support?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q9hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q9hlp" role="tooltip">This refers to an adult who the youth can go to for advice or guidance
+                                    when there is a decision to make or a problem to solve, or for companionship to share
+                                    personal achievements. This can include, but is not limited to, adult relatives, parents or
+                                    foster parents. The definition excludes spouses, partners, boyfriends or girlfriends and
+                                    current caseworkers. The adult must be easily accessible to the youth,
+                                    either by telephone or in person.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdConnAdult"
+                            formControlName="cdConnAdult"
+                            name="cdConnAdult"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdHomeless" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >{{q10Label}}
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q10hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q10hlp" role="tooltip">'Homeless' means that the youth had no regular or adequate place to live.
+                                    This includes living in a car, or on the street, or staying in a homeless or
+                                    other temporary shelter.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdHomeless"
+                            formControlName="cdHomeless"
+                            name="cdHomeless"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdSubstanceAbuse" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >{{q11Label}}
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q11hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q11hlp" role="tooltip">This includes either self-referring or being referred by a social
+                                    worker, school staff, physician, mental health worker, foster parent, or other adult
+                                    for an alcohol or drug abuse assessment or counseling. Alcohol or drug abuse assessment
+                                    is a process designed to determine if someone has a problem with alcohol or drug use.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdSubstanceAbuse"
+                            formControlName="cdSubstanceAbuse"
+                            name="cdSubstanceAbuse"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdIncarceration" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >{{q12Label}}
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q12hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q12hlp" role="tooltip">This means that the youth was confined in a jail, prison, correctional facility, or
+                                    juvenile or community detention facility in connection with a crime (misdemeanor or felony)
+                                    allegedly committed by the youth.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdIncarceration"
+                            formControlName="cdIncarceration"
+                            name="cdIncarceration"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdChildren" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >{{q13Label}}
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q13hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q13hlp" role="tooltip">This means giving birth to or fathering at least one child that was born. If males do not know, answer 'No.'</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdChildren"
+                            formControlName="cdChildren"
+                            name="cdChildren"
+                            [data]="yesNoDeclined"
+                            (click)="updateChildBirthQues()"
+                            (keyleft)="updateChildBirthQues()"
+                            (keyright)="updateChildBirthQues()"
+                            (keyup)="updateChildBirthQues()"
+                            (keydown)="updateChildBirthQues()"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showChildBirthSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdBirthMarriage" class="col-10 col-form-label col-form-label-sm  conReqDisplay"
+                            >13A. If you responded yes to the previous question, were you married to the child's other parent at the time each child was born?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q13ahlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q13ahlp" role="tooltip">This means that when every child was born the youth was married to the other parent of the child.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdBirthMarriage"
+                            formControlName="cdBirthMarriage"
+                            name="cdBirthMarriage"
+                            [data]="yesNoDeclined"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdMedicaid" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >14. Currently are you on Medicaid?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q14hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q14hlp" role="tooltip">Medicaid is a health insurance program funded by the government.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdMedicaid"
+                            formControlName="cdMedicaid"
+                            name="cdMedicaid"
+                            [data]="yesNoDeclinedDontKnow"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdOtherHealthIns" class="col-10 col-form-label col-form-label-sm requiredDisplay"
+                            >15. Currently do you have health insurance, other than Medicaid?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q15hlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q15hlp" role="tooltip">'Health insurance' means having a third party pay for all or part of health care.
+                                    Youth might have health insurance such as group coverage offered by employers or schools, or
+                                    individual policies that cover medical and/or mental health care and/or prescription drugs, or
+                                    youth might be covered under parents' insurance. This also could include access to free health care
+                                    through a college, Indian Tribe, or other source.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdOtherHealthIns"
+                            formControlName="cdOtherHealthIns"
+                            name="cdOtherHealthIns"
+                            [data]="yesNoDeclinedDontKnow"
+                            (click)="updateHealthInsQues()"
+                            (keyleft)="updateHealthInsQues()"
+                            (keyright)="updateHealthInsQues()"
+                            (keyup)="updateHealthInsQues()"
+                            (keydown)="updateHealthInsQues()"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showHealthInsSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdInsMedical" class="col-10 col-form-label col-form-label-sm  conReqDisplay"
+                            >15A. Does your health insurance include coverage for medical services?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q15ahlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q15ahlp" role="tooltip">This means that the youth's health insurance covers at least some medical services or procedures. </div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdInsMedical"
+                            formControlName="cdInsMedical"
+                            name="cdInsMedical"
+                            [data]="yesNoDeclinedDontKnow"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showHealthInsSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdInsMental" class="col-10 col-form-label col-form-label-sm  conReqDisplay"
+                            >15B. Does your health insurance include coverage for mental health services?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q15bhlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q15bhlp" role="tooltip">This means that the youth's health insurance covers at least some mental health services.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdInsMental"
+                            formControlName="cdInsMental"
+                            name="cdInsMental"
+                            [data]="yesNoDeclinedDontKnow"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+                <div class="row pl-2 pt-2" *ngIf="showHealthInsSubQues">
+                    <div class="d-flex col-md-12 pt-1">
+                        <label tabindex="0" for="cdInsPrescription" class="col-10 col-form-label col-form-label-sm  conReqDisplay"
+                            >15C. Does your health insurance include coverage for prescription drugs?
+                            <button type="button" class="ttip btn btn-info nytd-btn-circle" aria-labelledby="q15chlp" aria-expanded="" (focus)="setAriaValues($event)" (focusout)="unsetAriaValues($event)">?
+                                <div class="tttext" id="q15chlp" role="tooltip">This means that the youth's health insurance covers at least some prescription drugs.</div>
+                            </button>
+                        </label>
+                    </div>
+                    <div class="d-flex col-md-12 pt-2 pl-4">
+                        <dfps-radio-button
+                            class="col-12"
+                            id="cdInsPrescription"
+                            formControlName="cdInsPrescription"
+                            name="cdInsPrescription"
+                            [data]="yesNoDeclinedDontKnow"
+                            [horizontal]="true"
+                        >
+                        </dfps-radio-button>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+
+        <div class="d-flex justify-content-end mt-2">
+
+            <div class="d-flex">
+                <dfps-input _id="isBaselineSurvey" ariaLabel="Baseline Survey"
+                    maxlength="25" formControlName="isBaselineSurvey" [hidden]="true">
+                </dfps-input>
+                <dfps-input _id="surveyStartDate" ariaLabel="Survey Start Date"
+                    maxlength="25" formControlName="surveyStartDate" [hidden]="true">
+                </dfps-input>
+                <dfps-input _id="surveyEndDate" ariaLabel="Survey End Date"
+                    maxlength="25" formControlName="surveyEndDate" [hidden]="true">
+                </dfps-input>
+                <dfps-input _id="clickedButton" ariaLabel="Clicked Button"
+                    maxlength="25" formControlName="clickedButton" [hidden]="true">
+                </dfps-input>
+            </div>
+
+            <div class="d-flex btn-sm">
+                <dfps-button label="Submit Completed Survey" _id="submitSurvey"
+                    (click)="submitCompletedSurvey()" [disabled]="isReadOnly">
+                </dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button label="Save and Return Later" _id="saveAndReturnLater"
+                    (click)="saveAndReturnLater()" [disabled]="isReadOnly">
+                </dfps-button>
+            </div>
+        </div>
+
+    </form>
+
+
+</div>

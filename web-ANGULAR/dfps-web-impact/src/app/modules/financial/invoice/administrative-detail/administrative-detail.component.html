@@ -1,0 +1,143 @@
+<div class="container-fluid bodycolor" *ngIf="adminFormDetails">
+    <div class="row">
+        <h1>Administrative Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <div class="alert alert-danger" *ngIf="infoDivDisplay">
+      <p>Attention:</p>
+
+      <div>
+        <ul>
+          <li *ngFor="let msg of informationalMsgs">
+            {{ msg }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <form [formGroup]="administrativeDetailForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Invoice ID:{{adminFormDetails.invoiceId}}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Invoice Phase:{{adminFormDetails.invoicePhase}}
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <h2>Administrative</h2>
+            <div class="row pt-12">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="service"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Service:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="service" formControlName="service"
+                            [dropDownValues]="adminFormDetails?.serviceList" ariaLabel="Service drop down is required field">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="csli" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">CSLI:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="csli" formControlName="csli" ariaLabel="csli is required" maxlength=2>
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="month" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Month:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="month" formControlName="month" ariaLabel="Month is required" (inputChange)="validateMonthYear($event)" maxlength=2>
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="year" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Year:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="year" formControlName="year" ariaLabel="Year is required" (inputChange)="validateMonthYear($event)" maxlength=4>
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="salaries" class="col-sm-4 col-form-label col-form-label-sm">Salaries:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="salaries" formControlName="salaries" ariaLabel="Salaries" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="benefits" class="col-sm-4 col-form-label col-form-label-sm">Benefits:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="benefits" formControlName="benefits" maxlength=11 currency=true ariaLabel="Benefits">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="travel" class="col-sm-4 col-form-label col-form-label-sm">Travel:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="travel" formControlName="travel" ariaLabel="Travel" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="supplies" class="col-sm-4 col-form-label col-form-label-sm">Supplies:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="supplies" formControlName="supplies" ariaLabel="Supplies" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="equipment" class="col-sm-4 col-form-label col-form-label-sm">Equipment:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="equipment" formControlName="equipment" ariaLabel="Equipment" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="other" class="col-sm-4 col-form-label col-form-label-sm">Other:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="other" formControlName="other" ariaLabel="Other" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="administrative"
+                        class="col-sm-4 col-form-label col-form-label-sm">Administrative:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="administrative" formControlName="administrative" ariaLabel="Administrative"
+                            currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="offset" class="col-sm-4 col-form-label col-form-label-sm">Offset:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="offset" formControlName="offset" ariaLabel="Offset" currency=true maxlength=11>
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3" *ngIf="saveAdminInfo">
+            <dfps-button label="Save" _id="Save" (click)="saveADMDetails()"></dfps-button>
+        </div>
+    </form>
+</div>

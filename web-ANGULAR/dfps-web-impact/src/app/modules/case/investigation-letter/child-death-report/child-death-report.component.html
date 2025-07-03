@@ -1,0 +1,273 @@
+<div class="alert alert-danger" *ngIf="errorNoDataMessage">
+    <p>Attention:</p>
+    <div>
+        {{errorNoDataMessage}}
+    </div>
+</div>
+<div class="alert alert-primary" *ngIf="investigationLetterRes?.attentionMessages && !hideAttentionMessage">
+  <p>Attention:</p>
+  <div *ngIf="investigationLetterRes?.attentionMessages">
+    <ul *ngFor="let message of investigationLetterRes?.attentionMessages">
+      <li>{{message}}</li>
+    </ul>
+  </div>
+</div>
+<div class="container-fluid bodycolor" *ngIf="investigationLetter">
+    <div class="row">
+        <h1>Letter Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+
+
+    <form [formGroup]="investigationLetterForm">
+        <div class="row">
+            <div class="text-left col-2 mt-2 pl-4"><b>Stage Name:</b></div>
+            <div class="col-4 mt-2 pl-4">{{investigationLetterRes.stageName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-2 mt-2 pl-4"><b>Case ID:</b></div>
+            <div class="text-left col-4 mt-2 pl-4">{{investigationLetterRes.caseId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+
+        <div #errors>
+            <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength">
+            </dfps-form-validation>
+        </div>
+        <div class="form-group mt-4">
+            <div class="row ml-0 pl-2">
+                <h2>{{letterTypeDecode}}</h2>
+            </div>
+        </div>
+
+        <div class="row pl-3">
+            <div class="d-flex col-md-7">
+                <label for="letterMethod" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Method:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="letterMethod" ariaLabel="Method is Required" formControlName="letterMethod"
+                        (change)="showReceiptNumber()" [dropDownValues]="investigationLetterRes.letterMethods">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4" *ngIf="displayReceiptNumber">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="recipientNumber" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">
+                    Regular/Certified Mail<br/><span class="pl-3">Return Receipt Number:</span></label>
+                <div class="col-sm-4 pt-3">
+                    <dfps-input _id="recipientNumber" formControlName="recipientNumber" maxlength="30"
+                        ariaLabel="Regular/Certified Mail Return Recipient Number is Conditionally Required">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="row pl-4 pb-3 font-weight-bolder">
+                <span style="font-size: 18px;">Letter To:</span>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 align-items-center">
+                <label for="administratorName" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">
+                    Name:</label>
+                <div class="col-sm-6">
+                    <dfps-input _id="administratorName" formControlName="administratorName" maxlength="100"
+                        ariaLabel="Name is Required">
+                    </dfps-input>
+                </div>
+                <div class="flex btn-sm">
+                    <dfps-button #searchButton class="pr-1" size="extraSmall" label="Search" _id="searchButton"
+                        (click)="searchPerson()" *ngIf="!hideSearchButton">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="addressLine1" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Address
+                    Line 1:</label>
+                <div class="col-sm-8">
+                    <dfps-input _id="addressLine1" formControlName="addressLine1" maxlength="30"
+                        ariaLabel="Address Line 1 is Required">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="addressLine2" class="col-sm-4 col-form-label col-form-label-sm pl-2">Address Line 2:</label>
+                <div class="col-sm-8">
+                    <dfps-input _id="addressLine2" formControlName="addressLine2" maxlength="30"
+                        ariaLabel="Address Line 2">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="addressCity" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">City:</label>
+                <div class="col-sm-6">
+                    <dfps-input _id="addressCity" formControlName="addressCity" ariaLabel="City is Required"
+                        maxlength="20">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="addressState"
+                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">State:</label>
+                <div class="col-sm-6">
+                    <dfps-select _id="addressState" ariaLabel="State is Required" formControlName="addressState"
+                        [dropDownValues]="investigationLetterRes.states">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="addressZip" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Zip:</label>
+                <div class="col-sm-3">
+                    <dfps-input _id="addressZip" ariaLabel="Zip is Required" formControlName="addressZip" maxlength="5">
+                    </dfps-input>
+                </div>
+                <label for="addressZipExt"><span>&nbsp;-&nbsp;</span></label>
+                <div class="col-sm-3">
+                    <dfps-input _id="addressZipExt" ariaLabel="Zip Extension" formControlName="addressZipExt"
+                        maxlength="4" ariaLabel="Zip Extension"></dfps-input>
+                </div>
+                <div class="col-sm-3">
+                    <dfps-address-validator _id="validateAddress" label="Validate" size="extraSmall"
+                        *ngIf="!hideValidateButton" (click)="validateAdressFields()"
+                        (validatedAddressEvent)="updateAdressFields($event)">
+                    </dfps-address-validator>
+                </div>
+            </div>
+        </div>
+        <div class="form-group mt-4">
+            <div class="row pt-3 pl-4 font-weight-bolder">
+                <span style="font-size: 18px;">Body:</span>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-1">
+                <label for="selectedChildsPersonId"
+                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Child Name:</label>
+                <div class="col-sm-6">
+                    <dfps-select _id="selectedChildsPersonId" ariaLabel="Child Name is Required"
+                        formControlName="selectedChildsPersonId"
+                        [dropDownValues]="investigationLetterRes.principalPersons">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="incidentLocation" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Location
+                    of Incident:</label>
+                <div class="col-sm-6">
+                    <dfps-select _id="incidentLocation" ariaLabel="Incident Location is Required"
+                        formControlName="incidentLocation" [dropDownValues]="investigationLetterRes.incidentLocation">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-3">
+            <div class="d-flex col-md-12 pt-4">
+                <label class="col-md-2 requiredDisplay" for="incidentSummary">
+                    Brief Incident Summary:</label>
+                <div class="col-md-8 pl-5 ml-2 pr-3">
+                    <dfps-textarea id="incidentSummary" formControlName="incidentSummary" maxLength="3000" aria-rowspan="4"
+                        ariaLabel="Brief Incident Summary is Required" [customStyleTextArea]="getCustomStyles()"></dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <div class="row pl-4 font-weight-bolder">
+                <span style="font-size: 18px;">Investigator Information:</span>
+            </div>
+        </div>
+
+        <div class="row pl-4">
+            <div class="d-flex col-md-7">
+                <label for="investigatorName"
+                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Investigator Name:</label>
+                <div class="col-sm-7">
+                    <dfps-input _id="investigatorName" formControlName="investigatorName" maxlength="50"
+                        ariaLabel="Investigator Name is Required">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pl-4">
+            <div class="d-flex col-md-7  pt-4">
+                <label for="investigatorDesignation"
+                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Designation:</label>
+                <div class="col-sm-7">
+                    <dfps-input _id="investigatorDesignation" formControlName="investigatorDesignation"
+                        ariaLabel="Designation is Required" maxlength="50">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="investigatorPhoneNumber"
+                    class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Phone Number:</label>
+                <div class="col-sm-7">
+                    <dfps-input _id="investigatorPhoneNumber" formControlName="investigatorPhoneNumber"
+                        ariaLabel="Phone Number is Required" maxlength="14" (change)="fmtPhoneNumber($event)">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="investigatorEmail" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Email
+                    Address:</label>
+                <div class="col-sm-7">
+                    <dfps-input _id="investigatorEmail" formControlName="investigatorEmail"
+                        ariaLabel="Email Address is Required" maxlength="50">
+                    </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div>
+            <hr aria-hidden="true">
+        </div>
+        <div class="d-flex">
+            <div class="justify-content-start mr-auto p-2">
+                <dfps-button class="mr-4" size="small" label="Delete" tabindex="0" _id="deleteButton"
+                    *ngIf="!hideDeleteButton" [disabled]="disableDeleteButton" (click)="delete()">
+                </dfps-button>
+                <dfps-button size="small" label="Download" tabindex="0" _id="downloadButton" (click)="download()"
+                           *ngIf="!hideDownloadButton" [disabled] = "disableDownloadButton">
+                </dfps-button>
+                <dfps-button size="small" label="Download Draft" tabindex="0" _id="downloadButton" (click)="downloadDraft()"
+                    *ngIf="!hideDownloadDraftButton" [disabled]="disableDownloadDraftButton">
+                </dfps-button>
+            </div>
+            <div class="justify-content-end p-2">
+                <dfps-button class="mr-4" size="small" label="Save and Complete" _id="submitButton" (click)="submit()"
+                    *ngIf="!hideSaveSubmitButton">
+                </dfps-button>
+                <dfps-button size="small" label="Save" _id="saveButton" (click)="save()" *ngIf="!hideSaveButton">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

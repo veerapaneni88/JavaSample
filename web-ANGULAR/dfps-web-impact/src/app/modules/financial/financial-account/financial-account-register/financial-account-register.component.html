@@ -1,0 +1,127 @@
+<div class="container-fluid bodycolor" *ngIf="financialTransactionRes">
+    <div class="row">
+        <h1>Financial Account Register</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="conReqDisplay text-right" tabindex="0">
+        <span class="sr-only">Double dagger is </span>conditionally required field</div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <div class="row">
+        <div class="col-3 mt-2">
+            Name:
+        </div>
+        <div class="col-3 mt-2 text-break">
+            {{financialTransactionRes.financialAccount.personName}}
+        </div>
+        <div class="mt-2 col-3">
+            Account Number:
+        </div>
+        <div class="mt-2 col-3">
+            {{financialTransactionRes.financialAccount.accountNumber}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3 mt-2">
+            Person ID:
+        </div>
+        <div class="col-3 mt-2">
+            {{financialTransactionRes.financialAccount.personId}}
+        </div>
+        <div class="col-3 mt-2">
+            SSN:
+        </div>
+        <div class="col-3 mt-2">
+            {{financialTransactionRes.financialAccount.personIdSsn}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3 mt-2">
+            Current Balance:
+        </div>
+        <div class="col-3 mt-2">
+            {{financialTransactionRes.financialAccount.balance | currency:'USD'}}
+        </div>
+        <div class="col-3 mt-2">
+            Current Available Balance:
+        </div>
+        <div class="col-3 mt-2">
+            {{financialTransactionRes.financialAccount.availableBalance | currency:'USD' }}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <dfps-data-table 
+                [dataTable]=" transactionDatatable"           
+                (selectedData)="setSelectedTransactions($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 d-flex justify-content-start mt-3">
+            <div *ngIf="isDeleted">
+                <div id="deleted" tabindex="0" #deletedIdSpan class="sr-only">
+                    Selected transactions deleted
+                </div>
+            </div>
+            <div class="justify-content-end mt-3" *ngIf="showAddAndDeleteButton">
+                <dfps-button add-button size="small" label="Delete" (click)="delete()" _id="deleteButtonId">
+                </dfps-button>
+            </div>
+        </div>
+        <div class="col-md-9 d-flex justify-content-end mt-3">
+            <div *ngIf="isReconciled">
+                <div id="reconciled" tabindex="0" #reconciledIdSpan class="sr-only">
+                    Selected transactions reconciled
+                </div>
+            </div>
+            <div class="justify-content-end mt-3" *ngIf="hideReconcileAndNewUsingButton">
+                <dfps-button add-button size="small" label="Reconciliation" _id="reconciliationButtonId" (click)="reconciliation()">
+                </dfps-button>
+            </div> &nbsp;&nbsp;
+            <div class="justify-content-end mt-3" *ngIf="hideReconcileAndNewUsingButton">
+                <dfps-button add-button size="small" label="New Using"  _id="newUsingButtonId"  (click)="newUsing()">
+                </dfps-button>
+            </div> &nbsp;&nbsp;
+            <div class="justify-content-end mt-3" *ngIf="showAddAndDeleteButton">
+                <dfps-button add-button size="small" label="Add" (click)="add()">
+                </dfps-button>
+            </div>
+        </div>
+       
+    </div>
+    <form [formGroup]="financialAcccountRegisterForm">
+        <div class="card formPanel mt-3" *ngIf="!hideReportSection">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Reports</h2>
+            </div>
+            <div class="p-2 mb-2 card-body">
+                <div class="row form-group align-items-center m-1">
+                    <div class="d-flex col-md-3 col-sm-6 col-12 mt-2">
+                        <label for="from" class="col-sm-3 col-form-label col-form-label-sm conReqDisplay">From:</label>
+                        <div class="col-sm-9">
+                            <dfps-date-picker _id="from" formControlName="from" placeholder="from"
+                                ariaLabel="From date is conditionally required"></dfps-date-picker>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3  col-sm-6  col-12 mt-2">
+                        <label for="to" class="col-sm-3 col-form-label col-form-label-sm conReqDisplay">To:</label>
+                        <div class="col-sm-10">
+                            <dfps-date-picker _id="to" formControlName="to" placeholder="to"
+                                ariaLabel="To date is conditionally required"></dfps-date-picker>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-6 col-sm-6  mt-2">
+                        <dfps-report-launch reportId='reportsLaunch' [reportsValues]='reports' buttonId='reportLaunch'
+                            [createEvent]='true'>
+                        </dfps-report-launch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

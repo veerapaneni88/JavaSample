@@ -1,0 +1,133 @@
+<div class="container-fluid bodycolor" *ngIf="paymentInformationRes">
+    <div class="row">
+        <h1>Payment Information </h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [validationErrors]="validationErrors" [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="row" [hidden]="bHideApproveButton">
+        <div class="d-flex col-md-11 pt-4">
+            <dfps-button label="Approval Status" _id="approvalStatus" (click)="showApproval()"></dfps-button>
+        </div>
+    </div>
+    <form [formGroup]="paymentInfoForm">
+                   
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name #: {{paymentInformationRes?.caseName}} </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource ID: {{paymentInformationRes?.resourceId}} </div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+        <h2>Monthly Payment Extensions</h2>
+                <div class="d-flex col-md-4 pt-4 pb-4">
+                    <label class="col-xs-6 col-sm-6 col-md-9 col-lg-4 requiredDisplay" for="startDate">
+                        Start Date:</label>
+                        <div class="col-sm-6">
+                        <dfps-date-picker
+                        _id="startDate"
+                        placeholder="startDate"
+                        ariaLabel="Start Date is Required"
+                        formControlName="startDate" 
+                    ></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="goodCause" class="col-xs-6 col-sm-6 col-md-9 col-lg-4 requiredDisplay">Payment Extension Good Cause:</label>
+                <div class="col-sm-12">
+                    
+                    <dfps-select _id="goodCause" formControlName="goodCause" [dropDownValues]="paymentInformationRes?.goodCause" maxlength="15"
+                     ariaLabel="Good Cause is Required"></dfps-select>
+                  </div>
+                 </div>
+                 <div class="d-flex col-md-4 pt-4">
+                    <label for="childName" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 requiredDisplay">Child's Name:</label>
+                  <div class="col-sm-6">
+                    
+                    <dfps-select _id="childName" formControlName="childName" [dropDownValues]="paymentInformationRes?.childNames" maxlength="15"
+                    ariaLabel="Child Name is Required" ></dfps-select>
+                  </div>
+                 </div>
+                 
+                    <div class="d-flex col-md-4 pt-4 pb-4">
+                        <label class="col-xs-6 col-sm-3 col-md-5 col-lg-4 conReqDisplay" for="comments">
+                            Comments:</label>
+                        <dfps-textarea class="col-sm-8 col-md-10 col-4" id="comments" formControlName="comments"
+                            maxLength="300" ariaLabel="Comments"></dfps-textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end pt-4 mt-2">
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" label="Request Extension"
+                            (click)="doRequestExtension()"  [disabled]="false"> </dfps-button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div *ngIf="paymentInformationRes?.showMultipleSadMsg">
+                        <div class="text-left col-sm-10 col-md-12 col-6">Multiple 68Os and/or 68Ps exist with varying term dates.</div>
+                    </div>
+                    </div>
+                <dfps-collapsable-section>
+                <accordion aria-class="bodycolor">
+                    <accordion-group class="accordion-group" aria-controls="searchTable" aria-expanded="false"
+                      heading="Current Caregiver Payment Information">
+                     <div class="row">
+                     <div class="col-md-12 pt-12">
+                      <dfps-data-table 
+                        [dataTable]="caregiverPaymentDataTable" 
+                        >
+                      </dfps-data-table>
+                      </div>
+                      </div>
+                      </accordion-group>
+                     <accordion-group class="accordion-group" aria-controls="searchTable" aria-expanded="false"
+                      heading="Monthly Kinship Payments for Child">
+                     <div class="row">
+                     <div class="col-md-12 pt-12">
+                      <dfps-data-table 
+                        [dataTable]="monthlyPaymentDataTable">
+                      </dfps-data-table>
+                      </div>
+                      </div>
+                      </accordion-group>
+                    <accordion-group class="accordion-group" aria-controls="searchTable" aria-expanded="false"
+                      heading="Monthly Extensions">
+                     <div class="row">
+                     <div class="col-md-12 pt-12">
+                      <dfps-data-table 
+                        [dataTable]="monthlyExtensionDataTable" 
+                        >
+                      </dfps-data-table>
+                      </div>
+                      </div>
+                      </accordion-group>
+                    <accordion-group class="accordion-group" aria-controls="searchTable" aria-expanded="false"
+                      heading="Post PMC Annual Reimbursement">
+                     <div class="row">
+                     <div class="col-md-12 pt-12">
+                      <dfps-data-table 
+                        [dataTable]="annualReimbursementDataTable" 
+                        >
+                      </dfps-data-table>
+                      </div>
+                      </div>
+                      </accordion-group>
+                </accordion>
+                </dfps-collapsable-section>
+                </div>
+                </form>
+                </div>
+                
+
+          

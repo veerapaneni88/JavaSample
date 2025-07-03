@@ -1,0 +1,173 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Search Available Payment Groups</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [validationErrors]="validationErrors" [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="infoDivDisplay">
+        <p>Attention:</p>
+
+        <div>
+            <ul>
+                <li *ngFor="let msg of informationalMsgs">
+                    {{ msg }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="paymentProcessForm">
+        <div class="requiredDisplay text-right mt-2" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+        <div class="conReqDisplay text-right  mt-2">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+
+        <div class="col-sm-10">
+            <div class="row pt-3">
+                <div class="d-flex flex-row col-12">
+                    <label for="processPaymentTypeSearch" class="pr-2 requiredDisplay" id="processPaymentType"
+                        tabindex="0">Process Payment Type:<span class="sr-only">Process Payment Type is required</span>
+                    </label>
+                    <dfps-radio-button _id="processPaymentTypeSearch" formControlName="processPaymentType" name="processPaymentType"
+                        ariaLabel="Search Type radio button" [data]="paymentProcessTypes" [horizontal]="true">
+                    </dfps-radio-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="accountNo" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Account
+                        No:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="accountNo" formControlName="accountNo" ariaLabel="Account Number is required"
+                            [dropDownValues]="accountNums"></dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="checkNo" class="col-sm-6 col-form-label col-form-label-sm">Check No.:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="checkNo" formControlName="checkNo" ariaLabel="Check number" maxlength="10">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="agencyAccountId" class="col-sm-6 col-form-label col-form-label-sm">Agency Account
+                        ID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="agencyAccountId" formControlName="agencyAccountId"
+                            ariaLabel="Agency Account ID" maxlength="10"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="payeePersonId" class="col-sm-6 col-form-label col-form-label-sm">Payee Person
+                        ID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="payeePersonId" formControlName="payeePersonId" ariaLabel="Payee Person ID"
+                            maxlength="10"></dfps-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-11 justify-content-end pt-4">
+                <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+            </div>
+            <div class="d-flex col-md-1 justify-content-end pt-4">
+                <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+            </div>
+        </div>
+        <ng-container *ngIf="displaySearchResults">
+            <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+            </div>
+        </ng-container>
+    </form>
+
+    <div *ngIf="displaySearchResults">
+        <!-- <form [formGroup]="selectionForm"> -->
+        <dfps-data-table-lazyload class="col-md-12 data-table" [dataTable]="dataTable"
+            [allowRowSelection]="isRowSelectionDisabled" (lazyLoadEvent)="loadDataLazy($event)"
+            (selectRowEvent)="selectedTableData($event)" [selectedRowOption]="DEFAULT_PAGE_SIZE">
+        </dfps-data-table-lazyload>
+        <!-- </form> -->
+        <div *ngIf="isPrintCheck">
+            <div class="d-flex justify-content-end w-100 mt-2"
+                *ngIf="!showPrintChecksBtn && dataTable?.tableBody.length && modifyPrivilege">
+                <dfps-button label="Assign Check Number" _id="assignCheck" (click)="assignCheckNumber()"></dfps-button>
+            </div>
+            <div class="d-flex justify-content-end w-100 mt-2" *ngIf="showPrintChecksBtn">
+                <dfps-button label="Print Checks" _id="printChecks" (click)="printChecks()"></dfps-button>
+            </div>
+        </div>
+        <div *ngIf="isProcessAch && modifyPrivilege">
+            <form [formGroup]="processAchForm">
+                <div class="row">
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="achNumber" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">ACH
+                            No.:</label>
+                        <div class="col-sm-7">
+                            <dfps-input _id="achNumber" maxlength="15" formControlName="achNumber" ariaLabel="ACH Number is required">
+                            </dfps-input>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="achDate" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">ACH
+                            Date:</label>
+                        <div class="col-sm-7">
+                            <dfps-date-picker _id="achDate" formControlName="achDate" placeholder="ACH"
+                                ariaLabel="ACH date is required"></dfps-date-picker>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="checkNo" class="col-sm-5 col-form-label col-form-label-sm">Total Payment:</label>
+                        <div class="col-sm-7">{{ processACHTotalAmounts | currency }}</div>
+                    </div>
+                    <div class="d-flex col-md-3 justify-content-end pt-4">
+                        <dfps-button label="Process Selected ACH" _id="processSelectedACH"
+                            (click)="processSelectedACH()"></dfps-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="isVoidCheck && modifyPrivilege">
+            <div class="d-flex justify-content-end w-100 mt-2">
+                <dfps-button label="Void Selected Checks" _id="voidSelectedChecks" (click)="voidSelectedChecks()">
+                </dfps-button>
+            </div>
+            <h2>Void Unprocessed Checks</h2>
+
+            <form [formGroup]="voidChecksForm">
+                <div class="row">
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="unprocessedCheckNo"
+                            class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Check No.:</label>
+                        <div class="col-sm-7">
+                            <dfps-input _id="unprocessedCheckNo" formControlName="unprocessedCheckNo"
+                                ariaLabel="Check Number is conditionally required." maxlength="10"></dfps-input>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="voidDate" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Void
+                            Date:</label>
+                        <div class="col-sm-7">
+                            <dfps-date-picker _id="voidDate" formControlName="voidDate" placeholder="void"
+                                ariaLabel="Void date is conditionally required."></dfps-date-picker>
+                        </div>
+                    </div>
+
+                    <div class="d-flex col-md-6 justify-content-end pt-4">
+                        <dfps-button label="Void Unprocessed Check" _id="voidUnprocessedCheck"
+                            (click)="voidUnprocessedCheck()"></dfps-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

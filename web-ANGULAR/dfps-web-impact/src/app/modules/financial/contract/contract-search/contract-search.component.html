@@ -1,0 +1,129 @@
+<div class="container-fluid bodycolor" (keyup.enter) = "!displaySearchResults ? doSearch(): ''" *ngIf="(displaySearchResponse | async) as displaySearch">
+    <div class="row">
+        <h1>Contract Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <p class="conReqDisplay text-right mt-2"><span class="sr-only">Double dagger is </span>conditionally required field
+    </p>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <p>The Budget Limit is part of the Search unless Contract Number or Agency Account ID is used.
+            </p>
+            <dfps-form-validation [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            <form [formGroup]="contractSerachForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="contractNumber"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Contract Number:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="contractNumber" formControlName="contractNumber" maxlength="15"
+                                    ariaLabel="Contract number is conditionally required"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="programType"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Program Type:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="programType" formControlName="programType"
+                                    ariaLabel="Program type is conditionally required"
+                                    [dropDownValues]="displaySearch.programTypes"></dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="region" class="col-sm-6 col-form-label col-form-label-sm">Region:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="region" formControlName="region" ariaLabel="Region"
+                                    [dropDownValues]="displaySearch.regions">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="agencyAccountId"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Agency Account
+                                ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="agencyAccountId" formControlName="agencyAccountId" maxlength="10"
+                                    ariaLabel="Agency account id is conditionally required">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="resourceId"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Resource ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="resourceId" formControlName="resourceId"
+                                    ariaLabel="Resource id is conditionally required" maxlength="10"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="functionType" class="col-sm-6 col-form-label col-form-label-sm">Function
+                                Type:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="functionType" formControlName="functionType" ariaLabel="Function Type"
+                                    (change)="validateFormControl(contractSerachForm.get('functionType'))"
+                                    [dropDownValues]="displaySearch.functionTypes"></dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="dateFrom" class="col-sm-6 col-form-label col-form-label-sm">From:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="dateFrom" formControlName="dateFrom" placeholder="from"
+                                    ariaLabel="From date"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="dateTo" class="col-sm-6 col-form-label col-form-label-sm">To:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="dateTo" formControlName="dateTo" placeholder="to"
+                                    ariaLabel="To date"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <div>
+                                <dfps-checkbox _id="budgetLimit"
+                                    [formControl]="contractSerachForm.controls['budgetLimit']" ariaLabel="Budget Limit"
+                                    label="Budget Limit">
+                                </dfps-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-11 justify-content-end pt-4">
+                            <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+                        </div>
+                        <div class="d-flex col-md-1 justify-content-end pt-4">
+                          <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="displaySearchResults">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+    <div class="row" *ngIf="displaySearchResults">
+        <div class="col-md-12 pt-12">
+            <dfps-data-table-lazyload class="data-table" [dataTable]="dataTable" [currentPage]="currentPageNumber"
+                [sortOrder] = "sortOrder" [sortField] = "sortField"
+                (handleClickEvent)="handleRouting($event)" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                (lazyLoadEvent)="loadDataLazy($event)">
+            </dfps-data-table-lazyload>
+            <div class="d-flex justify-content-end mt-2">
+                <dfps-button add-button size="small" *ngIf="displaySearch.addPrivilege" label="Add" (click)="add()">
+                </dfps-button>
+            </div>
+        </div>
+
+    </div>
+</div>

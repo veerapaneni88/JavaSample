@@ -1,0 +1,34 @@
+<div class="container-fluid bodycolor" *ngIf="injuryListRes">
+    <div class="row">
+        <h1>Injury List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2">{{injuryListRes?.stageName }}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2">{{injuryListRes?.caseId }}</div>
+    </div>
+    <div class="row">
+        <div class="d-flex justify-content-end mt-2">
+            <dfps-data-table [dataTable]="injuryDataTable" (selectedData)="selectedInjuryDetais($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6  d-flex  justify-content-begin" *ngIf="injuryListRes?.editMode">
+            <dfps-button add-button size="small" label="Delete" (click)="delete()" _id="deleteButtonId">
+            </dfps-button>
+        </div>
+        <div class="{{injuryListRes?.editMode ? 'col-md-6' : 'col-md-12'}} d-flex  justify-content-end"
+            *ngIf="injuryListRes?.editMode">
+            <dfps-button add-button size="small" label="Add" (click)="add()" _id="addButtonId">
+            </dfps-button>
+        </div>
+    </div>
+
+</div>

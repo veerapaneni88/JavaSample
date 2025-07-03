@@ -1,0 +1,48 @@
+.case-management-h2 {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 32px;
+    color: #212121;
+    margin-bottom: 10px;
+}
+
+.case-management-row-padding {
+    padding-top: 16px !important;
+}
+
+.case-management-body-text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #212121;
+}
+
+.padding-1{
+	padding-bottom: 20px;
+}
+
+.padding-left {
+	padding-left: 10px;
+}
+
+.background-light {
+	background-color: rgba(240, 240, 240, 1)!important;
+}
+.background-blue {
+	background-color: #d9edf7!important;
+}
+
+.border-background-color-1 {
+	border-color: ThreedShadow!important;
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-top-style: solid;
+    padding-bottom: 10px;
+	padding-right: 15px;
+    border-top-color: ThreedShadow!important;
+    border-left-color: ThreedShadow!important;
+    border-bottom-color: ThreedShadow!important;
+    border-right-color: ThreedShadow!important;
+}

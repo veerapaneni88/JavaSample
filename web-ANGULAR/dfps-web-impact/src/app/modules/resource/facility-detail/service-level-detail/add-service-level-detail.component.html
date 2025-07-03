@@ -1,0 +1,59 @@
+<div class="container-fluid bodycolor" *ngIf="resourceServiceRes">
+  <div class="row">
+    <h1>Add Service Level Detail</h1>
+  </div>
+  <div>
+    <hr aria-hidden="true" />
+  </div>
+  <div #errors>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+      [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+    </dfps-form-validation>
+  </div>
+
+  <div class="row">
+    <div class="requiredDisplay text-right mt-2 col-12" tabindex="0">
+      <span class="sr-only">Red asterisk is </span>required field
+    </div>
+  </div>
+
+  <form [formGroup]="addServiceLevelDetailForm">
+    <div class="form-group">
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource Name: {{resourceServiceRes.resourceName}}</div>
+      </div>
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource ID : {{resourceServiceRes.resourceId}}</div>
+      </div>
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource Type : {{resourceServiceRes.resourceType}}</div>
+      </div>
+      <br />
+      <div class="row">
+        <h2>Service Level Detail</h2>
+      </div>
+      <div>
+        <hr aria-hidden="true" />
+      </div>
+      <div class="row">
+        <div class="d-flex col-md-4 pt-4">
+          <label for="effectiveDate" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Effective
+            Date:</label>
+          <div class="col-sm-6">
+            <dfps-date-picker _id="effectiveDate" formControlName="effectiveDate" placeholder="effectiveDate"
+              ariaLabel="Effective Date is Required"></dfps-date-picker>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="d-flex col-md-11 justify-content-end pt-4">
+          <dfps-button _id="continueButton" label="Continue" (click)="doContinue()">
+            Search
+          </dfps-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>

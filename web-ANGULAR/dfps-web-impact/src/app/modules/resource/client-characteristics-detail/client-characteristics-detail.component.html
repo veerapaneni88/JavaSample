@@ -1,0 +1,121 @@
+<div class="container-fluid bodycolor" *ngIf="resourceCharacterDetailRes">
+    <div class="row">
+        <h1>Client Characteristics Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+
+    <form [formGroup]="clientCharacteristicsDetailForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource Name: {{resourceCharacterDetailRes.resourceName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource ID: {{resourceCharacterDetailRes.resourceId}}</div>
+        </div>
+
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource Type: {{resourceCharacterDetailRes.resourceType}}</div>
+        </div>
+        <br>
+        <div class="form-group">
+            <h2>Client Characteristics</h2>
+
+            <div class="row">
+                <div class="d-flex col-md-6">
+                    <label for="character"
+                        class="col-md-3 col-form-label col-form-label-sm requiredDisplay">Characteristics:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="character" [blankOption]="true"
+                            formControlName="character"
+                            ariaLabel="Characteristics is Required"
+                            [dropDownValues]="resourceCharacterDetailRes?.character">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <h2>Male Age Range</h2>
+            <div class="row">
+                <div class="d-flex col-md-6">
+                    <label for="maleAgeRangeMinYear" class="col-md-2">Minimum:</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="maleMinYear" formControlName="maleMinYear" maxlength="3"
+                            ariaLabel="Male Minimum Year"></dfps-input>
+                    </div>
+                    <label for="maleMinYear" class="col-sm-1">Year</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="maleMinMonth" formControlName="maleMinMonth" maxlength="2"
+                            ariaLabel="Male Minimum Month"></dfps-input>
+                    </div>
+                    <label for="maleMinMonth" class="col-sm-1">Month</label>
+                </div>
+                <div class="d-flex col-md-6">
+                    <label for="maleAgeRangeMaxYear" class="col-md-2">Maximum:</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="maleMaxYear" formControlName="maleMaxYear" maxlength="3"
+                            ariaLabel="Male Maximum Year"></dfps-input>
+                    </div>
+                    <label for="maleMaxYear" class="col-sm-1">Year</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="maleMaxMonth" formControlName="maleMaxMonth" maxlength="2"
+                            ariaLabel="Male Maximum Month"></dfps-input>
+                    </div>
+                    <label for="maleMaxMonth" class="col-sm-1">Month</label>
+                </div>
+            </div>
+            <br>
+            <h2>Female Age Range</h2>
+            <div class="row">
+                <div class="d-flex col-md-6">
+                    <label for="femaleAgeRangeMinYear" class="col-md-2">
+                        Minimum:</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="femaleMinYear" formControlName="femaleMinYear" maxlength="3"
+                            ariaLabel="Female Minimum Year"></dfps-input>
+                    </div>
+                    <label for="femaleMinYear" class="col-sm-1">Year</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="femaleMinMonth" formControlName="femaleMinMonth" maxlength="2"
+                            ariaLabel="Female Minimum Month"></dfps-input>
+                    </div>
+                    <label for="femaleMinMonth" class="col-sm-1">Month</label>
+                </div>
+                <div class="d-flex col-md-6">
+                    <label for="femaleAgeRangeMaxYear" class="col-md-2">
+                        Maximum:</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="femaleMaxYear" formControlName="femaleMaxYear" maxlength="3"
+                            ariaLabel="Female Maximum Year"></dfps-input>
+                    </div>
+                    <label for="femaleMaxYear" class="col-sm-1">Year</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="femaleMaxMonth" formControlName="femaleMaxMonth" maxlength="2"
+                            ariaLabel="Female Maximum Month"></dfps-input>
+                    </div>
+                    <label for="femaleMaxMonth" class="col-sm-1">Month</label>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="d-flex col-md-5 justify-content-start">
+                    <dfps-button add-button size="small" label="Delete" (click)="delete()" *ngIf="displayDeleteButton">
+                    </dfps-button>
+                </div>
+                <div class="d-flex col-md-5 justify-content-end">
+                    <dfps-button add-button size="small" label="Save" (click)="save()" *ngIf="displaySaveButton">
+                    </dfps-button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

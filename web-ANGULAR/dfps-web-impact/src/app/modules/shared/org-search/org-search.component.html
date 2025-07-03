@@ -1,0 +1,74 @@
+<div class="container-fluid bodycolor">
+
+    <div class="row">
+        <h1>Organization Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <p>Enter Search Criteria below to find an ORG. This Search is based on one field at a time. If EIN is
+                entered
+                with any other field,the search will use only EIN to find a match.</p>
+            <form [formGroup]="orgSearchForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+                                [validationErrorsLength]="validationErrorsLength">
+                            </dfps-form-validation>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-8 pt-4">
+                            <label for="ein" class="col-sm-2 col-form-label col-form-label-sm">EIN:</label>
+                            <div class="w-50">
+                                <dfps-input _id="ein" maxlength="9" ariaLabel="EIN" formControlName="ein">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-8 pt-4">
+                            <label for="legalName" class="col-sm-2 col-form-label col-form-label-sm">Legal Name:</label>
+                            <div class="w-75">
+                                <dfps-input _id="legalName" maxlength="30" ariaLabel="Legal Name"
+                                    formControlName="legalName">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <input type="hidden" name="helpFileId" id="helpFileId" value="{{helpFileName}}">
+                        <div class="d-flex col-md-8 pt-4">
+                            <label for="otherName" class="col-sm-2 col-form-label col-form-label-sm">Other Name:</label>
+                            <div class="w-75">
+                                <dfps-input _id="otherName" maxlength="10" ariaLabel="Other Name"
+                                    formControlName="otherName">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end w-60 mt-2">
+                        <dfps-button class="mr-2" label="Search" _id="orgSearch" (click)="search()"></dfps-button>
+                        <!-- <dfps-button label="Cancel" _id="orgCancel" (click)="cancel()"></dfps-button> -->
+                        <dfps-button label="Clear" _id="cancel" (click)="clear()"></dfps-button>
+                    </div>
+                </div>
+                <ng-container *ngIf="isOrgInfo">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+
+
+    <dfps-data-table *ngIf="isOrgInfo" [dataTable]="OrgDataTable" [allowRowSelection]="" [selectedRowData]=""
+        (selectedData)="getSelectedOrgSearch($event)">
+    </dfps-data-table>
+    <div *ngIf="isOrgInfo" class="d-flex justify-content-end w-100 mt-4">
+        <dfps-button label="Continue" [disabled]="!selectedOrg" _id="orgContinue" (click)="continue()"></dfps-button>
+    </div>
+</div>

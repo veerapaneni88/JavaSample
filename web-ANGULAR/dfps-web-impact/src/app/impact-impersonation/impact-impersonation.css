@@ -1,0 +1,10 @@
+.loginBodyBgDiv {
+    background-color: rgba(0, 92, 185, .65);
+    border-radius: 7px;
+}
+
+.loginHeadingDiv {
+    background-color: #435363;
+    opacity: 0.77;
+    border-radius: 7px;
+}

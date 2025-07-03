@@ -1,0 +1,208 @@
+<div class="container-fluid bodycolor" *ngIf="resourceSvcByAreaDetailRes">
+    <div class="row">
+        <h1>Services By Area Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true"
+            [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+
+    <form [formGroup]="servicesByAreaDetailForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource Name: {{resourceSvcByAreaDetailRes.resourceName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource ID: {{resourceSvcByAreaDetailRes.resourceId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span>conditionally required field</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource Type: {{resourceSvcByAreaDetailRes.resourceType}}</div>
+        </div>
+
+        <div class="form-group">
+            <br />
+            <div class="row">
+                <h2>Services by Area Information</h2>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="category"
+                        class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Category:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="category" [blankOption]="true"
+                            formControlName="category"
+                            ariaLabel="Category is Required"
+                            [dropDownValues]="resourceSvcByAreaDetailRes?.categories"
+                            (change)="loadServicesForCategoryChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="service"
+                        class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Service:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="service" [blankOption]="true"
+                            formControlName="service"
+                            ariaLabel="Service is Required"
+                            [dropDownValues]="filteredServices" (change)="resetKinshipCheckboxes()">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="state"
+                        class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">State:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="state" [blankOption]="false"
+                            formControlName="state"
+                            ariaLabel="State is Required"
+                            [dropDownValues]="resourceSvcByAreaDetailRes?.states"
+                            (change)="resourceSvcStateChange()">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="program"
+                        class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Program:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="program" [blankOption]="true"
+                            formControlName="program"
+                            ariaLabel="Program is Required"
+                            [dropDownValues]="resourceSvcByAreaDetailRes?.programs">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="region"
+                        class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Region:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="region" [blankOption]="true"
+                            formControlName="region"
+                            ariaLabel="Region is Required"
+                            [dropDownValues]="filteredRegions"
+                            (change)="loadCountiesForRegionChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="county"
+                        class="col-sm-5 col-form-label col-form-label-sm">County:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="county" [blankOption]="true"
+                            formControlName="county"
+                            ariaLabel="County"
+                            [dropDownValues]="filteredCounties"
+                            (change)="loadCountyChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="d-flex col-md-6 pt-4">
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="countyPartial"
+                            [formControl]="servicesByAreaDetailForm.controls['countyPartial']"
+                            ariaLabel="Partial County"
+                            label="Partial County">
+                        </dfps-checkbox>
+                    </div>
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="allCounties"
+                            [formControl]="servicesByAreaDetailForm.controls['allCounties']"
+                            ariaLabel="All Counties"
+                            label="All Counties"
+                            (click)="displayedOnAreaServedChange()">
+                        </dfps-checkbox>
+                    </div>
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="incomeBased"
+                            [formControl]="servicesByAreaDetailForm.controls['incomeBased']"
+                            ariaLabel="Income Based"
+                            label="Income Based">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+            </div>
+          <div *ngIf="['68B', '68C', '68D','68E','68F', '68G', '68H','68I','68J','68K', '68L', '68M','68N'].includes(servicesByAreaDetailForm.get('service').value)">
+            <br />
+            <div class="row">
+              <h2>Kinship Caretaker Assistance Eligibility</h2>
+            </div>
+
+            <div class="row">
+              <div class="d-flex col-md-6 pt-4">
+                <div class="col-sm-6">
+                  <dfps-checkbox _id="kinshipTraining"
+                                 [formControl]="servicesByAreaDetailForm.controls['kinshipTraining']"
+                                 ariaLabel="Kinship Training, if available"
+                                 label="Kinship Training, if available">
+                  </dfps-checkbox>
+                </div>
+                <div class="d-flex col-sm-6 conReqDisplay">
+                  <dfps-checkbox _id="kinshipHomeAssessment"
+                                 [formControl]="servicesByAreaDetailForm.controls['kinshipHomeAssessment']"
+                                 ariaLabel="Home Assessment"
+                                 label="Home Assessment">
+                  </dfps-checkbox>
+                </div>
+               <div class="d-flex col-sm-6 conReqDisplay">
+                  <dfps-checkbox _id="kinshipIncome"
+                                 [formControl]="servicesByAreaDetailForm.controls['kinshipIncome']"
+                                 ariaLabel="Income Qualification"
+                                 label="Income Qualification">
+                  </dfps-checkbox>
+                </div>
+                <div class="d-flex col-sm-6 conReqDisplay">
+                  <dfps-checkbox _id="kinshipAgreement"
+                                 [formControl]="servicesByAreaDetailForm.controls['kinshipAgreement']"
+                                 ariaLabel="Kinship Agreement Form"
+                                 label="Kinship Agreement Form">
+                  </dfps-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <div class="justify-content-start mr-auto p-2">
+                        <dfps-button add-button size="small"
+                            label="Delete"
+                            (click)="delete()"
+                            *ngIf="displayDeleteButton">
+                        </dfps-button>
+                    </div>
+
+                    <div class="justify-content-end p-2">
+                        <dfps-button add-button size="small"
+                            label="Save"
+                            (click)="save()"
+                            *ngIf="displaySaveButton">
+                        </dfps-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

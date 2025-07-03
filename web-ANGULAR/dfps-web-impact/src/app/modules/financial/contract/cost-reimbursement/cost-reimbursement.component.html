@@ -1,0 +1,185 @@
+<div class="container-fluid bodycolor" *ngIf="costReimbursementsDetails">
+    <div class="row">
+        <h1>Cost Reimbursement Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Period :
+            {{costReimbursementsDetails.period?costReimbursementsDetails.period : '' }}</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <div #errors>
+                <dfps-form-validation [validationErrors]="validationErrors" [shouldCheckDirty]="true"
+                    [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            </div>
+            <form [formGroup]="costReimbursementForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="version" class="col-form-label col-form-label-sm col-sm-4">
+                                Version:
+                            </label>
+                            <span id="version" class="col-sm-9">{{costReimbursementsDetails.version}} </span>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="lineItem" class="col-form-label col-form-label-sm col-sm-4">
+                                CSLI:
+                            </label>
+                            <span id="lineItem" class="col-sm-9">{{costReimbursementsDetails.lineItem}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="salaryAmount" class="col-sm-4 col-form-label col-form-label-sm">Salary
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="salaryAmount" formControlName="salaryAmount" currency=true maxlength=11
+                                    ariaLabel="Salary Amount">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="salaryUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Salary Amount Used:
+                            </label>
+                            <span id="salaryUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.salaryUsedAmount?(costReimbursementsDetails.salaryUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="fringeBenefitAmount" class="col-sm-4 col-form-label col-form-label-sm">Fringe
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="fringeBenefitAmount" formControlName="fringeBenefitAmount"
+                                    ariaLabel="Fringe Amount" currency=true maxlength=11>
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="fringeBenefitUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Fringe Amount Used:
+                            </label>
+                            <span id="fringeBenefitUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.fringeBenefitUsedAmount? (costReimbursementsDetails.fringeBenefitUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="travelAmount" class="col-sm-4 col-form-label col-form-label-sm">Travel
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="travelAmount" formControlName="travelAmount" currency=true maxlength=11
+                                    ariaLabel="Travel Amount">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="travelUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Travel Amount Used:
+                            </label>
+                            <span id="travelUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.travelUsedAmount? (costReimbursementsDetails.travelUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="supplyAmount" class="col-sm-4 col-form-label col-form-label-sm">Supply
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="supplyAmount" formControlName="supplyAmount" currency=true maxlength=11
+                                    ariaLabel="Supply Amount">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="supplyUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Supply Amount Used:
+                            </label>
+                            <span id="supplyUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.supplyUsedAmount?(costReimbursementsDetails.supplyUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="equipmentAmount" class="col-sm-4 col-form-label col-form-label-sm">Equipment
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="equipmentAmount" formControlName="equipmentAmount" currency=true maxlength=11
+                                    ariaLabel="Equipment Amount">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="equipmentUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Equipment Amount Used:
+                            </label>
+                            <span id="equipmentUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.equipmentUsedAmount?(costReimbursementsDetails.equipmentUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="otherAmount" class="col-sm-4 col-form-label col-form-label-sm">Other
+                                Amount:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="otherAmount" formControlName="otherAmount" currency=true maxlength=11
+                                    ariaLabel="Other Amount">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="otherUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Other Amount Used:
+                            </label>
+                            <span id="otherUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.otherUsedAmount? (costReimbursementsDetails.otherUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4 align-items-center">
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="offsetItemUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Off Item Used:
+                            </label>
+                            <span id="offsetItemUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.offsetItemUsedAmount?(costReimbursementsDetails.offsetItemUsedAmount | currency) : (0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4 align-items-center">
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="adminAllUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Admin Allocation Used:
+                            </label>
+                            <span id="adminAllUsedAmount"
+                                class="col-sm-9">{{costReimbursementsDetails.adminAllUsedAmount?(costReimbursementsDetails.adminAllUsedAmount | currency):(0 | currency)}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="totalAmount" class="col-sm-4 col-form-label col-form-label-sm">Total
+                                Amount:</label>
+                            <span id="totalAmount" class="col-sm-9">{{totalVal | currency}}</span>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4 align-items-center" tabindex="0">
+                            <label for="totalUsedAmount" class="col-form-label col-form-label-sm col-sm-4">
+                                Total Amount Used:
+                            </label>
+                            <span id="totalAmountUsed"
+                                class="col-sm-9">{{costReimbursementsDetails.salaryUsedAmount + costReimbursementsDetails.fringeBenefitUsedAmount + costReimbursementsDetails.travelUsedAmount  + costReimbursementsDetails.supplyUsedAmount + costReimbursementsDetails.equipmentUsedAmount + costReimbursementsDetails.otherUsedAmount + costReimbursementsDetails.offsetItemUsedAmount  + costReimbursementsDetails.adminAllUsedAmount | currency}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end w-100 mt-3" *ngIf="saveCRMInfo">
+                    <dfps-button label="Save" _id="crmSave" (click)="saveCRMDetails()"></dfps-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+.findings-note {
+    padding-left: 10px;
+    font-style: italic;
+}
+
+.findings {
+    padding: 10px;
+    flex-direction:  column;
+}
+
+.findings-ap-header-cell {
+    background-color: #c1d5ec!important;
+    font-weight: 600;
+    font-family: Roboto,sans-serif!important;
+    font-size: 14px;
+    text-align: center;
+}
+
+.findings-ap-cell {
+    border-left: 1px solid #c1d5ec!important;
+    border-bottom: 1px solid #c1d5ec!important;
+    border-right: 1px solid #c1d5ec!important;
+    border-top: 1px solid #c1d5ec!important;
+    text-align: center;
+}
+
+.findings-header-cell {
+    background-color: #c1d5ec!important;
+    font-weight: 600;
+    font-family: Roboto,sans-serif!important;
+    font-size: 14px;
+    padding: 10px;
+    text-align: center;
+}
+
+.findings-cell {
+    border-left: 1px solid #c1d5ec!important;
+    border-bottom: 1px solid #c1d5ec!important;
+    border-right: 1px solid #c1d5ec!important;
+    border-top: 1px solid #c1d5ec!important;
+    padding: 10px;
+    text-align: center;
+}
+
+.font-size-larger {
+    font-size: 18px;
+}
+
+.h-full {
+    height: 100%;
+}
+
+

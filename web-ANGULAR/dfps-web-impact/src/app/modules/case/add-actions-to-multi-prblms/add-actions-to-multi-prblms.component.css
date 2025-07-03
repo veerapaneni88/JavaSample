@@ -1,0 +1,109 @@
+thead > tr {
+	height: 48px;
+	font-size: 14px;
+	font-weight:700;
+	color: #212121;
+	background-color:#FFFFFF;
+	border: 1px solid #c1d5ec;
+	text-align: center;
+}
+
+tbody > tr {
+	height: 48px;
+	font-size: 14px;
+	font-weight:400;
+	color: #212121;
+	background-color:#FFFFFF;
+	border: 1px solid #c1d5ec !important;
+}
+
+td {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+}
+
+th {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+    text-align: left;
+}
+
+.tableDiv {
+	border: 1px solid #E0E0E0;
+	height: 310px;
+	overflow-y: auto;
+}
+
+.tableDivClass {
+	/*border: 1px solid #c1d5ec !important;*/
+	width: 100% !important;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td {
+    background-color: #ffffff;
+ }
+
+ .table-striped > tbody > tr:nth-child(odd) > td {
+    background-color: #e6f3ff;
+ }
+
+ .table-striped > thead > tr > th {
+    background-color: #c1d5ec;
+}
+
+table.dataTable tr th {
+	border-right: solid 1px #c1d5ec;
+	border-left: solid 1px #c1d5ec;
+}
+
+
+.border-background-color-1 {
+	border-color: ThreedShadow!important;
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-top-style: solid;
+    background-color: rgba(240, 240, 240, 1)!important;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-color: ThreedShadow!important;
+    border-left-color: ThreedShadow!important;
+    border-bottom-color: ThreedShadow!important;
+    border-right-color: ThreedShadow!important;
+}
+
+.border-background-color-2 {
+	border-color: #d2e9fe!important;
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-top-style: solid;
+    background-color: #d2e9fe;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-color: rgba(30, 144, 255, 1)!important;
+    border-left-color: rgba(30, 144, 255, 1)!important;
+    border-bottom-color: rgba(30, 144, 255, 1)!important;
+    border-right-color: rgba(30, 144, 255, 1)!important;
+}
+
+.border-background-color-3 {
+	border-color: gray!important;
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-top-style: solid;
+    background-color: rgba(200, 200, 200, 1);
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-color: rgba(128, 128, 128, 1)!important;
+    border-left-color: rgba(128, 128, 128, 1)!important;
+    border-bottom-color: rgba(128, 128, 128, 1)!important;
+    border-right-color: rgba(128, 128, 128, 1)!important;
+}

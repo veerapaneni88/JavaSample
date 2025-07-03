@@ -1,0 +1,741 @@
+<div class="container-fluid bodycolor" *ngIf="apsCaseManagementData">
+    <div class="alert alert-primary"
+        *ngIf="apsCaseManagementData.infoMessages && apsCaseManagementData.infoMessages.length> 0">
+        <p>Attention:</p>
+        <div *ngIf=" apsCaseManagementData.infoMessages && apsCaseManagementData.infoMessages.length > 0">
+            <div *ngFor="let data of apsCaseManagementData.infoMessages">
+                <li>{{data}}</li>
+            </div>
+        </div>
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div *ngIf="apsCaseManagementData?.stageCode === 'INV' || apsCaseManagementData?.stageCode === 'ARI'">
+        <form [formGroup]="caseManagementForm">
+            <div class="row case-management-heading pl-2">
+                <h1 aria-level="1">{{apsCaseManagementData?.pageTitle}}</h1>
+            </div>
+            <div>
+                <hr aria-hidden="true" />
+            </div>
+            <div class="case-management-body-text">
+                <div class="row mt-2">
+                    <div class="text-left col-6">
+                        Stage Name: {{apsCaseManagementData.stageName}}
+                    </div>
+                    <div class="requiredDisplay col-6 text-right" tabindex="0">
+                        <span class="sr-only">Red asterisk is </span>required field
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="conReqDisplay text-right mt-2 col-12" tabindex="0">
+                        <span class="sr-only">Double dagger is </span>conditionally required field
+                    </div>
+                </div>
+            </div>
+            <div class="row col-md-12 ml-2 case-management-row-padding">
+                <div class="d-flex btn-sm" *ngIf="this.apsCaseManagementData.displayApprovalStatus && apsCaseManagementData?.stageCode === 'INV'">
+                    <dfps-button add-button size="small" label="Approval Status" (click)="approvalStatus()">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="case-management-left-pad-second-level case-management-row-padding">
+                <hr aria-hidden="true" />
+            </div>
+            <div>
+                <div class="row case-management-left-pad-second-level ml-0">
+                    <h2 class="case-management-h2" aria-level="2">
+                        Dates
+                    </h2>
+                </div>
+                <div class="case-management-body-text">
+                    <div class="row case-management-left-pad-third-level">
+                        <div class="text-left col-3">
+                            Investigation Begun:
+                        </div>
+                        <div class="text-left col-3">
+                            {{apsCaseManagementData?.apsInvestigationDetailDto?.dtApsInvstBegun}}
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level case-management-row-padding">
+                        <div class="text-left col-3">
+                            Case Completed:
+                        </div>
+                        <div class="text-left col-3">
+                            {{apsCaseManagementData?.apsInvestigationDetailDto?.dtApsInvstCmplt}}
+                        </div>
+                    </div>
+                </div>
+                <div class="case-management-left-pad-second-level case-management-row-padding">
+                    <hr aria-hidden="true" />
+                </div>
+                <div class="row case-management-left-pad-second-level ml-0">
+                    <h2 class="case-management-h2" aria-level="2">
+                        Conclusion
+                    </h2>
+                </div>
+                <div class="case-management-body-text">
+                    <div class="row case-management-left-pad-third-level">
+                        <div class="text-left col-3">
+                            Overall Disposition:
+                        </div>
+                        <div class="text-left col-3">
+                            {{apsCaseManagementData?.overallDisposition?.decode?.includes('-')?
+                            apsCaseManagementData.overallDisposition.decode.slice(0,apsCaseManagementData.overallDisposition.decode.lastIndexOf('-'))
+                            :
+                            apsCaseManagementData?.overallDisposition?.decode}}
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level case-management-row-padding">
+                        <div class="text-left col-3">
+                            Closure Reason:
+                        </div>
+                        <div *ngIf="showClosureDropdown(); else closureTextTemplate" class="text-left col-4">
+                            <dfps-select _id="closureReason" ariaLabel="Closure Reason" formControlName="closureReason"
+                                name="closureReason" [dropDownValues]="closureReasons">
+                            </dfps-select>
+                        </div>
+                        <ng-template #closureTextTemplate>
+                            <div class="text-left col-6">
+                                {{closureReason}}
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+               <div *ngIf="apsCaseManagementData?.stageCode === 'INV'">
+                <div class="case-management-left-pad-second-level case-management-row-padding">
+                    <hr aria-hidden="true" />
+                </div>
+                <div class="row case-management-left-pad-second-level ml-0">
+                    <h2 class="case-management-h2" aria-level="2">
+                        {{!apsCaseManagementData.preSingleStage ? 'Case Closure Checklist' : 'Stage Closure Checklist'}}
+                    </h2>
+                </div>
+                <div class="case-management-body-text">
+                    <div class="row case-management-left-pad-third-level">
+                        <div
+                            class="text-left col-12 {{!apsCaseManagementData.preSingleStage ? 'requiredDisplay' : 'conReqDisplay'}}">
+                            {{!apsCaseManagementData.preSingleStage ? 'Was alleged victim/client informed of case
+                            closure?:' : 'If closed in investigation stage:'}}
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level" *ngIf="!apsCaseManagementData.preSingleStage">
+                        <div class="text-left col-12 pt-2">
+                            <div class="case-management-body-text col-12">
+                                <!-- <dfps-radio-button _id="victimInformedofCaseClosure"
+                                    formControlName="victimInformedofCaseClosure" name="victimInformedofCaseClosure"
+                                    ariaLabel="Informed of Case Closure radio button" [data]="victimInformedofCaseClosureData"
+                                    [horizontal]="true">
+                                </dfps-radio-button> -->
+                                <ng-container *ngFor="let option of victimInformedofCaseClosureData; let i = index">
+                                    <div class="d-flex items-baseline">
+                                        <p-radioButton [value]="option.value"
+                                            inputId="{{'victimInformedofCaseClosure'+ i}}"
+                                            name="victimInformedofCaseClosure"
+                                            formControlName="victimInformedofCaseClosure"></p-radioButton>
+                                        <label class="mb-0 ml-1"
+                                            for="{{'victimInformedofCaseClosure'+ i}}">{{option.label}}</label>
+                                        <ng-container *ngIf="i === 0">
+                                            <span class="sr-only">Double dagger</span>
+                                            <label class="mx-4 mb-0 pl-4 conReqDisplay" for="clientAdvisedDate">
+                                                Date Client Advised:</label>
+                                            <dfps-date-picker _id="clientAdvisedDate"
+                                                formControlName="clientAdvisedDate" name="clientAdvisedDate"
+                                                ariaLabel="Date Client Advised"></dfps-date-picker>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row case-management-left-pad-third-level" *ngIf="apsCaseManagementData.preSingleStage">
+                        <div class="text-left col-12 pt-2">
+                            <div class="case-management-body-text col-12">
+                                <!-- <dfps-radio-button _id="victimInformedofCaseClosure"
+                                                formControlName="victimInformedofCaseClosure" name="victimInformedofCaseClosure"
+                                                ariaLabel="Informed of Case Closure radio button" [data]="victimInformedofStageClosureData"
+                                                [horizontal]="true">
+                                </dfps-radio-button> -->
+                                <ng-container *ngFor="let option of victimInformedofStageClosureData; let i = index">
+                                    <div class="d-flex items-baseline">
+                                        <p-radioButton [value]="option.value"
+                                            inputId="{{'victimInformedofCaseClosure'+ i}}"
+                                            name="victimInformedofCaseClosure"
+                                            formControlName="victimInformedofCaseClosure"></p-radioButton>
+                                        <label class="mb-0 ml-1"
+                                            for="{{'victimInformedofCaseClosure'+ i}}">{{option.label}}</label>
+                                        <ng-container *ngIf="i === 0">
+                                            <span class="sr-only">Double dagger</span>
+                                            <label class="mx-4 mb-0 pl-4 conReqDisplay" for="clientAdvisedDate">
+                                                Date Client Advised:</label>
+                                            <dfps-date-picker _id="clientAdvisedDate"
+                                                formControlName="clientAdvisedDate" name="clientAdvisedDate"
+                                                ariaLabel="Date Client Advised"></dfps-date-picker>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="row pt-4 case-management-left-pad-third-level">
+                        <div class="d-flex col-md-12 pt-4 pb-4">
+                            <label class="col-sm-4 col-md-4 col-2 conReqDisplay" for="narrative">
+                                Date Client Advised:</label>
+                            <dfps-date-picker _id="clientAdvisedDate" formControlName="clientAdvisedDate" name="clientAdvisedDate"
+                                ariaLabel="Date Client Advised"></dfps-date-picker>
+                        </div>
+                    </div> -->
+                    <div class="row pt-4 case-management-left-pad-third-level"
+                        *ngIf="!apsCaseManagementData.preSingleStage">
+                        <div class="d-flex col-md-12 pt-4 pb-4">
+                            <span class="sr-only">Double dagger</span>
+                            <label class="col-sm-4 col-md-4 col-2 conReqDisplay" for="narrative">
+                                Narrative:</label>
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="narrative" formControlName="narrative" name="narrative"
+                                    maxLength="4000" rows="5" ariaLabel="Narrative"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('narrative').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('narrative')?.value?.length || 0)}} characters left
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="case-management-body-text">
+                    <div class="row case-management-left-pad-third-level">
+                        <div class="text-left pt-4 col-12">
+                            {{!apsCaseManagementData.preSingleStage ? 'If services were provided:' : 'If progressing to
+                            service delivery:'}}
+
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level">
+                        <div class="text-left col-6 pt-2">
+                            <div class="case-management-body-text col-sm-12">
+                                <dfps-radio-button _id="servicesProvided" formControlName="servicesProvided"
+                                    name="servicesProvided" ariaLabel="Service Provided radio button"
+                                    [data]="servicesProvidedData" [horizontal]="true">
+                                </dfps-radio-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pt-4 case-management-left-pad-third-level"
+                        *ngIf="!apsCaseManagementData.preSingleStage">
+                        <div class="d-flex col-md-12 pt-4 pb-4">
+                            <span class="sr-only">Double dagger</span>
+                            <label class="col-sm-4 col-md-4 col-2 conReqDisplay" for="servicesProvidedNarrative">
+                                Narrative:</label>
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="servicesProvidedNarrative"
+                                    formControlName="servicesProvidedNarrative" name="servicesProvidedNarrative"
+                                    maxLength="4000" ariaLabel="Narrative"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('servicesProvidedNarrative').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('servicesProvidedNarrative')?.value?.length || 0)}}
+                                    characters left
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <accordion>
+                    <accordion-group *ngIf="!apsCaseManagementData.preSingleStage" class="accordion-group pt-2"
+                        heading="Self-Neglect Conclusion Summary" aria-controls="selfNeglectAcc" aria-expanded="false"
+                        (isOpenChange)="updateStatusOfSelfNeglectAccordion($event)" [isOpen]="selfNeglectAccordionOpen">
+                        <div class="row case-management-left-pad-third-level" id="selfNeglectAcc" #selfNeglectAcc>
+                            <div class="text-left pt-2 col-12">
+                                Description of the Allegations and Finding:
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level" id="selfNeglectDescriptionDiv">
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="descriptionOfTheAllegationsAndFinding"
+                                    formControlName="descriptionOfTheAllegationsAndFinding"
+                                    name="descriptionOfTheAllegationsAndFinding" maxLength="4000"
+                                    ariaLabel="Description of the Allegations and Finding"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('descriptionOfTheAllegationsAndFinding').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 -
+                                    (caseManagementForm.get('descriptionOfTheAllegationsAndFinding')?.value?.length ||
+                                    0)}} characters left
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level">
+                            <div class="text-left pt-2 col-12">
+                                Root Cause:
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level" id="selfNeglectRootCauseDiv">
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="rootCause" formControlName="rootCause" name="rootCause"
+                                    maxLength="4000" ariaLabel=" Root Cause"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('rootCause').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('rootCause')?.value?.length || 0)}} characters left
+                                </span>
+                            </div>
+                        </div>
+                    </accordion-group>
+                    <accordion-group *ngIf="!apsCaseManagementData.preSingleStage" class="accordion-group pt-2"
+                        heading="Conclusion Justification" aria-controls="conclusionJustificationAcc"
+                        aria-expanded="false" (isOpenChange)="updateStatusOfConclusionJustificationAccordion($event)"
+                        [(isOpen)]="cjAccordionOpen">
+                        <div class="row case-management-left-pad-third-level" id="conclusionJustificationAcc"
+                            #conclusionJustificationAcc>
+                            <div class="text-left col-12">
+                                For multiple allegations, list and number them separately
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level">
+                            <div class="text-left pt-2 col-12">
+                                Description of the Allegations:
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level"
+                            id="conclusionJustificationDescriptionDiv">
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="descriptionOfTheAllegations"
+                                    formControlName="descriptionOfTheAllegations" name="descriptionOfTheAllegations"
+                                    maxLength="4000" ariaLabel="Description of the Allegations"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('descriptionOfTheAllegations').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('descriptionOfTheAllegations')?.value?.length ||
+                                    0)}} characters left
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row case-management-left-pad-third-level">
+                            <div class="text-left pt-2 col-12">
+                                Analysis of the Evidence:
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level" id="conclusionJustificationAnalysisDiv">
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="analysisOfTheEvidence" formControlName="analysisOfTheEvidence"
+                                    name="analysisOfTheEvidence" maxLength="4000"
+                                    ariaLabel="Analysis of the Evidence"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('analysisOfTheEvidence').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('analysisOfTheEvidence')?.value?.length || 0)}}
+                                    characters left
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row case-management-left-pad-third-level">
+                            <div class="text-left pt-2 col-12">
+                                Preponderance Statement:
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-third-level"
+                            id="conclusionJustificationPreponderanceDiv">
+                            <div class="col-sm-8 col-md-8 col-2">
+                                <dfps-textarea _id="preponderanceStatement" formControlName="preponderanceStatement"
+                                    name="preponderanceStatement" maxLength="4000"
+                                    ariaLabel="Preponderance Statement"></dfps-textarea>
+                                <span
+                                    *ngIf="!caseManagementForm.get('preponderanceStatement').disabled; else noCharacterLeftTemplate"
+                                    class="character-text">
+                                    {{4000 - (caseManagementForm.get('preponderanceStatement')?.value?.length || 0)}}
+                                    characters left
+                                </span>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+                <div class="row case-management-left-pad-second-level pt-4">
+                    <div class="text-left col-12">
+                        If there is external documentation:
+                    </div>
+                </div>
+                <div class="row case-management-left-pad-fourth-level">
+                    <dfps-checkbox _id="docExists" ariaLabel="External documents have been added to the case"
+                        [formControl]="caseManagementForm.controls['docExists']"
+                        label="{{!apsCaseManagementData.preSingleStage ? 'External documents have been added to the case.' : 'External documents have been added to the external documentation list'}}"
+                        inputName="docExists">
+                    </dfps-checkbox>
+                </div>
+
+                <div class="row case-management-left-pad-second-level pt-4">
+                    <div class="text-left col-12">
+                        If Legal Actions have been taken:
+                    </div>
+                </div>
+                <div class="row case-management-left-pad-fourth-level">
+                    <dfps-checkbox _id="legalActionsCompleted"
+                        ariaLabel="The Legal Actions and Outcomes Page has been completed"
+                        [formControl]="caseManagementForm.controls['legalActionsCompleted']"
+                        label="The Legal Actions and Outcomes Page has been completed."
+                        inputName="legalActionsCompleted" name="legalActionsCompleted">
+                    </dfps-checkbox>
+                </div>
+
+                <div class="row case-management-left-pad-second-level pt-4">
+                    <div class="text-left col-12">
+                        {{!apsCaseManagementData.preSingleStage ? 'If family violence is present:' : 'If family violence
+                        is validated:'}}
+                    </div>
+                </div>
+                <div class="row case-management-left-pad-fourth-level">
+                    <dfps-checkbox _id="clientProvidedMaterial"
+                        [formControl]="caseManagementForm.controls['clientProvidedMaterial']"
+                        ariaLabel="Client provided with written materials concerning available community service"
+                        label="Client provided with written materials concerning available community service."
+                        inputName="clientProvidedMaterial" name="clientProvidedMaterial">
+                    </dfps-checkbox>
+                </div>
+
+                <div class="row case-management-left-pad-second-level pt-4">
+                    <div class="text-left col-12">
+                        {{!apsCaseManagementData.preSingleStage ? 'If PCS funds are used:' : 'If ECS funds are used:'}}
+                    </div>
+                </div>
+                <div class="row case-management-left-pad-fourth-level">
+                    <dfps-checkbox _id="alernateResourceExplored" ariaLabel="Alternate resources were explored"
+                        [formControl]="caseManagementForm.controls['alernateResourceExplored']"
+                        label="{{!apsCaseManagementData.preSingleStage ? 'Alternate resources were explored.' : 'Alternate resources explored if ECS funds are to be used'}}"
+                        inputName="alernateResourceExplored" name="alernateResourceExplored">
+                    </dfps-checkbox>
+                </div>
+                <div class="row case-management-left-pad-fourth-level" *ngIf="!apsCaseManagementData.preSingleStage">
+                    <dfps-checkbox _id="verifiedClientGoods"
+                        ariaLabel="Verified client received goods/services purchased using PCS funds"
+                        [formControl]="caseManagementForm.controls['verifiedClientGoods']"
+                        label="Verified client received goods/services purchased using PCS funds."
+                        inputName="verifiedClientGoods" name="verifiedClientGoods">
+                    </dfps-checkbox>
+                </div>
+
+                <div class="row case-management-left-pad-third-level pt-4">
+                    <dfps-checkbox _id="unableToCommunicateInEnglish"
+                        [formControl]="caseManagementForm.controls['unableToCommunicateInEnglish']"
+                        ariaLabel="Client or other principal(s) was unable to communicate in English or has a Communication Disability"
+                        label="Client or other principal(s) was unable to communicate in English or has a Communication Disability"
+                        inputName="unableToCommunicateInEnglish" name="unableToCommunicateInEnglish"
+                        (click)="toggleLEPSection()">
+                    </dfps-checkbox>
+                </div>
+                <div *ngIf="showLEPSection">
+                    <div class="row case-management-left-pad-second-level pt-4">
+                        <div class="text-left col-12">
+                            Complete this section if client or other principal(s) is unable to communicate in English or
+                            has a
+                            Communication Disability.
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level pt-4">
+                        <div class="col-sm-2">
+                            <dfps-checkbox _id="client" [formControl]="caseManagementForm.controls['client']"
+                                ariaLabel="Client" label="Client" inputName="client" name="client"></dfps-checkbox>
+                        </div>
+                        <div class="text-left col-sm-2">
+                            Other (Name/s)
+                        </div>
+
+                        <div class="col-sm-2">
+                            <dfps-input _id="otherName" formControlName="otherName" name="otherName" maxlength="50"
+                                ariaLabel="Other (Name/s)">
+                            </dfps-input>
+                        </div>
+
+
+                    </div>
+                    <div class="row case-management-left-pad-third-level case-management-row-padding">
+                        <div class="case-management-body-text col-sm-12">
+                            <!-- <dfps-radio-button _id="clientCommunication" formControlName="clientCommunication"
+                                name="clientCommunication" ariaLabel="Translator Used Radio Button" [data]="clientCommunicationData"
+                                [horizontal]="true">
+                            </dfps-radio-button> -->
+                            <ng-container *ngFor="let option of clientCommunicationData; let i = index">
+                                <div class="d-flex items-center">
+                                    <p-radioButton [value]="option.value" inputId="{{'clientCommunication' + i}}"
+                                        name="clientCommunication" formControlName="clientCommunication">
+                                    </p-radioButton>
+                                    <label class="mb-0 ml-1"
+                                        for="{{'clientCommunication' + i}}">{{option.label}}</label>
+                                </div>
+                                <ng-container *ngIf="i === 0">
+                                    <div class="row case-management-row-padding mb-4">
+                                        <div class="case-management-body-text col-sm-12">
+                                            Client's Method of communication
+                                        </div>
+                                        <div class="case-management-body-text col-sm-12">
+                                            <dfps-input _id="clientMethodOfCommuincation"
+                                                formControlName="clientMethodOfCommuincation"
+                                                name="clientMethodOfCommuincation" maxlength="50"
+                                                ariaLabel="Other (Name/s)"></dfps-input>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level case-management-row-padding">
+                        <div class="text-left pt-2 col-12">
+                            Translator's Name/Relationship
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level" id="translaterNameDiv">
+                        <div class="col-sm-8 col-md-8 col-2">
+                            <dfps-textarea _id="translaterName" formControlName="translaterName" name="translaterName"
+                                maxLength="300" ariaLabel="Translator's Name/Relationship"></dfps-textarea>
+                        </div>
+                    </div>
+
+                    <div class="row case-management-left-pad-third-level">
+                        <div class="text-left pt-2 col-12">
+                            If alternative means of communication were used, describe below (e.g. written notes,
+                            communication board,
+                            etc.):
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-third-level" id="alternateCommunicationMeansDiv">
+                        <div class="col-sm-8 col-md-8 col-2">
+                            <dfps-textarea _id="alternateCommunicationMeans"
+                                formControlName="alternateCommunicationMeans" name="alternateCommunicationMeans"
+                                maxLength="300"
+                                ariaLabel="If alternative means of communication were used, describe below (e.g. written notes, communication board, etc.)">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="apsCaseManagementData?.reportableConductExists as emrRequired">
+                <div>
+                    <div class="case-management-left-pad-first-level ml-0">
+                        <div class="case-management-left-pad-first-level case-management-row-padding">
+                            <hr aria-hidden="true" />
+                        </div>
+                        <h2 class="row case-management-left-pad-second-level case-management-h2" aria-level="2">
+                            Employee Misconduct Registry (EMR)- Due Process
+                        </h2>
+                        <div class="case-management-left-pad-first-level case-management-row-padding">
+                            <hr aria-hidden="true" />
+                        </div>
+
+                        <div *ngIf="apsCaseManagementData.preSingleStage">
+                            <h2 class="row case-management-left-pad-second-level case-management-h2" aria-level="2">
+                                Program Administrator
+                            </h2>
+                            <div class="case-management-left-pad-first-level case-management-row-padding">
+                                <hr aria-hidden="true" />
+                            </div>
+                            <div class="row case-management-left-pad-second-level pt-4">
+                                <div class="text-left col-12">
+                                    Please identify the Program Administrator(PA) who will oversee the EMR Process.
+                                </div>
+                            </div>
+                            <div class="row case-management-left-pad-third-level case-management-row-padding">
+                                <div class="text-left col-3" [ngClass]="{'requiredDisplay': emrRequired}">
+                                    PA for EMR Process:
+                                </div>
+                                <div class="text-left col-3">
+                                    <dfps-select _id="programAdmin" ariaLabel="Program Administrator for EMR Process"
+                                        formControlName="programAdmin" name="programAdmin"
+                                        [dropDownValues]="programAdmins">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 class="row case-management-left-pad-second-level case-management-h2" aria-level="2">
+                            HCSSA Administrator
+                        </h2>
+                        <div class="case-management-left-pad-first-level case-management-row-padding">
+                            <hr aria-hidden="true" />
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4">
+                        <div class="text-left col-12">
+                            Investigations with Reportable Conduct require the HCSSA Administrator's contact information
+                            to conduct the EMR process.
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4">
+                        <div class="text-left col-sm-2" [ngClass]="{'requiredDisplay': emrRequired}">
+                            Name of Agency:
+                        </div>
+
+                        <div class="col-sm-4">
+                            <dfps-input _id="nameOfAgency" formControlName="nameOfAgency" name="nameOfAgency"
+                                maxlength="50" ariaLabel="Name of Agency"></dfps-input>
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4">
+                        <div class="text-left col-sm-2" [ngClass]="{'requiredDisplay': emrRequired}">
+                            First:
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-input _id="firstName" formControlName="firstName" name="firstName" maxlength="12"
+                                ariaLabel="First Name"></dfps-input>
+                        </div>
+                        <div class="text-left col-sm-1">
+                            Middle:
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-input _id="middleName" formControlName="middleName" name="middleName" maxlength="12"
+                                ariaLabel="Middle Name"></dfps-input>
+                        </div>
+                        <div class="text-left col-sm-1" [ngClass]="{'requiredDisplay': emrRequired}">
+                            Last:
+                        </div>
+                        <div class="col-sm-3">
+                            <dfps-input _id="lastName" formControlName="lastName" name="lastName" maxlength="22"
+                                ariaLabel="Last Name"></dfps-input>
+                        </div>
+                    </div>
+                    <div formGroupName="address">
+                        <div class="row case-management-left-pad-second-level pt-4">
+                            <div for="addressLine0" class="text-left col-sm-2"
+                                [ngClass]="{'requiredDisplay': emrRequired}">
+                                Address Ln 1:
+                            </div>
+
+                            <div class="col-sm-4">
+                                <dfps-input _id="addressLine0" formControlName="addressLine0" name="addressLine0"
+                                    maxlength="30" ariaLabel="Address Ln 1"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-second-level pt-4">
+                            <div class="text-left col-sm-2">
+                                Address Ln 2:
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-input _id="addressLine2" formControlName="addressLine2" name="addressLine2"
+                                    maxlength="30" ariaLabel="Address Ln 2"></dfps-input>
+                            </div>
+                            <div class="text-left col-sm-1" [ngClass]="{'requiredDisplay': emrRequired}">
+                                City:
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-input _id="city" formControlName="city" name="city" maxlength="20"
+                                    ariaLabel="City"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-second-level pt-4">
+                            <div class="text-left col-sm-2" [ngClass]="{'requiredDisplay': emrRequired}">
+                                State:
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-select _id="state" ariaLabel="State" formControlName="state" name="state"
+                                    [dropDownValues]="states"></dfps-select>
+                            </div>
+                            <div class="text-left col-sm-1" [ngClass]="{'requiredDisplay': emrRequired}">
+                                Zip:
+                            </div>
+                            <div class="d-flex col-sm-2">
+                                <dfps-input _id="zip" formControlName="zip" name="zip" [maxlength]="5"
+                                    ariaLabel="Zip"></dfps-input>
+                                <dfps-input _id="zipExt" formControlName="zipExt" name="zipExt" [maxlength]="4"
+                                    ariaLabel="Zip"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="row case-management-left-pad-second-level pt-4">
+                            <div class="text-left col-sm-2" [ngClass]="{'requiredDisplay': emrRequired}">
+                                County:
+                            </div>
+
+                            <div class="col-sm-4">
+                                <dfps-select _id="county" ariaLabel="county" formControlName="county" name="county"
+                                    [dropDownValues]="counties">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4">
+                        <div class="text-left col-sm-2" [ngClass]="{'requiredDisplay': emrRequired}">
+                            Phone:
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-input _id="phone" formControlName="phone" name="phone" maxlength="14"
+                                ariaLabel="Phone"></dfps-input>
+                        </div>
+                        <div class="text-left col-sm-1">
+                            Extension:
+                        </div>
+                        <div class="col-sm-2">
+                            <dfps-input _id="extension" formControlName="extension" name="extension" maxlength="8"
+                                ariaLabel="Extension"></dfps-input>
+                        </div>
+                        <div class="text-left col-sm-1">
+                            Email:
+                        </div>
+                        <div class="col-sm-4">
+                            <dfps-input _id="email" formControlName="email" name="email" maxlength="50"
+                                ariaLabel="Email"></dfps-input>
+                        </div>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4"
+                        *ngIf="this.apsCaseManagementData.pageMode !== 'VIEW' && (this.apsCaseManagementData.displaySendForReview || this.apsCaseManagementData?.entityInformation)">
+                        <dfps-address-validator _id="validateAddress" label="Validate" class="pr-1" size="small"
+                            (click)="validateAdressFields()" (validatedAddressEvent)="updateAdressFields($event)">
+                        </dfps-address-validator>
+                    </div>
+                    <div class="row case-management-left-pad-second-level pt-4 justify-content-end">
+                        <div class="d-flex btn-sm"
+                            *ngIf="this.apsCaseManagementData.displaySendForReview && this.apsCaseManagementData.pageMode !== 'VIEW'">
+                            <dfps-button add-button size="small" label="Send For Review" (click)="sendForReview()">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-end pt-4">
+                <div class="d-flex btn-sm"
+                    *ngIf="this.apsCaseManagementData.displaySaveAndSubmit && this.apsCaseManagementData.pageMode !== 'VIEW' && apsCaseManagementData?.stageCode !== 'ARI'">
+                    <dfps-button add-button size="small" label="Save and Submit" (click)="saveAndSubmit()">
+                    </dfps-button>
+                </div>
+                <div class="d-flex btn-sm" *ngIf="this.apsCaseManagementData.pageMode !== 'VIEW'">
+                    <dfps-button add-button size="small" label="Save" (click)="save()">
+                    </dfps-button>
+                </div>
+
+            </div>
+            <div class="p-2 mb-2 card-body pt-4">
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-6" *ngIf="this.apsCaseManagementData?.preSingleStage && apsCaseManagementData?.stageCode !== 'ARI' && apsCaseManagementData?.apsInvestigationDetailDto?.idEvent != 0">
+                        <dfps-button label="Narrative" _id="narrative" (click)="generateNarrative()">
+                        </dfps-button>
+                        <div *ngIf="this.apsCaseManagementData?.docExists">
+                            <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        <ng-template #noCharacterLeftTemplate>
+            <span class="character-text">
+                0 characters left
+            </span>
+        </ng-template>
+        <div class="card formPanel">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Forms Launch</h2>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+    </div>
+</div>

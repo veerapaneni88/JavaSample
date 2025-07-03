@@ -1,0 +1,227 @@
+<div class="container-fluid bodycolor" *ngIf="displayFinancialAcctResponse">
+    <div class="row" style="padding-left: 3px;">
+        <h1>Financial Account Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <p class="requiredDisplay text-right mt-2"><span class="sr-only">Red asterisk is</span>required field</p>
+    <div class="col-sm-12 pt-0">
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+        <form [formGroup]="financialAcctDetailForm">
+            <div class="form-group">
+                <div class="row ml-0">
+                    <h2 class="resource-search-h2" aria-level="2">
+                        Account Detail
+                    </h2>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="personId" class="col-sm-3 col-md-4 col-form-label col-form-label-sm">Person
+                            ID:</label>
+                        <div class="col-sm-7 pr-0">
+                            <dfps-input _id="personId" formControlName="personId" maxlength="16"> </dfps-input>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="personName" class="col-sm-5 col-form-label col-form-label-sm">Name:</label>
+                        <span class="px-3">
+                            {{ financialAcctDetailForm.controls.personName.value }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="program"
+                            class="col-sm-3 col-md-4 col-form-label col-form-label-sm requiredDisplay">Program:</label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="program" [blankOption]="false" formControlName="program"
+                                [dropDownValues]="displayFinancialAcctResponse?.programs"
+                                ariaLabel="program is required" (change)="programChanged()">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="type" class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Account
+                            Type:</label>
+                        <div class="col-sm-7">
+                            <dfps-select _id="type" formControlName="type" [dropDownValues]="
+                                    this.financialAcctDetailForm.controls.program.value === 'APS'
+                                        ? displayFinancialAcctResponse?.apsTypes
+                                        : this.financialAcctDetailForm.controls.program.value === 'CPS'
+                                        ? displayFinancialAcctResponse?.cpsTypes
+                                        : ''
+                                " placeholder="type" ariaLabel="Account type is required"></dfps-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="status"
+                            class="col-sm-3 col-md-4 col-form-label col-form-label-sm requiredDisplay">Status:</label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="status" [blankOption]="false" formControlName="status"
+                                [dropDownValues]="displayFinancialAcctResponse?.status" ariaLabel="status is required">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-3 pt-4">
+                        <label for="fromDate" class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Account
+                            Number:</label>
+                        <div class="col-sm-6">
+                            <dfps-input _id="accountNumber" formControlName="accountNumber" placeholder="from"
+                                ariaLabel="Account Number is required" maxlength="15"></dfps-input>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-1 pt-4" *ngIf="isNew">
+                        <dfps-button _id="validatePersonId" label="Validate" class="pr-1" size="extraSmall"
+                            (click)="validate()"></dfps-button>
+                    </div>
+                    <div *ngIf="isPersonIdValidated">
+                        <div id="personIdValidated" tabindex="0" #personIdSpan class="sr-only">
+                            Account Detail Validated
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-4 pt-4">
+
+                        <dfps-checkbox id="dedicated" *ngIf="showDedicated" label="Child has a dedicated Account"
+                            class="pl-3" tabindex="-1" ariaLabel="Child has a dedicated Account"
+                            [formControl]="financialAcctDetailForm.controls.dedicated" style="outline: none;">
+                        </dfps-checkbox>
+
+                    </div>
+
+
+                </div>
+                <div class="pt-3 pb-3">
+                    <hr />
+                </div>
+                <div class="row ml-0 pb-4">
+                    <h2 class="resource-search-h2" aria-level="2">
+                        Financial Institution Detail
+                    </h2>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-12 col-lg-8 col-sm-12">
+                        <label for="name"
+                            class="col-sm-3 col-md-2 col-form-label col-form-label-sm requiredDisplay">Name:</label>
+                        <div class="col-sm-7 col-md-8">
+                            <dfps-input _id="institutionName" formControlName="institutionName" placeholder="name"
+                                ariaLabel="institution name is required" maxlength="60"></dfps-input>
+                        </div>
+                    </div>
+                </div>
+
+                <accordion>
+                    <accordion-group class="accordion-group pt-2" heading="Address and Phone Information" (isOpenChange)="log($event)">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="phone"
+                                            class="col-sm-3 col-form-label col-form-label-sm">Phone Number:</label>
+                                        <div class="col-sm-7">
+                                            <dfps-input _id="phone" formControlName="phone">
+                                            </dfps-input>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="ext"
+                                            class="col-sm-3 col-form-label col-form-label-sm">Extension:</label>
+                                        <div class="col-sm-7 col-md-4">
+                                            <dfps-input _id="ext" formControlName="ext"></dfps-input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="address1"
+                                            class="col-sm-3 col-form-label col-form-label-sm">Address Line 1:</label>
+                                        <div class="col-sm-7">
+                                            <dfps-input _id="address1" formControlName="address1"></dfps-input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="address2" class="col-sm-3 col-form-label col-form-label-sm"> Address Line 2:</label>
+                                        <div class="col-sm-7">
+                                            <dfps-input _id="address2" formControlName="address2">
+                                            </dfps-input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="city" class="col-sm-3 col-form-label col-form-label-sm">City:
+                                        </label>
+                                        <div class="col-sm-7">
+                                            <dfps-input _id="city" formControlName="city"></dfps-input>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="state" class="col-sm-3 col-form-label col-form-label-sm">State:
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <dfps-select _id="state" formControlName="state"
+                                                [dropDownValues]="displayFinancialAcctResponse?.states"
+                                                placeholder="state"></dfps-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="d-flex col-sm-12 col-md-6">
+                                        <label for="zip" class="col-sm-3 col-form-label col-form-label-sm">Zip:</label>
+                                        <div class="col-sm-5 col-md-3 pr-0">
+                                            <dfps-input _id="zip" formControlName="zip" maxlength="5"> </dfps-input>
+                                        </div>
+                                        <label for="zipExt" class="text-center px-0"><span>&nbsp;-&nbsp;</span></label>
+                                        <div class="d-flex col-sm-2 pl-0 pr-0">
+                                            <dfps-input _id="zipExt" formControlName="zipExt" maxlength="4"
+                                                ariaLabel="Zip Extension"></dfps-input>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex col-md-6 col-sm-12">
+                                        <label for="county" class="col-sm-3 col-form-label col-form-label-sm">County:
+                                        </label>
+                                        <div class="col-sm-6">
+                                            <dfps-select _id="county" formControlName="county"
+                                                [dropDownValues]="displayFinancialAcctResponse?.counties"
+                                                placeholder="county"></dfps-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="d-flex col-md-9">
+                                        <label for="zip"
+                                            class="col-sm-3 col-md-2 col-form-label col-form-label-sm">Comments:</label>
+                                        <div class="col">
+                                            <dfps-textarea _id="comments" formControlName="comments"
+                                                ariaLabel="Comments"></dfps-textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex col-md-10">
+                                    </div>
+                                    <div class="d-flex col-md-2 pl-3">
+                                        <dfps-address-validator _id="validateAddress" label="Validate" class="pr-1"
+                                            *ngIf="isShowValidate" size="extraSmall" (click)="validateAdressFields()"
+                                            (validatedAddressEvent)="updateAdressFields($event)">
+                                        </dfps-address-validator>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+                <br />
+                <div class="d-flex justify-content-end pl-1" *ngIf="!isView">
+                    <dfps-button _id="staffSearchButton" label="Save" (click)="save()"></dfps-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

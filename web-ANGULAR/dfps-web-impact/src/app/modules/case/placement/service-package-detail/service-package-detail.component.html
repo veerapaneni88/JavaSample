@@ -1,0 +1,348 @@
+<div class="container-fluid bodycolor" *ngIf="servicePackageRes">
+    <div class="row">
+        <h1>Service Package</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="row">
+        <div class="requiredDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <form [formGroup]="servicePackageDetailForm">
+      <div class="form-group">
+            <h2>Service Package</h2>
+            <div class="row">
+              <div class="d-flex col-md-6 pt-4">
+                <label for="servicePackageCaseType"
+                       class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Is this child
+                  being served under DFPS or SSCC?</label>
+                <div class="col-sm-6">
+                  <dfps-select _id="servicePackageCaseType" formControlName="servicePackageCaseType"
+                               ariaLabel="Service Package case Type is required"
+                               [dropDownValues]="servicePackageRes.servicePackageCaseTypes"
+                               (change)="servicePackageCaseTypeChange()"></dfps-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="servicePackageType"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Service Package
+                        Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="servicePackageType" formControlName="servicePackageType"
+                            ariaLabel="Service Package Type is required"
+                            [dropDownValues]="servicePackageRes.servicePackageTypes"
+                            (change)="servicePackageTypeChange()"></dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="servicePackage"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Service
+                        Package:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="servicePackage" formControlName="servicePackage"
+                            ariaLabel="Service Package is required" [dropDownValues]="servicePackages"
+                            (change)="servicePackageChange()"></dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4" *ngIf="!hideOverrideReason">
+                    <label for="overrideReason" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Override
+                        Reason:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="overrideReason" formControlName="overrideReason"
+                            ariaLabel="Override Reason is conditionally required"
+                            [dropDownValues]="servicePackageRes.overrideReasons"
+                            (change)="overrideReasonChange()"></dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4" *ngIf="!hideOverrideReasonComments">
+                    <label class="col-sm-2 conReqDisplay" for="overrideReasonComments">
+                        Override Reason Comments:</label>
+                    <dfps-textarea class="col-sm-10 col-md-10 col-2" _id="overrideReasonComments"
+                        formControlName="overrideReasonComments"
+                        ariaLabel="Override Reason Comments is conditionally required"
+                        [customStyleTextArea]="getCustomStyles()" maxLength="1200"></dfps-textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="startDate" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Start
+                        Date:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="startDate" formControlName="startDate" ariaLabel="Start date is required"
+                        (ngModelChange)="populateEndDate()" [minDate]="primaryStartDate"></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="endDate" class="col-sm-4 col-form-label col-form-label-sm"
+                        [ngClass]="{ 'requiredDisplay' : servicePackageRes.stageType !== 'C-PB'}">End Date:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="endDate" formControlName="endDate"
+                            (ngModelChange)="isModifiedEndDate($event);endDateChange();autoPopulateAddOnEndDate(null)"
+                            ariaLabel="End date is required" [minDate]="primaryStartDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="!hideEndReasonAndComments">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="endReason" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">End
+                        Reason:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="endReason" formControlName="endReason"
+                            ariaLabel="End Reason is conditionally required"
+                            [dropDownValues]="endReasons"></dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="!hideEndReasonAndComments">
+                <div class="d-flex col-md-12 pt-4">
+                    <label class="col-sm-2" for="endReasonComments">
+                        End Reason Comments:</label>
+                    <dfps-textarea class="pl-2 ml-1 col-sm-10 col-md-10 col-2" _id="endReasonComments"
+                        formControlName="endReasonComments" ariaLabel="End Reason Comments"
+                        [customStyleTextArea]="getCustomStyles()" maxLength="1200"></dfps-textarea>
+                </div>
+            </div>
+            <div class="row" *ngIf="showCansAssessmentQuestion">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="cansCompletedIndicator" class="col-sm-7 col-form-label col-form-label-sm requiredDisplay">Was CANS Assessment Completed by a
+                        DFPS/SSCC CANS Assessor Used to Inform Recommendation?</label>
+                    <div class="col-sm-5 ml-4">
+                        <dfps-radio-button name="type"
+                            ariaLabel="Was CANS Assessment Completed to Inform Recommendation?" [data]="cansAssessmentRadio"
+                            [horizontal]="true" formControlName="cansCompletedIndicator" name="cansCompletedIndicator"
+                            (click) = "cansCompletedIndicatorChange()">
+                        </dfps-radio-button>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4" *ngIf="servicePackageDetailForm.get('cansCompletedIndicator').value === 'N'">
+                    <label class="col-sm-4 conReqDisplay" for="cansNotCompletedReason">
+                        If No, Why?</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="cansNotCompletedReason" formControlName="cansNotCompletedReason"
+                            ariaLabel="CANS Assessment not completed reason is conditionally required"
+                            [dropDownValues]="servicePackageRes.cansAssessmentNotCompletedReasons"
+                            (change)="cansNotCompletedReasonChange()"></dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="servicePackageDetailForm.get('cansNotCompletedReason').value === '40'">
+                <div class="d-flex col-md-12 pt-4">
+                    <label class="col-sm-2 conReqDisplay" for="cansNotCompletedComments">Comments:</label>
+                    <dfps-textarea class="col-sm-10 col-md-10 col-2" _id="cansNotCompletedComments"
+                        formControlName="cansNotCompletedComments" ariaLabel="CANS Assessment Comments is conditionally required"
+                        [customStyleTextArea]="getCustomStyles()" maxLength="1200"></dfps-textarea>
+                </div>
+            </div>
+            <div *ngIf="showCansAssessmentSection">
+                <div class="pt-4">
+                    <hr aria-hidden="true" />
+                </div>
+                <h2 class="pt-4">CANS ASSESSMENT</h2>
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="cansAssessmentCompletedDate" class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">CANS
+                            Assessment Completed
+                            Date:</label>
+                        <div class="col-sm-5">
+                            <dfps-date-picker _id="cansAssessmentCompletedDate"
+                                formControlName="cansAssessmentCompletedDate"
+                                ariaLabel="CANS Assessment CompletedDate" [maxDate] = "maxDate"></dfps-date-picker>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="cansAssessorName" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">CANS
+                            Assessor:</label>
+                        <div class="col-sm-6">
+                            <dfps-input _id="cansAssessorName" formControlName="cansAssessorName" name = "cansAssessor" maxlength="50"
+                            ariaLabel="CANS Assessor"></dfps-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-8 pt-4">
+                        <label for="cansRecommendationComments" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">CANS
+                            Assessment Recommendation Rationale:</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-12 pt-2">
+                        <dfps-textarea class="col-sm-12 col-md-12 pl-0" _id="cansRecommendationComments"
+                            formControlName="cansRecommendationComments" ariaLabel="CANS
+                            Assessment Recommendation Rationale"
+                            [customStyleTextArea]="getCustomStyles()" maxLength="1200"></dfps-textarea>
+                    </div>
+                </div>
+            </div>
+        <!--
+      <div class="card formPanel" *ngIf="showThirdPartyReviewerSection">
+        -->
+        <div class="card formPanel" *ngIf=false>
+                <div class="pt-4">
+                    <hr aria-hidden="true" />
+                </div>
+                <h2 class="pt-4">Third Party Reviewer Assessment</h2>
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="thirdPartyReviewerAssessmentCompletedDate" class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">
+                            Assessment Completed Date:</label>
+                        <div class="col-sm-5">
+                            <dfps-date-picker _id="groAssessmentCompletedDate"
+                                formControlName="groAssessmentCompletedDate"
+                                ariaLabel="Third Party Reviewer Assessment CompletedDate" ></dfps-date-picker>
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="groRecommendedIndicator" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">GRO II Recommended:</label>
+                        <div class="col-sm-4">
+                            <dfps-radio-button name="type"
+                                ariaLabel="GRO II Recommended" [data]="cansAssessmentRadio"
+                                [horizontal]="true" formControlName="groRecommendedIndicator" name="groRecommendedIndicator">
+                            </dfps-radio-button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-8 pt-4">
+                        <label for="thirdPartyReviewerComments" class="col-sm-6 col-form-label col-form-label-sm">Comments</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-12 pt-2">
+                        <dfps-textarea class="col-sm-12 col-md-12 pl-0" _id="thirdPartyReviewerComments"
+                            formControlName="thirdPartyReviewerComments" ariaLabel="Third Party Reviewer Assessment Comments"
+                            [customStyleTextArea]="getCustomStyles()" maxLength="4000"></dfps-textarea>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="showAddOnServices">
+                <div class="pt-4">
+                    <hr aria-hidden="true" />
+                </div>
+                <h2 class="pt-4">Add-On Service</h2>
+                <div class="row">
+                    <div class="d-flex col-md-4 pt-4">
+                        <label for="addOnService" class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Add-On
+                            Service:</label>
+                    </div>
+                </div>
+
+                <div formArrayName="addonServicePackages">
+                    <div *ngFor="let service of getAddonServices(servicePackageDetailForm); let i = index">
+                        <div [formGroupName]="i">
+                            <div class="row">
+                                <div class="d-flex col-md-12 pt-4">
+                                    <dfps-checkbox _id="{{'servicePackage' + i}}"
+                                        [formControl]="service.controls['isPackageSelected']" isBinary="false"
+                                        ariaLabel="addonServiceCheckboxFields[i]?.decode"
+                                        label="{{addonServiceCheckboxFields[i]?.decode}}"
+                                        (click)="resetAddonServiceFields(i);updateAddonServicePackageCode(i)">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                            <div *ngIf="service.get('isPackageSelected').value">
+                                <div class="row">
+                                    <div class="d-flex col-md-6 pt-4">
+                                        <label for="startDate"
+                                            class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Start
+                                            Date:</label>
+                                        <div class="col-sm-6">
+                                            <dfps-date-picker _id="{{'startDate' + i}}" formControlName="startDate"
+                                                ariaLabel="Start date is required" (ngModelChange)="autoPopulateAddOnEndDate(i)">
+                                            </dfps-date-picker>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex col-md-6 pt-4">
+                                        <label for="endDate"
+                                            class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">End
+                                            Date:</label>
+                                        <div class="col-sm-6">
+                                            <dfps-date-picker _id="{{'endDate' + i}}" formControlName="endDate"
+                                                ariaLabel="End date is required" (ngModelChange)="isAddonEndDateModified($event, i)">
+                                            </dfps-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="service.get('endReasonRequired').value">
+                                    <div class="d-flex col-md-6 pt-4">
+                                        <label for="endReason"
+                                            class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">End
+                                            Reason:</label>
+                                        <div class="col-sm-6">
+                                            <dfps-select _id="{{'endReason' + i}}" formControlName="endReason"
+                                                ariaLabel="End Reason is conditionally required"
+                                                [dropDownValues]="servicePackageRes.addonServiceEndReasons"
+                                                (change)="addOnServiceEndReasonChange(i)"></dfps-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex col-md-12 pt-4" *ngIf="service.get('endReason').value === '40'">
+                                        <label class="col-sm-2 conReqDisplay" for="endReasonComments">End Reason Comments:</label>
+                                        <dfps-textarea class="pl-2 ml-1 col-sm-10 col-md-10 col-2" _id="{{'endReasonComments' + i}}"
+                                            formControlName="endReasonComments"
+                                            ariaLabel="End Reason Comments is conditionally required"
+                                            [customStyleTextArea]="getCustomStyles()" maxLength="1200"></dfps-textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <div class="row" [hidden]="!servicePackageRes?.servicePackage">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="dateLastUpdated" class="col-sm-4 col-form-label col-form-label-sm">Date Last
+                        Updated:</label>
+                    <div class="col-sm-8">{{servicePackageRes?.servicePackage?.lastUpdatedDate}}</div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="lastUpdatedBy" class="col-sm-4 col-form-label col-form-label-sm">Last Updated
+                        By:</label>
+                    <div class="col-sm-8">{{servicePackageRes?.servicePackage?.lastModifiedBy}}</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-2" *ngIf = "isEditMode">
+                <dfps-button add-button size="small" label="Save" (click)="save()">
+                </dfps-button>
+            </div>
+        </div>
+<!--
+      <div class="card formPanel" *ngIf="showThirdPartyReviewerSection">
+-->
+      <div class="card formPanel" *ngIf=false>
+      <div class="p-2 mb-2 card-heading formHeader">
+          <h3>Forms and Reports</h3>
+        </div>
+        <div class="p-2 mb-2 card-body">
+        <div class="row">
+          <div class="d-flex col-md-6 pt-6" >
+            <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                              [createEvent]='true'>
+            </dfps-form-launch>
+          </div>
+          </div>
+        </div>
+      </div>
+    </form>
+</div>

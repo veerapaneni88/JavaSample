@@ -1,0 +1,231 @@
+<div class="container-fluid bodycolor" *ngIf="isDisplayScreen">
+    <div class="row">
+        <h1>Home History Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="resourceHistoryDetailForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name #: {{resurceHistoryDetailRes.caseName }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row pb-4">
+            <div class="text-left col-6 mt-2">Resource ID: {{ resurceHistoryDetailRes.resourceId }}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <h2>Home Information</h2>
+        <div class="row pl-4 mt-2">
+            <div class="d-flex col-md-4 pt-2">
+                <label for="startDate" class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Start
+                    Date:</label>
+                <div class="col-sm-6">
+                    <dfps-date-picker _id="startDate" formControlName="startDate" ariaLabel="Start Date is Required">
+                    </dfps-date-picker>
+                </div>
+            </div>
+            <div class="d-flex col-md-4 pt-2">
+                <label for="endDate" class="col-sm-3 col-form-label col-form-label-sm"
+                    [ngClass]="{'requiredDisplay': isEditMode}">End
+                    Date:</label>
+                <div class="col-sm-6">
+                    <dfps-date-picker _id="endDate" formControlName="endDate"
+                        ariaLabel="End Date is Conditionally Required">
+                    </dfps-date-picker>
+                </div>
+            </div>
+            <div class="d-flex col-md-4 pt-2">
+                <label for="capacity" class="col-sm-3 col-form-label col-form-label-sm"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Capacity:</label>
+                <div class="col-sm-4">
+                    <dfps-input _id="capacity" formControlName="capacity" maxlength="4"
+                        ariaLabel="Capacity is Conditionally Required"></dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4 pb-4">
+            <div class="d-flex col-md-4 pt-3">
+                <label for="category" class="col-sm-3 col-form-label col-form-label-sm"
+                    [ngClass]="{'requiredDisplay': isEditMode}">Category:</label>
+                <div class="col-sm-6">
+                    <dfps-select _id="category" ariaLabel="Category is Required"
+                        formControlName="category" [dropDownValues]="resurceHistoryDetailRes.categoryList"
+                        (change)="categoryTypeChanged($event)">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-4 pt-3">
+                <label for="status" class="col-sm-3 col-form-label col-form-label-sm"
+                    [ngClass]="{'requiredDisplay': isEditMode}">Status:</label>
+                <div class="col-sm-6">
+                    <dfps-select _id="status" ariaLabel="Status" formControlName="status"
+                        [dropDownValues]="resurceHistoryDetailRes.statusList">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <h2>Male Age Range Approved</h2>
+        <div class="row pl-4 mt-2 pb-4">
+            <div class="d-flex col-md-3 pt-2">
+                <label for="minAgeMaleChildYear" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Min Year:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="minAgeMaleChildYear" ariaLabel="Male Minimun Year" [blankOption]="false"
+                        formControlName="minAgeMaleChildYear" [dropDownValues]="resurceHistoryDetailRes.year">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="minAgeMaleChildMonth" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Min Month:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="minAgeMaleChildMonth" ariaLabel="Male Minimum Month" [blankOption]="false"
+                        formControlName="minAgeMaleChildMonth" [dropDownValues]="resurceHistoryDetailRes.month">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="maxAgeMaleChildYear" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Max Year:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="maxAgeMaleChildYear" ariaLabel="Male Maximum Year" [blankOption]="false"
+                        formControlName="maxAgeMaleChildYear" [dropDownValues]="resurceHistoryDetailRes.year">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="maxAgeMaleChildMonth" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Max Month:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="maxAgeMaleChildMonth" ariaLabel="Male Maximum Month" [blankOption]="false"
+                        formControlName="maxAgeMaleChildMonth" [dropDownValues]="resurceHistoryDetailRes.month">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <h2>Female Age Range Approved</h2>
+        <div class="row pl-4 mt-2 pb-4">
+            <div class="d-flex col-md-3 pt-2">
+                <label for="minAgeFemaleChildYear" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Min Year:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="minAgeFemaleChildYear" ariaLabel="Female Minimum Year" [blankOption]="false"
+                        formControlName="minAgeFemaleChildYear" [dropDownValues]="resurceHistoryDetailRes.year">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="minAgeFemaleChildMonth" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Min Month:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="minAgeFemaleChildMonth" ariaLabel="Female Minimum Month"
+                        [blankOption]="false" formControlName="minAgeFemaleChildMonth"
+                        [dropDownValues]="resurceHistoryDetailRes.month">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="maxAgeFemaleChildYear" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Max Year:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="maxAgeFemaleChildYear" ariaLabel="Female Maximum Year" [blankOption]="false"
+                        formControlName="maxAgeFemaleChildYear" [dropDownValues]="resurceHistoryDetailRes.year">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-3 pt-2">
+                <label for="maxAgeFemaleChildMonth" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Max Month:</label>
+                <div class="col-sm-4">
+                    <dfps-select _id="maxAgeFemaleChildMonth" ariaLabel="Female Maximum Month"
+                        [blankOption]="false" formControlName="maxAgeFemaleChildMonth"
+                        [dropDownValues]="resurceHistoryDetailRes.month">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <h2>Foster Home Type</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <dfps-multi-select id="homeType" [multiSelectValues]="resurceHistoryDetailRes.homeType"
+                    formControlName="homeType" inputName="homeType"
+                    [preSelectedValues]="selectedHomeTypeCodes"
+                    (selectedValues)="updateHomeTypes($event)" [multiSelectDisabled]=disbaleHomeTypes>
+                </dfps-multi-select>
+            </div>
+        </div>
+        <div class="row pt-4">
+            <div class="col-md-12">
+                <label for="category" class="col-sm-12 col-form-label col-form-label-sm">
+                    <h5>Foster Parent's Relationship to Children Being Placed:<i
+                            class="fa fa-question-circle fa_custom_blue" aria-hidden="true" (click)="helpIcon()"></i>
+                    </h5>
+                </label>
+            </div>
+        </div>
+        <div class="row pb-4">
+            <div class="col-md-12">
+                <dfps-multi-select id="filteredHomeTypes" [multiSelectValues]="famRelTypes"
+                    formControlName="famRelTypes" inputName="famRelTypes"
+                    [preSelectedValues]="selectedFamRelTypeCodes"
+                    (selectedValues)="updateFamilyRelationTypes($event)" [multiSelectDisabled]=disbaleHomeTypes>
+                </dfps-multi-select>
+            </div>
+        </div>
+        <h2>Closure Information</h2>
+        <div class="row pl-4">
+            <div class="d-flex col-md-6 pt-2">
+                <label for="closureReason" class="col-sm-3 col-form-label col-form-label-sm conReqDisplay"
+                    [ngClass]="{'conReqDisplay': isEditMode}">Closure
+                    Reason:</label>
+                <div class="col-sm-5">
+                    <dfps-select _id="closureReason" ariaLabel="Closure Reason"
+                        formControlName="closureReason" [dropDownValues]="resurceHistoryDetailRes.closureReasonList">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-6 pt-2">
+                <label for="recommendReopening" class="col-sm-4 col-form-label col-form-label-sm">Recommend
+                    Re-opening:</label>
+                <div class="col-sm-5">
+                    <dfps-select _id="recommendReopen" ariaLabel="Recommend Reopening"
+                        formControlName="recommendReopen"
+                        [dropDownValues]="resurceHistoryDetailRes.recommendReOpeningList">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-6 pt-3">
+                <label for="involuntaryClosure" class="col-sm-3 col-form-label col-form-label-sm">Involuntary
+                    Closure:</label>
+                <div class="col-sm-5 pl-3">
+                    <dfps-select _id="involuntaryClosure" ariaLabel="Involuntary Closure"
+                        formControlName="involuntaryClosure"
+                        [dropDownValues]="resurceHistoryDetailRes.involuntaryClosureList">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-6 justify-content-start w-100 pt-4">
+                <dfps-button size="small" label="Delete" tabindex="0" (click)="deleteResourceHistory()"
+                    _id="deleteButtonId" [hidden]="!isEditMode">
+                </dfps-button>
+            </div>
+            <div class="d-flex col-md-6 justify-content-end w-100 pt-4">
+                <dfps-button size="small" label="Save" tabindex="0" (click)="doSave()" _id="saveButtonId">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

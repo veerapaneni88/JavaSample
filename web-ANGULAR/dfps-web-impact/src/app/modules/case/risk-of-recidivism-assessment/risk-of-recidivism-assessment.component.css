@@ -1,0 +1,53 @@
+.rora-left-pad-third-level {
+    padding-left: 50px;
+}
+
+.rora-option {
+    display: flex;
+    align-items: baseline;
+    flex-direction: column;
+}
+
+/* .rora-option label {
+    margin-top: 5px;
+} */
+
+.rora-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.rora-suboptions {
+    margin-left: 20px;
+}
+
+.width-100 {
+    width: 100px;
+}
+
+.rora-sup-fields {
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.rora-sup-fields span {
+    width: 50px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.rora-answer-option{
+    display: flex;
+    width: 100%;
+}
+
+.rora-answer-option .rora-sup-fields {
+    margin-right: 20px;
+}
+
+.error-text {
+ color: #e00;
+}

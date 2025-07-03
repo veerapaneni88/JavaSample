@@ -1,0 +1,116 @@
+<div class="container-fluid bodycolor" *ngIf="medicalConsenterRes">
+    <div class="row">
+        <h1>Designated Medical Consenter</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="medicalConsenterForm">
+
+        <div class="row">
+            <div class="col-md-2">
+                <label for="name" class="col-form-label col-form-label-sm">Resource Name:</label>
+            </div>
+            <div class="col-md-6">
+                {{medicalConsenterRes.resource.name}}
+            </div>
+            <div class=" requiredDisplay d-flex col-md-3" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label for="resourceId" class="col-form-label col-form-label-sm">Resource ID:</label>
+            </div>
+            <div class="col-md-6">
+                {{medicalConsenterRes.resource.resourceId}}
+            </div>
+            <div class=" conReqDisplay d-flex col-md-3" tabindex="0">
+                <span>conditionally required field</span>
+            </div>
+        </div>  
+        
+        <div class="row">
+            <div class="col-md-2">
+                <label for="type" class="col-form-label col-form-label-sm">Resource Type:</label>
+            </div>
+            <div class="col-md-3">
+                {{medicalConsenterRes.resource.type}}
+            </div>           
+        </div> 
+
+        <div class="row">
+            <div class="col-md-2">
+                <label for="type" class="col-form-label col-form-label-sm">Region-Catchment: </label>
+            </div>
+            <div class="col-md-3">
+                {{medicalConsenterRes.resource.region}}-{{medicalConsenterRes.resource.ssccCatchment}}
+            </div>           
+        </div> 
+    
+        <br>
+        <div class="form-group">
+            <h2>Designated Medical Consenter Details</h2>
+            <div class="row pt-4">
+                <div class="d-flex col-md-2">
+                    <label class="col-form-label requiredDisplay" for="personId">
+                        Person ID:</label>
+                </div>
+                <div class="d-flex col-md-2">                    
+                        {{ personId }}
+                </div>                          
+                <div class="d-flex col-md-0">
+                    <label for="name" class="col-form-label requiredDisplay">Name:</label>
+                </div>
+                <div class="d-flex col-md-2">
+                    {{ personName }}
+                </div> 
+                <div class="d-flex col-md-2">
+                    <dfps-button size="extraSmall" label="Select Person" _id="searchPerson" (click)="searchPerson()"
+                        *ngIf="displayPersonSEarchButton"></dfps-button>
+                </div>                
+            </div>
+            <div class="row pt-4">
+                <div class="col-md-2 d-flex">
+                    <label class="col-form-label requiredDisplay" for="comments">
+                        Comments:</label>
+                </div>
+                <div class="col-md-8">
+                    <dfps-textarea _id="comments" formControlName="comments" maxLength="300" ariaLabel="Comments"
+                        [disabled]="disableComments"></dfps-textarea>
+                </div>
+            </div>
+            <div class="row pt-4">
+                <div class="col-md-2">
+                    <label for="lastUpdatedDate" class="col-form-label col-form-label-sm">Date Last
+                        Updated:</label>
+                </div>
+                <div class="col-md-3">
+                    {{ medicalConsenterRes.medicalConsenter?.lastUpdatedDate }}
+                </div>
+                <div class="d-flex col-md-3">
+                    <label for="lastUpdatedBy" class="col-form-label col-form-label-sm">Last Updated By:</label>
+                </div>
+                <div class="d-flex col-md-2">
+                    {{ medicalConsenterRes.medicalConsenter?.lastUpdatedBy }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-5 justify-content-start">
+                <dfps-button size="small" label="Cancel" (click)="cancel()" *ngIf="displayCancelButton">
+                </dfps-button>
+            </div>
+            <div class="d-flex col-md-5 justify-content-center">
+                <dfps-button size="small" label="Save" (click)="save()" *ngIf="displaySaveButton">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

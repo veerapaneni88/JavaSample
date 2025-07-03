@@ -1,0 +1,65 @@
+thead > tr {
+	height: 48px;
+	font-size: 14px;
+	font-weight:700;
+	color: #212121;
+	background-color:#FFFFFF;
+	border: 1px solid #c1d5ec;
+	text-align: center;
+}
+
+tbody > tr {
+	height: 48px;
+	font-size: 14px;
+	font-weight:400;
+	color: #212121;
+	background-color:#FFFFFF;
+	border: 1px solid #c1d5ec !important;
+}
+
+td {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+}
+
+th {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+    text-align: left;
+}
+
+.tableDiv {
+	border: 1px solid #E0E0E0;
+	height: 310px;
+	overflow-y: auto;
+}
+
+.tableDivClass {
+	/*border: 1px solid #c1d5ec !important;*/
+	width: 100% !important;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td {
+    background-color: #ffffff;
+ }
+
+ .table-striped > tbody > tr:nth-child(odd) > td {
+    background-color: #e6f3ff;
+ }
+
+ .table-striped > thead > tr > th {
+    background-color: #c1d5ec;
+}
+
+table.dataTable tr th {
+	border-right: solid 1px #c1d5ec;
+	border-left: solid 1px #c1d5ec;
+}
+
+.no-records {
+	padding: 5px 0 120px 0;
+}
+
+.error-text{
+    color: #cd0000 !important;
+}

@@ -1,0 +1,180 @@
+<div class="container-fluid bodycolor" *ngIf="contractPeriodResponse">
+    <div class="row">
+        <h1>Contract Period Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <form [formGroup]="contractPeriodForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Contract #: {{contractPeriodResponse.contractPeriod.scorContractNumber}}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Agency Acct ID : {{contractPeriodResponse.contractPeriod.contractId}}
+            </div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally
+                required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Period : {{contractPeriodResponse.contractPeriod.period}}</div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Resource Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="resourceId" class="col-sm-3 col-form-label col-form-label-sm">Resource
+                        ID:</label>
+                    <span id="resourceId" class="col-sm-9">
+                        {{contractPeriodResponse?.contractResource ? contractPeriodResponse.contractResource.resourceId : ''}}
+                    </span>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="vendorId" class="col-sm-3 col-form-label col-form-label-sm">Vendor
+                        ID:</label>
+                    <span id="vendorId" class="col-sm-9">
+                        {{contractPeriodResponse?.contractResource ? contractPeriodResponse.contractResource.vendorId : ''}}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="resourceName" class="col-form-label col-form-label-sm col-sm-3">
+                        Resource Name:
+                    </label>
+                    <span id="resourceName" class="col-sm-9">
+                        {{contractPeriodResponse?.contractResource ? contractPeriodResponse.contractResource.resourceName : ''}}
+                    </span>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="addressLine1" class="col-sm-3 col-form-label col-form-label-sm">Address Line 1:</label>
+                    <span id="addressLine1" class="col-sm-9">
+                        {{contractPeriodResponse?.contractResource ? contractPeriodResponse.contractResource.addressLine1 : ''}}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="resourceLegalName" class="col-sm-3 col-form-label col-form-label-sm">Legal
+                        Name: </label>
+                    <span id="resourceLegalName" class="col-sm-9">
+                        {{contractPeriodResponse?.contractResource ? contractPeriodResponse.contractResource.legalName : ''}}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true">
+        </div>
+
+        <div class="form-group mt-5">
+            <h2>Contract Period Detail</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="startDate"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Start:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="startDate" formControlName="startDate"
+                            ariaLabel="Start date is required field"></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="displayContractNumberField">
+                    <label for="scorContractNumber" class="col-sm-6 col-form-label col-form-label-sm">Contract
+                        Number:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="scorContractNumber" formControlName="scorContractNumber" maxlength="15"
+                            ariaLabel="Contract number"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4 align-items-start" *ngIf="displayContractNumberField">
+                    <dfps-button size="extraSmall" label="Validate" _id="validateResource" [hidden]="hideValidateButton"
+                        (click)="doValidate()">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="termDate"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Term:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="termDate" formControlName="termDate" placeholder="Term"
+                            ariaLabel="Term date is required field"></dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="legalIdentifier" class="col-sm-6 col-form-label col-form-label-sm">Legal
+                        Identifier:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="legalIdentifier" formControlName="legalIdentifier" maxlength="3"
+                            ariaLabel="Legal Identifier"></dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="earlyTerm" class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Early
+                        Term:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="earlyTerm" formControlName="earlyTerm" ariaLabel="Early Term date">
+                        </dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="showProcurementNumber">
+                    <label for="procurementNumber"
+                        class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Procurement Number:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="procurementNumber" formControlName="procurementNumber" maxlength="16"
+                            ariaLabel="Procurement Number is conditionally required"></dfps-input>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4 pl-0">
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="renew" ariaLabel="Renewal" label="Renewal"
+                            [formControl]="contractPeriodForm.controls['renew']" inputName="renew">
+                        </dfps-checkbox>
+                    </div>
+
+                </div>
+                <div class="d-flex col-md-1"></div>
+                <div class="d-flex col-md-4 pt-4 pl-0">
+                    <div class="col-sm-6">
+                        <dfps-checkbox _id="signed" ariaLabel="Signed" label="Signed"
+                            [formControl]="contractPeriodForm.controls['signed']" inputName="signed" isBinary="true">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="statusCode" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Status
+                        :</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="statusCode" formControlName="statusCode" [dropDownValues]="status"
+                            ariaLabel="Status Dropdown is required field" (change)="statusCodeChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3">
+            <dfps-button label="Save" _id="contractSave" [hidden]="hideSaveButton" (click)="doSave()"></dfps-button>
+        </div>
+        <input type="hidden" aria-hidden="true" id="lastUpdatedDate" formControlName="lastUpdatedDate">
+        <input type="hidden" aria-hidden="true" id="contractId" formControlName="contractId">
+        <input type="hidden" aria-hidden="true" id="period" formControlName="period">
+    </form>
+</div>

@@ -1,0 +1,107 @@
+<div class="container-fluid bodycolor" *ngIf="personTrainingRes">
+    <div class="row">
+        <h1>Home Member Training Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+
+    <form [formGroup]="trainingDetailForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Name: {{personTrainingRes.name}}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Person ID: {{personTrainingRes.personId}}</div>
+        </div>
+
+        <div class="form-group">
+            <br />
+            <div class="row">
+                <h2>Home Member Training</h2>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="trainingDate"
+                        class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Date:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="trainingDate" formControlName="trainingDate" placeholder="trainingDate"
+                            ariaLabel="Training Date is Required">
+                        </dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="title" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Title:</label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="title" formControlName="title" ariaLabel="Title is Required"
+                            maxlength="50">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="type" class="col-md-2 col-form-label col-form-label-sm requiredDisplay">Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="type" [blankOption]="true" formControlName="type"
+                            ariaLabel="Type is Required"
+                            [dropDownValues]="personTrainingRes?.trainingType">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2 pt-4">
+                    <dfps-checkbox _id="evaluationComponent"
+                        [formControl]="trainingDetailForm.controls['evaluationComponent']"
+                        ariaLabel="Evaluation Component" label="Evaluation Component">
+                    </dfps-checkbox>
+                </div>
+                <div class="d-flex col-md-3 pt-4">
+                    <dfps-checkbox _id="kinTrainingCompleted" *ngIf="personTrainingRes.kinStage"
+                        [formControl]="trainingDetailForm.controls['kinTrainingCompleted']"
+                        ariaLabel="ALL Kinship Training Completed" label="ALL Kinship Training Completed">
+                    </dfps-checkbox>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="trainingSession" class="col-md-2 col-form-label col-form-label-sm">Session:</label>
+                    <div class="col-sm-3">
+                        <dfps-input _id="trainingSession" formControlName="trainingSession" maxlength="2"
+                            ariaLabel="Session"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="hours" class="col-md-2 col-form-label col-form-label-sm">Hours:</label>
+                    <div class="col-sm-3">
+                        <dfps-input _id="hours" formControlName="hours" maxlength="3" ariaLabel="Hours">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="d-flex col-md-7 pt-4">
+                    <div class="justify-content-start mr-auto p-2">
+                        <dfps-button add-button size="small" label="Delete" (click)="delete()"
+                            *ngIf="displayDeleteButton">
+                        </dfps-button>
+                    </div>
+
+                    <div class="justify-content-end p-2">
+                        <dfps-button add-button size="small" label="Save" (click)="save()" *ngIf="displaySaveButton">
+                        </dfps-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

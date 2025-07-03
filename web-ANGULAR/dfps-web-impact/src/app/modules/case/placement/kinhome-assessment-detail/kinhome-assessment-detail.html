@@ -1,0 +1,352 @@
+<div class="container-fluid bodycolor" *ngIf="kinAssessmentRes">
+    <div class="row">
+        <h1>Kinship Home Assessment</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="row">
+        <div class="requiredDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <form [formGroup]="kinAssessmentDetailForm">
+        <div class="form-group">
+            <!--Caregiver Detail section-->
+            <div class="col-md-12 pt-3">
+                <h2>Caregiver Detail</h2>
+            </div>
+            <div class="row pl-4" *ngIf="isDisableSvcAuth">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="caregiverName" class="col-md-8 col-form-label col-form-label-sm">
+                        Name of Kinship Caregiver:
+                    </label>
+                    <div class="col-sm-6">
+                        {{kinAssessmentRes?.kinAssessmentDetail?.caregiverName}}
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="!isDisableSvcAuth">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="caregiverName" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">
+                        Name of Kinship Caregiver:
+                    </label>
+                    <dfps-select _id="caregiverName" formControlName="caregiverName"
+                    [dropDownValues]="kinAssessmentRes?.kinAssessmentDetail?.kinCaregiverInfo"
+                    ariaLabel="caregiverName" (change)="onCaregiverNameChange()">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="caregiverId" class="col-md-8 col-form-label col-form-label-sm">
+                        PID of Kinship Caregiver:
+                    </label>
+                    <div class="col-sm-6"  *ngIf="isDisableSvcAuth">
+                        {{kinAssessmentRes?.kinAssessmentDetail?.caregiverId}}
+                    </div>
+                    <div class="col-sm-6"  *ngIf="!isDisableSvcAuth">
+                        {{caregiverPID}}
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="caseId" class="col-md-8 col-form-label col-form-label-sm">
+                        CVS Case Number:
+                    </label>
+                    <div class="col-sm-6">
+                        {{kinAssessmentRes?.caseId}}
+                    </div>
+                </div>
+            </div>
+            <!--End of Caregiver Detail section-->
+            <!--placement info section-->
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <div class="col-md-12 pt-3">
+                <h2>Child(ren) Placed</h2>
+            </div>
+
+            <ng-container formArrayName="kinPlacementInfo"
+                *ngFor="let kinPlacement of kinAssessmentRes?.kinAssessmentDetail?.kinPlacementInfo;let i=index;">
+                <div [formGroupName]="i" class="row pl-4">
+                    <div class="d-flex col-md-4 pt-3">
+                        <label for="childName{{i}}" class="col-md-6 col-form-label col-form-label-sm">Child
+                            Name:</label>
+                        <div class="col-md-6 findings-cell">{{kinPlacement.childName}}</div>
+                    </div>
+                    <div class="d-flex col-md-2">
+                        <label for="id{{i}}" [hidden]="true"
+                            class="col-md-2 col-form-label col-form-label-sm">Id:</label>
+                        <div class="col-md-4 findings-cell" [hidden]="true">{{kinPlacement.id}}</div>
+                        <label for="childId{{i}}" [hidden]="true"
+                            class="col-md-2 col-form-label col-form-label-sm">Child
+                            Id:</label>
+                        <div class="col-md-4 findings-cell" [hidden]="true">{{kinPlacement.childId}}</div>
+                    </div>
+                    <div class="d-flex col-md-4 pt-3">
+                        <label for="dtOfPlacement{{i}}" class="col-md-6 col-form-label col-form-label-sm">Placement
+                            Start
+                            Date:</label>
+                        <div class="col-md-6">
+                            <dfps-date-picker _id="dtOfPlacement{{i}}" formControlName="dtOfPlacement"
+                                placeholder="dtOfPlacement" ariaLabel="Placement Start Date"  >
+                            </dfps-date-picker>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <!--End of placement section-->
+            <!--Home Assessment Information section-->
+            <div class="col-md-12 pt-3">
+                <h2>Home Assessment Information</h2>
+            </div>
+            <div class="row pl-4" *ngIf="isDisableSvcAuth">
+                <div class="d-flex col-md-6 pt-4" >
+                    <label for="svcAuthDate" class="col-md-8 col-form-label col-form-label-sm">Date Service
+                        Authorization entered in
+                        IMPACT 2.0:</label>
+                    <div class="col-sm-8">{{kinAssessmentRes?.kinAssessmentDetail?.svcAuthDate}}</div>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="!isDisableSvcAuth">
+                <div class="d-flex col-md-6 pt-4" >
+                    <label for="homeAssmtSubmittedDate" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Date Home Assessment Submitted:
+                    </label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="homeAssmtSubmittedDate" formControlName="homeAssmtSubmittedDate"
+                                ariaLabel="Date Home Assessment Submitted" [maxDate]="maxDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="approvalCd"
+                        class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Approved:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="approvalCd" formControlName="approvalCd"
+                            [dropDownValues]="kinAssessmentRes?.approvalReasonList" ariaLabel="approvalCd"
+                            (change)="approvalCdChange()">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="isApproved">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="dtOfApproval" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">
+                        Date of Approval:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="dtOfApproval" formControlName="dtOfApproval" ariaLabel="Date of Approval"
+                            [maxDate]="maxDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="isDenied">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="dtOfDenial" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">
+                        Date of Denial:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="dtOfDenial" formControlName="dtOfDenial" ariaLabel="Date of Denial"
+                            [maxDate]="maxDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4" *ngIf="isDenied">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="denialReason" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">
+                        Reason for Denial:
+                    </label>
+                </div>
+            </div>
+            <div _id="denialReason" *ngIf="isDenied" class="pl-4">
+
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-4">
+                        <dfps-checkbox _id="criminalHistory" ariaLabel="Criminal History" label="Criminal History"
+                            [formControl]="kinAssessmentDetailForm?.controls['criminalHistory']"
+                            inputName="criminalHistory" name="criminalHistory" (click)="criminalHistoryClicked()"
+                            (change)="criminalHistoryClicked()">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indCriminalHistory">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="chKinSafety" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Is a
+                            Kinship
+                            Safety Evaluation required to address Criminal History?</label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="chKinSafety" formControlName="chKinSafety" [dropDownValues]="yesNo"
+                                ariaLabel="Is a Kinship Safety Evaluation required to address Criminal History?">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indCriminalHistory">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="chAddendum" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Is an
+                            Addendum
+                            required to address Criminal History? </label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="chAddendum" formControlName="chAddendum" [dropDownValues]="yesNo"
+                                ariaLabel="Is an Addendum required to address Criminal History?">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-4">
+                        <dfps-checkbox _id="abuseNeglectHistory" ariaLabel="DFPS Abuse/Neglect History"
+                            label="DFPS Abuse/Neglect History"
+                            [formControl]="kinAssessmentDetailForm?.controls['abuseNeglectHistory']"
+                            inputName="abuseNeglectHistory" name="abuseNeglectHistory" (click)="abnHistoryClicked()"
+                            (change)="abnHistoryClicked()">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indAbuseNeglectHistory">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="abnKinSafety" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Is a
+                            Kinship
+                            Safety Evaluation required to address DFPS Abuse/Neglect History?</label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="abnKinSafety" formControlName="abnKinSafety" [dropDownValues]="yesNo"
+                                ariaLabel="Is a Kinship Safety Evaluation required to address DFPS Abuse/Neglect History?">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indAbuseNeglectHistory">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="abnAddendum" class="col-md-8 col-form-label col-form-label-sm requiredDisplay">Is an
+                            Addendum required to address DFPS Abuse/Neglect History?</label>
+                        <div class="col-sm-6">
+                            <dfps-select _id="abnAddendum" formControlName="abnAddendum" [dropDownValues]="yesNo"
+                                ariaLabel="Is an Addendum required to address DFPS Abuse/Neglect History?">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-4">
+                        <dfps-checkbox _id="otherReason" ariaLabel="Other" label="Other"
+                            [formControl]="kinAssessmentDetailForm?.controls['otherReason']" inputName="otherReason"
+                            name="otherReason" (click)="otherReasonClicked()" (change)="otherReasonClicked()">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indOtherReason">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="dnCommentEnteredBy" class="col-sm-4 col-form-label col-form-label-sm">
+                            Created By:
+                        </label>
+                        <div class="col-sm-6">
+                            {{kinAssessmentDetailForm.get('dnCommentEnteredBy').value}}
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="dtDnCommentEntered" class="col-sm-4 col-form-label col-form-label-sm">
+                            Created On:
+                        </label>
+                        <div class="col-sm-6">
+                            {{kinAssessmentDetailForm.get('dtDnCommentEntered').value}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="indOtherReason">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="dnCommentModifiedBy" class="col-sm-4 col-form-label col-form-label-sm">
+                            Modified By:
+                        </label>
+                        <div class="col-sm-6">
+                            {{kinAssessmentDetailForm.get('dnCommentModifiedBy').value}}
+                        </div>
+                    </div>
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="dtDnCommentModified" class="col-sm-4 col-form-label col-form-label-sm">
+                            Modified On:
+                        </label>
+                        <div class="col-sm-6">
+                            {{kinAssessmentDetailForm.get('dtDnCommentModified').value}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row pl-4 pt-4" *ngIf="indOtherReason">
+                    <label for="denialReasonComments" class="col-sm-12 ml-2 requiredDisplay">Reason for Denial:</label>
+                    <div class="col-md-8">
+                        <dfps-textarea class="col-sm-6" style="padding: 0;" _id="denialReasonComments"
+                            formControlName="denialReasonComments" [customStyleTextArea]="getCustomStyles()"
+                            maxLength="500" ariaLabel="denialReasonComments (Maximum character length is 500)">
+                        </dfps-textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <!--End Of Home Assessment Information section-->
+            <!--Comments section-->
+            <div class="col-md-12 pt-3">
+                <h2>Comments</h2>
+            </div>
+           <div class="row pl-4 pt-4">
+                <!-- <label for="txtComments" class="col-md-12 ml-3">Comments:</label> -->
+                <div class="col-md-8">
+                    <dfps-textarea class="col-sm-6" style="padding: 0;" _id="txtComments" formControlName="txtComments"
+                        [customStyleTextArea]="getCustomStyles()" maxLength="500" ariaLabel="Comments"></dfps-textarea>
+                </div>
+            </div>
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <!--End of Comments section-->
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-end mt-4">
+                    <div class="col-sm-6">
+                        <dfps-button add-button size="small" label="Edit" (click)="edit()" *ngIf="isFixer"
+                            [disabled]="isEditMode">
+                        </dfps-button>
+                    </div>
+                    <div class="col-sm-6">
+                        <dfps-button add-button size="small" label="Save" class="ml-3 pull-right" (click)="save()"
+                            *ngIf="!hideSaveButton">
+                        </dfps-button>
+                        <dfps-button add-button size="small" label="Save and Complete" class="ml-3 pull-right"
+                            (click)="saveComplete()" *ngIf="!hideSaveSubmitButton">
+                        </dfps-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card formPanel">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h3>Forms and Reports</h3>
+            </div>
+            <div class="p-2 mb-2 card-body">
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-6">
+                        <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                            [createEvent]='true'>
+                        </dfps-form-launch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,324 @@
+<div class="container-fluid bodycolor" *ngIf="apsGuardianshipDetails && guardianshipDetailForm">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="guardianshipDetailForm">
+        <div class="row case-management-heading pl-2">
+            <h1 aria-level="1">Guardianship Detail</h1>
+        </div>
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div>
+            <div class="row mt-2">
+                <div class="text-left col-6">
+                    Stage Name: {{apsGuardianshipDetails.caseName}}
+                </div>
+                <div class="requiredDisplay col-6 text-right" tabindex="0">
+                    <span class="sr-only">Red asterisk is </span>required field
+                </div>
+            </div>
+            <div class="row">
+                <div class="conReqDisplay text-right mt-2 mb-2 col-12" tabindex="0">
+                    <span class="sr-only">Double dagger is </span>conditionally required field
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="showReferralActionSection">
+            <accordion>
+                <accordion-group class="accordion-group pt-2" heading="Guardianship Referral Actions" [(isOpen)]="isReferralActionsOpen">
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Initial Case Review:</label>
+                            <dfps-date-picker _id="initialCaseReview" formControlName="initialCaseReview"
+                                name="initialCaseReview" ariaLabel="Initial Case Review"></dfps-date-picker>
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Initial Case Review Results:</label>
+                            <dfps-select _id="initialCaseReviewResults" ariaLabel="Initial Case Review Results"
+                                formControlName="initialCaseReviewResults" name="initialCaseReviewResults"
+                                [dropDownValues]="initialCaseReviewResultsList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Notification of DADS Assessment Received:</label>
+                            <dfps-date-picker _id="notificationOfDadsAssessmentReceived" formControlName="notificationOfDadsAssessmentReceived"
+                                name="notificationOfDadsAssessmentReceived" ariaLabel="Notification of DADS Assessment Received">
+                            </dfps-date-picker>
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Notification of DADS Assessment Results:</label>
+                            <dfps-select _id="notifDadsAssessmentResults" ariaLabel="Notification of DADS Assessment Results:"
+                                formControlName="notifDadsAssessmentResults" name="notifDadsAssessmentResults"
+                                [dropDownValues]="notifDadsAssessmentResultsList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Joint Staffing:</label>
+                            <dfps-date-picker _id="jointStaffing" formControlName="jointStaffing" name="jointStaffing"
+                                ariaLabel="Joint Staffing"></dfps-date-picker>
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Joint Staffing Results:</label>
+                            <dfps-select _id="jointStaffingResults" ariaLabel="Joint Staffing Results"
+                                formControlName="jointStaffingResults" name="jointStaffingResults"
+                                [dropDownValues]="jointStaffingResultsList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Management Review:</label>
+                            <dfps-date-picker _id="managementReview" formControlName="managementReview" name="managementReview"
+                                ariaLabel="Management Review"></dfps-date-picker>
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Management Review Results:</label>
+                            <dfps-select _id="managementReviewResults" ariaLabel="Management Review Results"
+                                formControlName="managementReviewResults" name="managementReviewResults"
+                                [dropDownValues]="managementReviewResultsList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Guardianship Review Committee: </label>
+                            <dfps-date-picker _id="guardianshipReviewCommittee" formControlName="guardianshipReviewCommittee"
+                                name="guardianshipReviewCommittee" ariaLabel="Guardianship Review Committee"></dfps-date-picker>
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Guardianship Review Committee Results:</label>
+                            <dfps-select _id="guardianshipReviewCommitteeResults"
+                                ariaLabel="Guardianship Review Committee Results"
+                                formControlName="guardianshipReviewCommitteeResults" name="guardianshipReviewCommitteeResults"
+                                [dropDownValues]="guardianshipReviewCommitteeResultsList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="d-flex col-sm-5 col-md-5 pt-2 pb-2">
+                        </div>
+                        <div class="d-flex col-sm-7 col-md-7 pt-2 pb-2">
+                            <label class="col-sm-3 col-md-3 col-3" for="narrative">
+                                Final Outcome:</label>
+                            <dfps-select _id="finalOutcome" ariaLabel="Final Outcome" formControlName="finalOutcome"
+                                name="finalOutcome" [dropDownValues]="finalOutcomeList">
+                            </dfps-select>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </ng-container>
+
+
+        <div class="case-management-row-padding">
+            <div class="row case-management-left-pad-second-level ml-0">
+                <h2 class="case-management-h2" aria-level="2">
+                    Guardianship Information
+                </h2>
+            </div>
+
+            <div class="row case-management-left-pad-third-level case-management-row-padding">
+                <div for="guardianType" class="text-left requiredDisplay col-2">
+                    Guardian Type:
+                </div>
+                <div class="text-left col-3">
+                    <dfps-select _id="guardianType" ariaLabel="Guardian Type" formControlName="guardianType"
+                        name="guardianType" [dropDownValues]="guardianTypeList">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="row case-management-left-pad-third-level case-management-row-padding">
+                <div class="text-left requiredDisplay col-2">
+                    Guardianship Type:
+                </div>
+                <div class="text-left col-3">
+                    <dfps-select _id="guardianshipType" ariaLabel="Guardianship Type" formControlName="guardianshipType"
+                        name="guardianshipType" [dropDownValues]="guardianshipTypeList">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+
+        <div class="case-management-row-padding">
+            <div class="row case-management-left-pad-second-level ml-0">
+                <h2 class="case-management-h2" aria-level="2">
+                    Guardian
+                </h2>
+            </div>
+
+            <div class="row case-management-left-pad-third-level case-management-row-padding mb-2">
+                <div class="d-flex col-md-2 conReqDisplay">
+                    Name:
+                </div>
+                <div class="d-flex col-md-3">
+                    <dfps-input _id="guardianName" ariaLabel="Guardian Name" formControlName="guardianName" name="guardianName" maxLength="30">
+                    </dfps-input>
+                </div>
+                <div class="d-flex col-md-4"></div>
+
+                <ng-container *ngIf="!eventId || eventId==0 || !apsGuardianshipDetails?.guardianshipResponseDto?.sdsGuardName">
+                    <div class="d-flex col-md-0 pr-1">
+                        <dfps-button add-button size="small" label="Select Resource" disabled="true" (click)="selectResource()">
+                        </dfps-button>
+                    </div>
+                    <div class="d-flex col-md-0 pl-2">
+                        <dfps-button add-button size="small" label="Select Person" (click)="selectPerson()">
+                        </dfps-button>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="row case-management-left-pad-fourth-level case-management-row-padding mb-2">
+                <div class="d-flex col-md-0" *ngIf="!isEditMode && apsGuardianshipDetails?.guardianshipResponseDto?.indGuardAgedOut!=='N'">
+                    <dfps-checkbox _id="agedOutOfCps" ariaLabel="Aged out of CPS"
+                                                label="Aged out of CPS" [formControl]="guardianshipDetailForm.controls['agedOutOfCps']"
+                                                inputName="agedOutOfCps"  name="agedOutOfCps">
+                     </dfps-checkbox>
+                 </div>
+            </div>
+        </div>
+
+        <accordion>
+            <accordion-group class="accordion-group pt-2" (isOpenChange)="onAddressPhoneDetailOpenChange($event)" heading="Address/Phone Detail" [(isOpen)]="isAddressPhoneDetailsOpen">
+                <div  class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="d-flex col-md-6 col-sm-12">
+                                <label for="phone"
+                                    class="col-sm-3 col-form-label col-form-label-sm">Number:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="phone" formControlName="phone" maxlength="14">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-6 col-sm-12">
+                                <label for="ext"
+                                    class="col-sm-3 col-form-label col-form-label-sm">Extension:</label>
+                                <div class="col-sm-7 col-md-4">
+                                    <dfps-input _id="ext" formControlName="ext" maxlength="8"></dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div formGroupName="address">
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="address1"
+                                        class="col-sm-3 col-form-label col-form-label-sm">Street:</label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="address1" formControlName="address1" maxlength="30"></dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="address2" class="col-sm-3 col-form-label col-form-label-sm sr-only">Street Address 2</label>
+                                    <div class="col-sm-7 offset-sm-3">
+                                        <dfps-input _id="address2" formControlName="address2" maxlength="30">
+                                        </dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="city" class="col-sm-3 col-form-label col-form-label-sm">City:
+                                    </label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="city" formControlName="city" maxlength="20"></dfps-input>
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="state" class="col-sm-3 col-form-label col-form-label-sm">State:
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <dfps-select _id="state" formControlName="state"
+                                            [dropDownValues]="statesList"
+                                            placeholder="state"></dfps-select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-sm-12 col-md-6">
+                                    <label for="zip" class="col-sm-3 col-form-label col-form-label-sm">Zip:</label>
+                                    <div class="col-sm-5 col-md-3 pr-0">
+                                        <dfps-input _id="zip" formControlName="zip" maxlength="5"> </dfps-input>
+                                    </div>
+                                    <label for="zipExt" class="text-center px-0 sr-only">Zip Extension</label>
+                                    <div class="d-flex col-sm-2 pl-1 pr-0">
+                                        <dfps-input _id="zipExt" formControlName="zipExt" maxlength="4"
+                                            ariaLabel="Zip Extension"></dfps-input>
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="county" class="col-sm-3 col-form-label col-form-label-sm">County:
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <dfps-select _id="county" formControlName="county"
+                                            [dropDownValues]="countiesList"
+                                            placeholder="county"></dfps-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="d-flex col-md-9">
+                                <label for="comments"
+                                    class="col-sm-3 col-md-2 col-form-label col-form-label-sm">Comments:</label>
+                                <div class="col">
+                                    <dfps-textarea _id="comments" formControlName="comments"
+                                        ariaLabel="Comments" maxLength="100"></dfps-textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="isAddressEditMode">
+                            <div class="d-flex col-md-11">
+                            </div>
+                            <div class="d-flex col-md-1 pl-3" >
+                                <dfps-address-validator _id="validateAddress" label="Validate" class="pr-1" size="small"
+                                    (click)="validateAdressFields()" (validatedAddressEvent)="updateAdressFields($event)">
+                                </dfps-address-validator>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </accordion-group>
+        </accordion>
+
+        <div *ngIf="isEditMode || isAddressEditMode" class="row justify-content-end">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save" (click)="save()" _id="saveButtonId">
+                </dfps-button>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="case-management-row-padding"></div>
+    <div class="card formPanel" *ngIf="showFormLaunch">
+        <div class="p-2 mb-2 card-heading formHeader">
+            <h2>Forms Launch</h2>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-6 pt-6 pb-6">
+                <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues' [createEvent]='true'>
+                </dfps-form-launch>
+            </div>
+            <div class="d-flex col-md-2"></div>
+        </div>
+    </div>
+</div>

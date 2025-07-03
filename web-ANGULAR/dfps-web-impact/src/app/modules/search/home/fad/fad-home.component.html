@@ -1,0 +1,647 @@
+<div class="container-fluid bodycolor" *ngIf="displayHomeInformation">
+    <div class="row">
+        <h1>Add Home</h1>
+    </div>
+
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+
+    <form [formGroup]="homeForm">
+        <div class="form-group">
+            <div class="row">
+                <div class="requiredDisplay text-right mt-2 col-12" tabindex="0">
+                    <span class="sr-only">Red asterisk is </span>required field
+                </div>
+            </div>
+            <div class="row">
+                <div class="conReqDisplay text-right mt-2  col-12">
+                    <span>conditionally required field</span>
+                </div>
+            </div>
+            <dfps-collapsable-section>
+                <accordion aria-class="bodycolor">
+                    <accordion-group class="accordion-group" heading="Home Demographics" id="homeDemographicsGroup"
+                        [isOpen]="isHomeDemographicsOpen">
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="homeName"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Home
+                                    Name:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="homeName" formControlName="homeName" maxlength="30"
+                                        ariaLabel="Home Name is Required">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="category"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Category:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="category" ariaLabel="Category is Required"
+                                        formControlName="category" [dropDownValues]="displayHomeInformation.category">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="status" class="col-sm-5 col-form-label col-form-label-sm">Status:</label>
+                                <div class="col-sm-7" id="status" ariaLabel="Status">
+                                    {{displayHomeInformation.statusInquiry}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="ethnicity"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Ethnicity:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="ethnicity" ariaLabel="Ethnicity" formControlName="ethnicity"
+                                        [dropDownValues]="displayHomeInformation.ethnicity">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="language"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Language:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="language" ariaLabel="Language" formControlName="language"
+                                        [dropDownValues]="displayHomeInformation.language">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="religion"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Religion:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="religion" ariaLabel="Religion" formControlName="religion"
+                                        [dropDownValues]="displayHomeInformation.religion">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="annualIncome"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Annual
+                                    Income:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="annualIncome" formControlName="annualIncome" currency=true
+                                        maxlength="12" ariaLabel="Annual Income is Conditionally Required">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="maritalStatus"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Marital
+                                    Status:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="maritalStatus"
+                                        ariaLabel="Marital Status is Conditionally Required"
+                                        formControlName="maritalStatus"
+                                        [dropDownValues]="displayHomeInformation.maritalStatus"
+                                        (change)="maritalStatusChange()">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="marriageDate"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Marriage
+                                    Date:</label>
+                                <div class="col-sm-7">
+                                    <dfps-date-picker _id="marriageDate" formControlName="marriageDate"
+                                        ariaLabel="Marriage Date is Conditionally Required">
+                                    </dfps-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="sourceOfInquiry" class="col-sm-5 col-form-label col-form-label-sm">Source of
+                                    Inquiry:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="sourceOfInquiry" ariaLabel="Source Of Inquiry"
+                                        formControlName="sourceOfInquiry"
+                                        [dropDownValues]="displayHomeInformation.sourceOfInquiry">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="respite" class="col-sm-5 col-form-label col-form-label-sm">Respite:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="respite" ariaLabel="Respite" formControlName="respite"
+                                        [dropDownValues]="displayHomeInformation.respite">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <div class="col-sm-8">
+                                    <dfps-checkbox _id="individualStudyProcess"
+                                        [formControl]="homeForm.controls['individualStudyProcess']"
+                                        ariaLabel="Individual Study Process" label="Individual Study Process"
+                                        inputName="individualStudyProcess">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group" heading="Primary Address" id="primaryAddressGroup"
+                        aria-expanded="true">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="vendorIdPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Vendor ID:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="vendorIdPrimaryAddress" maxlength="14"
+                                        formControlName="vendorIdPrimaryAddress" ariaLabel="Vendor Id">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="attentionPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Attention:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="attentionPrimaryAddress" formControlName="attentionPrimaryAddress"
+                                        ariaLabel="Attention" maxlength="30">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="addressLn1PrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Address Line
+                                    1:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="addressLn1PrimaryAddress" maxlength="30"
+                                        formControlName="addressLn1PrimaryAddress"
+                                        ariaLabel="Address Line 1 is Required" (change)="primaryAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="addressLn2PrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Address Line 2:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="addressLn2PrimaryAddress" maxlength="60"
+                                        formControlName="addressLn2PrimaryAddress" ariaLabel="Address Line 2"
+                                        (change)="primaryAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="cityPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">City:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="cityPrimaryAddress" maxlength="20"
+                                        formControlName="cityPrimaryAddress" ariaLabel="City is Required"
+                                        (change)="primaryAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="statePrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">State:
+                                </label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="statePrimaryAddress" formControlName="statePrimaryAddress"
+                                        ariaLabel="State is Required" [dropDownValues]="displayHomeInformation.state"
+                                        (change)="statePrimaryAddressChange()">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4 align-items-center">
+                                <label for="zipPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Zip:</label>
+                                <div class="col-sm-3 pr-0">
+                                    <dfps-input _id="zipPrimaryAddress" formControlName="zipPrimaryAddress"
+                                        ariaLabel="Zip is Required" maxlength="5"
+                                        (change)="primaryAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                                <label for="zipExtPrimaryAddress"
+                                    class="text-center px-0"><span>&nbsp;-&nbsp;</span></label>
+                                <div class="d-flex col-sm-2 pl-0 pr-0">
+                                    <dfps-input _id="zipExtPrimaryAddress" maxlength="4"
+                                        formControlName="zipExtPrimaryAddress" ariaLabel="Zip Extension"
+                                        (change)="primaryAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                                <div class="d-flex btn-sm" id="validatePrimaryAddressDiv">
+                                    <dfps-address-validator _id="validatePrimaryAddress" #validatePrimaryAddress
+                                        label="Validate" class="pr-1" size="extraSmall"
+                                        (click)="validateAdressFieldsPrimary()"
+                                        (validatedAddressEvent)="updateAdressFieldsPrimary($event)">
+                                    </dfps-address-validator>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="countyPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">County:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="countyPrimaryAddress" ariaLabel="County is Required"
+                                        formControlName="countyPrimaryAddress"
+                                        [dropDownValues]="displayHomeInformation.counties"
+                                        (change)="countyPrimaryAddressChange()">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="schoolDistrictPrimaryAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">School
+                                    District:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="schoolDistrictPrimaryAddress" ariaLabel="School District"
+                                        formControlName="schoolDistrictPrimaryAddress"
+                                        [dropDownValues]="displayHomeInformation.schoolDistrictPrimary">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label class="col-sm-5" for="commentsPrimaryAddress">
+                                    Comments:</label>
+                                <dfps-textarea class="col-sm-7 col-md-12 col-2" _id="commentsPrimaryAddress"
+                                    formControlName="commentsPrimaryAddress" ariaLabel="Comments" maxLength="80">
+                                </dfps-textarea>
+                            </div>
+                        </div>
+                    </accordion-group>
+                    <accordion-group class="accordion-group" heading="Business Address" id="businessAddressGroup">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="vendorIdBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Vendor
+                                    ID:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="vendorIdBusinessAddress" maxlength="14"
+                                        formControlName="vendorIdBusinessAddress"
+                                        ariaLabel="Vendor Id is Conditionally Required">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="attentionBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Attention:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="attentionBusinessAddress" maxlength="30"
+                                        formControlName="attentionBusinessAddress" ariaLabel="Attention">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="addressLn1BusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Address Line
+                                    1:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="addressLn1BusinessAddress" maxlength="30"
+                                        formControlName="addressLn1BusinessAddress"
+                                        ariaLabel="Address Line 1 is Conditionally Required"
+                                        (change)="businessAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="addressLn2BusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Address Line 2:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="addressLn2BusinessAddress" maxlength="60"
+                                        formControlName="addressLn2BusinessAddress" ariaLabel="Address Line 2"
+                                        (change)="businessAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="cityBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">City:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="cityBusinessAddress" maxlength="20"
+                                        formControlName="cityBusinessAddress" ariaLabel="City is Conditionally Required"
+                                        (change)="businessAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="stateBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">State:
+                                </label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="stateBusinessAddress" formControlName="stateBusinessAddress"
+                                        ariaLabel="State is Conditionally Required"
+                                        [dropDownValues]="displayHomeInformation.state"
+                                        (change)="stateBusinessAddressChange()">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4 align-items-center">
+                                <label for="zipBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Zip:</label>
+                                <div class="col-sm-3 pr-0">
+                                    <dfps-input _id="zipBusinessAddress" formControlName="zipBusinessAddress"
+                                        ariaLabel="Zip is Conditionally Required" maxlength="5"
+                                        (change)="businessAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                                <label for="zipExtBusinessAddress"
+                                    class="text-center px-0"><span>&nbsp;-&nbsp;</span></label>
+                                <div class="d-flex col-sm-2 pl-0 pr-0">
+                                    <dfps-input _id="zipExtBusinessAddress" maxlength="4"
+                                        formControlName="zipExtBusinessAddress" ariaLabel="Zip Extension"
+                                        (change)="businessAddressValueChange()">
+                                    </dfps-input>
+                                </div>
+                                <div class="d-flex btn-sm" id="validateBusinessAddressDiv">
+                                    <dfps-address-validator _id="validateBusinessAddress" #validateBusinessAddress
+                                        label="Validate" class="pr-1" size="extraSmall"
+                                        (click)="validateAdressFieldsBusiness()"
+                                        (validatedAddressEvent)="updateAdressFieldsBusiness($event)">
+                                    </dfps-address-validator>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="countyBusinessAddress"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">County:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="countyBusinessAddress"
+                                        ariaLabel="County is Conditionally Required"
+                                        formControlName="countyBusinessAddress"
+                                        [dropDownValues]="displayHomeInformation.counties"
+                                        (change)="countyBusinessAddressChange()">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-1"></div>
+                            <div class="d-flex col-md-4 pt-4"></div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label class="col-sm-5" for="commentsBusinessAddress">
+                                    Comments:</label>
+                                <dfps-textarea class="col-sm-7 col-md-12 col-2" _id="commentsBusinessAddress"
+                                    formControlName="commentsBusinessAddress" ariaLabel="Comments" maxLength="80">
+                                </dfps-textarea>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group" heading="Phone" id="phoneGroup">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="phoneTypePrimary"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Type:</label>
+                                <div class="col-sm-7">
+                                    <dfps-select _id="phoneTypePrimary" ariaLabel="Type"
+                                        formControlName="phoneTypePrimary"
+                                        [dropDownValues]="displayHomeInformation.phoneType">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="phonePrimary" class="col-sm-5 col-form-label col-form-label-sm">Phone
+                                    Number:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="phonePrimary" ariaLabel="Phone Number"
+                                        formControlName="phonePrimary" maxlength="15">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="phoneExtPrimary"
+                                    class="col-sm-5 col-form-label col-form-label-sm">Extension:</label>
+                                <div class="col-sm-7">
+                                    <dfps-input _id="phoneExtPrimary" ariaLabel="Phone Extension" maxlength="8"
+                                        formControlName="phoneExtPrimary">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label class="col-sm-5" for="phoneCommentsPrimary">Comments:</label>
+                                <dfps-textarea class="col-sm-7 col-md-12 col-2" _id="phoneCommentsPrimary"
+                                    formControlName="phoneCommentsPrimary" ariaLabel="Comments" maxLength="80">
+                                </dfps-textarea>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group" heading="Home Interest" id="homeInterestGroup">
+                        <h2>Male Age Range Interests</h2>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-3 pt-4 pb-4">
+                                <label for="maleAgeRangeInterestsMinYear"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Min
+                                    Year:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="maleAgeRangeInterestsMinYear" ariaLabel="Male Minimum Year"
+                                        formControlName="maleAgeRangeInterestsMinYear"
+                                        [dropDownValues]="displayHomeInformation.year" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="maleAgeRangeInterestsMinMonth"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Min
+                                    Month:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="maleAgeRangeInterestsMinMonth" ariaLabel="Male Minimum Month"
+                                        formControlName="maleAgeRangeInterestsMinMonth"
+                                        [dropDownValues]="displayHomeInformation.month" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="maleAgeRangeInterestsMaxYear"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Max
+                                    Year:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="maleAgeRangeInterestsMaxYear" ariaLabel="Male maximum Year"
+                                        formControlName="maleAgeRangeInterestsMaxYear"
+                                        [dropDownValues]="displayHomeInformation.year" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="maleAgeRangeInterestsMaxMonth"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Max
+                                    Month:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="maleAgeRangeInterestsMaxMonth"
+                                        ariaLabel="Male Maximum Month"
+                                        formControlName="maleAgeRangeInterestsMaxMonth"
+                                        [dropDownValues]="displayHomeInformation.month" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <h2>Female Age Range Interests</h2>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-3 pt-4 pb-4">
+                                <label for="femaleAgeRangeInterestsMinYear"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Min
+                                    Year:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="femaleAgeRangeInterestsMinYear"
+                                        ariaLabel="Female Minimum Year"
+                                        formControlName="femaleAgeRangeInterestsMinYear"
+                                        [dropDownValues]="displayHomeInformation.year" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="femaleAgeRangeInterestsMinMonth"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Min
+                                    Month:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="femaleAgeRangeInterestsMinMonth"
+                                        ariaLabel="Female Minimum Month"
+                                        formControlName="femaleAgeRangeInterestsMinMonth"
+                                        [dropDownValues]="displayHomeInformation.month" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="femaleAgeRangeInterestsMaxYear"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Max
+                                    Year:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="femaleAgeRangeInterestsMaxYear"
+                                        ariaLabel="Female Maximum Year"
+                                        formControlName="femaleAgeRangeInterestsMaxYear"
+                                        [dropDownValues]="displayHomeInformation.year" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-3 pt-4">
+                                <label for="femaleAgeRangeInterestsMaxMonth"
+                                    class="col-sm-5 col-form-label col-form-label-sm conReqDisplay">Max
+                                    Month:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="femaleAgeRangeInterestsMaxMonth"
+                                        ariaLabel="Female Maximum Month"
+                                        formControlName="femaleAgeRangeInterestsMaxMonth"
+                                        [dropDownValues]="displayHomeInformation.month" [blankOption]="false">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="pt-4">Child Ethnicities</h2>
+                        <div class="pt-2 pb-2">
+                            <dfps-multi-select id="childesEthnicity" ariaLabel="Child Ethnicities"
+                                [multiSelectValues]="displayHomeInformation.childesEthnicity"
+                                formControlName="childesEthnicity" inputName="childesEthnicity"
+                                [disabled]="isChildesEthnicity" (selectedValues)="selectedChildEthnicityValues($event)">
+                            </dfps-multi-select>
+                        </div>
+                        <h2 class="pt-4">Child Characteristics</h2>
+                        <dfps-multi-select id="childCharacteristics" ariaLabel="Child Characteristics"
+                            [multiSelectValues]="displayHomeInformation.childCharacteristics"
+                            formControlName="childCharacteristics" inputName="childCharacteristics"
+                            [disabled]="isChildCharacteristics"
+                            (selectedValues)="selectedChildCharacteristicsValues($event)">
+                        </dfps-multi-select>
+                        <h2 class="pt-4">Child Placement Information</h2>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4 pb-4">
+                                <label for="noOfChildren"
+                                    class="col-sm-5 col-form-label col-form-label-sm requiredDisplay">Number of
+                                    Children:</label>
+                                <div class="col-sm-4">
+                                    <dfps-input _id="noOfChildren" formControlName="noOfChildren" maxlength="4"
+                                        ariaLabel="Number of Children is Required">
+                                    </dfps-input>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <div class="col-sm-8">
+                                    <dfps-checkbox _id="willTransportChildren"
+                                        [formControl]="homeForm.controls['willTransportChildren']"
+                                        ariaLabel="Will Transport Children" label="Will Transport Child[ren]"
+                                        inputName="willTransportChildren">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <div class="col-sm-8">
+                                    <dfps-checkbox _id="emergencyPlacements "
+                                        [formControl]="homeForm.controls['emergencyPlacements']"
+                                        ariaLabel="Emergency Placements" label="Emergency Placements"
+                                        inputName="emergencyPlacements">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-8 pt-4 pb-4">
+                                <label class="col-sm-3 col-md-3 col-2" for="comments">
+                                    Comments:</label>
+                                <dfps-textarea class="col-sm-6 col-md-12 col-2" _id="comments"
+                                    formControlName="comments" maxLength="300" ariaLabel="Comments">
+                                </dfps-textarea>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+            </dfps-collapsable-section>
+            <div class="d-flex justify-content-end mt-2">
+                <div class="d-flex btn-sm">
+                    <dfps-button size="small" label="Save and Assign" (click)="saveAndAssign()">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>

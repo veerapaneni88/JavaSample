@@ -1,0 +1,85 @@
+<div class="container-fluid bodycolor" *ngIf="displayApsPreShieldServicePlanDetails">
+    <div class="row case-management-heading pl-2">
+        <h1 aria-level="1">APS Service Plan</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <form [formGroup]="apsPreShieldServicePlanForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Stage Name: {{displayApsPreShieldServicePlanDetails?.nmStage}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <h5 class="pt-4">Identified Problems</h5>
+        <div formGroupName="apsInvestigationDetailDto" class="pt-2">
+            <div class="row d-flex">
+                <div class="d-flex col-md-12 pt-4">
+                    <label for="Time" class="col-sm-2 col-form-label col-form-label-sm">Date Completed:</label>
+                    <div class="col-sm-2">
+                        <dfps-input _id="dtApsInvstCltAssmt" formControlName="dtApsInvstCltAssmt"
+                            ariaLabel="Date Completed" name="dtApsInvstCltAssmt" inputName="dtApsInvstCltAssmt">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <dfps-collapsable-section>
+            <accordion>
+                <div *ngIf="displayApsPreShieldServicePlanDetails.apsClientFactorsDto">
+                    <div formArrayName="apsClientFactorsDto"
+                        *ngFor="let data of servicePlanSourcesList; let taskIndex=index;">
+                        <div [formGroupName]="taskIndex">
+                            <accordion-group class="accordion-group pt-0" [isOpen]='false'
+                                heading="{{data.controls['codeDecode'].value}}">
+                                <div formArrayName="apsClientFactorsCodesDto"
+                                    *ngFor="let category of getapsClientCategoryDtoList(taskIndex); let categoryIndex=index;">
+                                    <div class="col-md-12 d-flex">
+                                        <dfps-checkbox _id="category.controls['decode']"
+                                            ariaLabel="{{category.controls['decode'].value}}"
+                                            label="{{category.controls['decode'].value}}"
+                                            [formControl]="category.controls['selectedFlag']"
+                                            inputName="category.controls['decode']">
+                                        </dfps-checkbox>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <dfps-textarea class="col-sm-6 col-md-12 col-2"
+                                            _id="category.controls['txtApsCltFactorCmnts']" name="txtApsCltFactorCmnts"
+                                            [formControl]="category.controls['txtApsCltFactorCmnts']"
+                                            ariaLabel="{{category.controls['txtApsCltFactorCmnts']}}">
+                                        </dfps-textarea>
+                                    </div>
+                                </div>
+                            </accordion-group>
+                        </div>
+                    </div>
+                </div>
+            </accordion>
+        </dfps-collapsable-section>
+        <div class="p-2 mb-2 card-body" *ngIf="displayApsPreShieldServicePlanDetails.narrativeExists">
+            <div class="row">
+                <div class="d-flex col-md-6 pt-6">
+                    <dfps-button label="Narrative" _id="narrative" (click)="generateNarrative()">
+                    </dfps-button>
+                    <div *ngIf="displayApsPreShieldServicePlanDetails.narrativeExists">
+                        <span class="fa fa-check ml-1 mt-2"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card formPanel">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Forms Launch</h2>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'
+                        [createEvent]='true'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+    </form>
+</div>

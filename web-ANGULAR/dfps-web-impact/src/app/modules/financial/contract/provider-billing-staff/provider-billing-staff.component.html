@@ -1,0 +1,54 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Provider Billing Staff</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="requiredDisplay text-right mt-2" tabindex="0">
+        <span class="sr-only">Red asterisk is </span>required field</div>
+    <div class="row" id="addEmployeeDataTable" *ngIf="addEmployeeDataTable && hideEmployeeTable">
+        <div class="col-md-12">
+            <dfps-data-table [dataTable]="addEmployeeDataTable"  [selectedRowData]="setSelectedProviderInfo()" (selectedData)="getProviderInfo($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <input type="hidden" name="helpFileId" id="helpFileId" value="{{helpFileName}}">
+    <div class="d-flex" *ngIf="addEmployeeDataTable && hideEmployeeTable">
+        <div class="justify-content-start mr-auto p-2">
+            <dfps-button  add-button size="small" _id="deleteEmployee"  label="Delete" (click)="delete()">
+            </dfps-button>
+           
+        </div>
+        <div class="justify-content-end p-2">
+            <dfps-button add-button size="small" label="Save" (click)="saveEmployeeDetails()">
+            </dfps-button>
+          
+        </div>
+    </div>
+    <div class="row" id="pBillingDataTable" *ngIf="pBillingDataTable">
+        <div class="col-md-12">
+            <dfps-data-table [dataTable]="pBillingDataTable" (selectedData)="getEmployeeInfo($event)" [allowRowSelection]="disableEmployeeInfo" >
+            </dfps-data-table>
+        </div>
+    </div>
+    <div class="d-flex" _id ="addEmpDiv">
+        <div *ngIf="isEmployeeDeleted">
+            <div id="employeeDeleted" tabindex="0" #employeeIdSpan class="sr-only">
+                Employee Deleted
+            </div>
+        </div>
+        <div class="justify-content-start mr-auto p-2" *ngIf="!pBillingTableData && actionButtons && !hideEmployeeTable">
+            <dfps-button add-button size="small" _id="deleteEmployee" label="Delete" (click)="deleteEmployee()">
+            </dfps-button>
+           
+        </div>
+        <div class="justify-content-end p-2" *ngIf="actionButtons && !hideEmployeeTable">
+            <dfps-button add-button size="small"    label="Add" (click)="addEmployee()">
+            </dfps-button>
+          
+            </div>
+        </div>
+   
+   
+</div>

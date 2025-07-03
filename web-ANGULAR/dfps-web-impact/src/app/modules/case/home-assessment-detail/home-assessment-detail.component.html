@@ -1,0 +1,148 @@
+<div class="container-fluid bodycolor" *ngIf="displayHomeAssessmentDetail">
+  <div class="row">
+    <h1>Home Assessment/Addendum Detail</h1>
+  </div>
+  <div>
+    <hr aria-hidden="true" />
+  </div>
+  <div #errors>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+                          [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+  </div>
+  <div class="alert alert-primary" *ngIf="displayHomeAssessmentDetail?.attentionMessages">
+    <p>Attention:</p>
+    <div *ngIf="displayHomeAssessmentDetail?.attentionMessages">
+      <ul *ngFor="let message of displayHomeAssessmentDetail?.attentionMessages">
+        <li>{{message}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row" [hidden]="displayHomeAssessmentDetail.approvalStatusHide">
+    <div class="d-flex col-md-11 pt-4">
+      <dfps-button label="Approval status" _id="approvalStatus" (click)="showApproval()"></dfps-button>
+    </div>
+  </div>
+  <form [formGroup]="homeAddendumDetailForm">
+    <div class="row">
+      <div class="text-left col-6 mt-2">Stage Name: {{displayHomeAssessmentDetail.stageName}}</div>
+    </div>
+    <div class="row">
+      <div class="text-left col-6 mt-2">Stage ID: {{displayHomeAssessmentDetail.stageId}}</div>
+    </div>
+    <div class="form-group mt-5">
+      <div *ngIf="enableCurrentHomeAssessment">
+        <h2>Current Home Assessment/Addendum/Kinship Safety Evaluation Status</h2>
+        <div class="row pl-4">
+          <div class="col-sm-4 pt-2">
+            <label for="assessmentStatus">Status of Kinship Caregiver Home
+              Assessment:</label>
+          </div>
+          <div class="col-sm-4 pt-2">
+            {{displayHomeAssessmentDetail.overallStatus}}
+          </div>
+        </div>
+        <div class="row pl-4">
+          <div class="col-sm-4 pt-2">
+            <label for="assessmentStatus">Home Assessment Status Date:</label>
+          </div>
+          <div class="col-sm-4 pt-2">
+            {{displayHomeAssessmentDetail.overallDate}}
+          </div>
+        </div>
+      </div>
+
+      <h2>Home Assessment/Addendum/Kinship Safety Evaluation</h2>
+      <div class="row pl-4">
+        <div class="d-flex col-md-4 pt-4">
+          <label for="type" class="col-sm-6 col-form-label col-form-label-sm">Type:</label>
+          <div class="col-sm-6">
+            {{displayHomeAssessmentDetail.eventType}}
+          </div>
+        </div>
+        <div class="d-flex col-md-4 pt-4">
+          <label for="dtLastUpdated" class="col-sm-6 col-form-label col-form-label-sm">Date Last
+            Updated:</label>
+          <div class="col-sm-6">
+            {{displayHomeAssessmentDetail.lastUpdatedDate}}
+          </div>
+        </div>
+        <div class="d-flex col-md-4 pt-4">
+          <div class="col-sm-6">
+            <dfps-checkbox _id="outputCompletedChecked"
+                           [formControl]="homeAddendumDetailForm.controls['outputCompletedChecked']"
+                           ariaLabel="Output Completed" label="Output Completed" inputName="outputCompletedChecked">
+            </dfps-checkbox>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!this.displayHomeAssessmentDetail.statusHidden">
+        <div class="row pl-4">
+          <div class="d-flex col-md-4 pt-4">
+            <label for="signatureDate"
+                   class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Signature
+              Date:</label>
+            <div class="col-sm-6">
+              <dfps-date-picker _id="signatureDate" formControlName="signatureDate"
+                                ariaLabel="Signature Date is Conditionally Required"></dfps-date-picker>
+            </div>
+          </div>
+        </div>
+        <div class="row pl-4">
+          <div class="d-flex col-md-4 pt-4">
+            <label for="statusCodes"
+                   class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Assessment
+              Status:</label>
+            <div class="col-sm-6">
+              <dfps-select _id="statusCodes" ariaLabel="Assessment Status"
+                           formControlName="statusCodes"
+                           [dropDownValues]="displayHomeAssessmentDetail.statusCodes">
+              </dfps-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dfps-collapsable-section>
+        <accordion>
+          <accordion-group class="accordion-group pt-2"
+                           heading="Home Assessment/Addendum/Kinship Safety Evaluation History">
+            <div class="row" id="homeAssessmentAddendumTable">
+              <div class="col-md-12">
+                <dfps-data-table [dataTable]="kinshipSafetyEvaluationDataTable"
+                                 class="data-table dataTableConfig">
+                </dfps-data-table>
+              </div>
+            </div>
+          </accordion-group>
+        </accordion>
+      </dfps-collapsable-section>
+    </div>
+    <div class="d-flex">
+      <div class="justify-content-start mr-auto p-2">
+        <div *ngIf="this.displayHomeAssessmentDetail.event.status==='PROC'">
+          <dfps-button size="small" label="Delete" tabindex="0" _id="deleteButton"
+                       [hidden]="displayHomeAssessmentDetail.submitHidden" (click)="deleteDetail()">
+          </dfps-button>
+        </div>
+      </div>
+      <div class="justify-content-end p-2">
+        <dfps-button class="mr-4" size="small" label="Save and Submit" _id="submitButton" (click)="submit()"
+                     [hidden]="displayHomeAssessmentDetail.submitHidden">
+        </dfps-button>
+        <dfps-button size="small" label="Save" _id="saveButton" (click)="save()"
+                     [hidden]="displayHomeAssessmentDetail.saveHidden">
+        </dfps-button>
+      </div>
+    </div>
+    <div class="p-2 mb-2 card-body">
+      <div class="row">
+        <div class="d-flex col-md-6 pt-6">
+          <dfps-button label="Document" _id="narrative" (click)="generateNarrative()"></dfps-button>
+          <div *ngIf="displayHomeAssessmentDetail.documentExists">
+            <span class="fa fa-check ml-1 mt-2"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

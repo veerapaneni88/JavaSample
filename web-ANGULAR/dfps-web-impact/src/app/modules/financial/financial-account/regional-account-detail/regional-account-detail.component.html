@@ -1,0 +1,120 @@
+<div class="container-fluid bodycolor" *ngIf="regionalAccountResponse">
+    <div class="row">
+        <h1>Regional Account Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <br>
+    <h2>Account Detail</h2>
+    <div class="row pt-12" *ngIf="regionalAccountInfo">
+        <div class="d-flex col-md-6 pt-4">
+            <label for="bankName" class="col-sm-4 col-form-label col-form-label-sm">Bank Name:</label>
+            <span id="bankName" class="col-sm-9">{{regionalAccountInfo.name}}</span>
+        </div>
+        <div class="d-flex col-md-4 pt-4">
+            <label for="accountNumber" class="col-sm-6 col-form-label col-form-label-sm">Account Number:</label>
+            <span id="accountNumber" class="col-sm-9">{{regionalAccountInfo.accountNumber}}</span>
+        </div>
+    </div>
+    <div class="row pt-12" *ngIf="regionalAccountInfo">
+        <div class="d-flex col-md-4 pt-4">
+            <label for="currentBalance" class="col-sm-6 col-form-label col-form-label-sm">Current Balance:</label>
+            <span id="currentBalance" class="col-sm-9">{{regionalAccountInfo.balance | currency}}</span>
+        </div>
+    </div>
+    <dfps-collapsable-section>
+        <accordion>
+            <accordion-group class="accordion-group pt-2" heading="Address and Phone Information" (isOpenChange)="log($event)">
+                <form [formGroup]="regionalAccountDetailsForm">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="phoneNumber"
+                                        class="col-sm-3 col-form-label col-form-label-sm">Number:</label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="phoneNumber" formControlName="phoneNumber"
+                                            ariaLabel="Phone Number"></dfps-input>
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="ext"
+                                        class="col-sm-3 col-form-label col-form-label-sm">Extension:</label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="ext" formControlName="ext" ariaLabel="Phone Number Extension">
+                                        </dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="address1"
+                                        class="col-sm-3 col-form-label col-form-label-sm">Street:</label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="address1" formControlName="address1" ariaLabel="address1">
+                                        </dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="address2" class="col-sm-3 col-form-label col-form-label-sm"></label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="address2" formControlName="address2" ariaLabel="address2">
+                                        </dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="city" class="col-sm-3 col-form-label col-form-label-sm">City:
+                                    </label>
+                                    <div class="col-sm-7">
+                                        <dfps-input _id="city" formControlName="city" ariaLabel="City"></dfps-input>
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="state" class="col-sm-3 col-form-label col-form-label-sm">State:
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <dfps-select _id="state" formControlName="state" placeholder="state"
+                                            ariaLabel="State Dropdown"
+                                            [dropDownValues]="regionalAccountResponse?.stateList">
+                                        </dfps-select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt-4">
+                                <div class="d-flex col-sm-12 col-md-6">
+                                    <label for="zip" class="col-sm-3 col-form-label col-form-label-sm">Zip:</label>
+                                    <div class="col-sm-5 col-md-3 pr-0">
+                                        <dfps-input _id="zip" formControlName="zip" ariaLabel="Zipcode"> </dfps-input>
+                                    </div>
+                                    <label for="zipExt" class="text-center px-0"><span>&nbsp;-&nbsp;</span></label>
+                                    <div class="d-flex col-sm-2 pl-0 pr-0">
+                                        <dfps-input _id="zipExt" formControlName="zipExt" maxlength="4"
+                                            ariaLabel="Zip Extension"></dfps-input>
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-6 col-sm-12">
+                                    <label for="county" class="col-sm-3 col-form-label col-form-label-sm">County:
+                                    </label>
+                                    <div class="col-sm-6">
+                                        <dfps-select _id="county" formControlName="county" placeholder="county"
+                                            ariaLabel="County Dropdown"
+                                            [dropDownValues]="regionalAccountResponse?.countyList">
+                                        </dfps-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </accordion-group>
+        </accordion>
+    </dfps-collapsable-section>
+    <dfps-data-table-lazyload class="data-table" [dataTable]="accountDetailsDataTable"
+        (lazyLoadEvent)="loadDataLazy($event)" [selectedRowOption]="DEFAULT_PAGE_SIZE">
+    </dfps-data-table-lazyload>
+</div>

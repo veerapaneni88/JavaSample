@@ -1,0 +1,213 @@
+<div class="container-fluid bodycolor" *ngIf="safetyPlanResponse">
+    <div class="row">
+        <h1>Safety Plan Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2">{{safetyPlanResponse.stageName}}</div>
+        <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2">{{safetyPlanResponse.caseId}}</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength">
+    </dfps-form-validation>
+    <form [formGroup]="safetyPlanForm">
+        <div class="form-group mt-5">
+            <div class="row">
+                <h2>Operation Information</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-2">
+                <label for="classOperationName" class="col-md-3 col-form-label col-form-label-sm requiredDisplay">CLASS
+                    Operation Name:</label>
+                <div id="classOperationName" class="col-md-6">{{safetyPlanResponse?.classOperationName}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="classOperationNumber"
+                    class="col-md-3 col-form-label col-form-label-sm requiredDisplay">CLASS Operation Number:</label>
+                <div id="classOperationNumber" class="col-md-6">{{safetyPlanResponse?.classOperationNumber}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="operationImpactFacilityType"
+                    class="col-md-3 col-form-label col-form-label-sm requiredDisplay">IMPACT Facility Type:</label>
+                <div id="operationImpactFacilityType" class="col-md-6">
+                    {{safetyPlanResponse?.operationImpactFacilityType}}</div>
+            </div>
+        </div>
+        
+        <div *ngIf="safetyPlanResponse.showAgencyHomeInfo">
+            <br>
+            <div class="row">
+                <h2>Agency Home Information</h2>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <label for="agencyHomeName" class="col-md-3 col-form-label col-form-label-sm requiredDisplay">CLASS
+                        Agency Home Name:</label>
+                    <div id="agencyHomeName" class="col-md-6">{{safetyPlanResponse?.agencyHomeName}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <label for="agencyHomeOperationNumber"
+                        class="col-md-3 col-form-label col-form-label-sm requiredDisplay">CLASS Agency Home
+                        Operation Number:</label>
+                    <div id="agencyHomeOperationNumber" class="col-md-6">
+                        {{safetyPlanResponse?.agencyHomeOperationNumber}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-12 pt-4">
+                    <label for="agencyHomeImpactFacilityType"
+                        class="col-md-3 col-form-label col-form-label-sm requiredDisplay">IMPACT Facility Type:</label>
+                    <div id="agencyHomeImpactFacilityType" class="col-md-6">
+                        {{safetyPlanResponse?.agencyHomeImpactFacilityType}}</div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <hr aria-hidden="true">
+        </div>
+        <div class="row">
+            <h2>Safety Plan Information</h2>
+        </div>
+        <div class="row">
+            <em>(Form J-801-3016)</em>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="operationNameAndNumber"
+                    class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Operation
+                    Name and Number:</label>
+                <div class="col-md-4">
+                    <dfps-select _id="operationNameAndNumber" formControlName="operationNameAndNumber"
+                        ariaLabel="Operation Name and Number is required"
+                        [dropDownValues]="safetyPlanResponse?.operationNameAndNumber"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="effectiveDate" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Effective
+                    Date:</label>
+                <div class="col-md-2">
+                    <dfps-date-picker _id="effectiveDate" formControlName="effectiveDate"
+                        ariaLabel="Effective Date is required field"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-date-picker>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="unsafeSituations" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Each
+                    specific situation causing children to be unsafe:</label>
+                <div class="col-md-8">
+                    <dfps-textarea class="col-sm-6 col-md-8 col-4" style="padding: 0;" _id="unsafeSituations"
+                        formControlName="unsafeSituations" maxLength="2000"
+                        ariaLabel="Each specific situation causing children to be unsafe"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="immediateAction" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Each
+                    action that will be taken immediately to keep children safe:</label>
+                <div class="col-md-8">
+                    <dfps-textarea class="col-sm-6 col-md-8 col-4" style="padding: 0;" _id="immediateAction"
+                        formControlName="immediateAction" maxLength="2000"
+                        ariaLabel="Each action that will be taken immediately to keep children safe"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="responsiblePersons" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Each
+                    person responsible for
+                    ensuring that the operation takes these actions:</label>
+                <div class="col-md-8">
+                    <dfps-textarea class="col-sm-6 col-md-8 col-4" style="padding: 0;" _id="responsiblePersons"
+                        formControlName="responsiblePersons" maxLength="2000"
+                        ariaLabel="Each person responsible for ensuring that the operation takes these actions"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="actionTimeFrame" class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Time
+                    frame for completing each action:</label>
+                <div class="col-md-8">
+                    <dfps-textarea class="col-sm-6 col-md-8 col-4" style="padding: 0;" _id="actionTimeFrame"
+                        formControlName="actionTimeFrame" maxLength="2000"
+                        ariaLabel="Time frame for completing each action"
+                        [disabled]="(spStatus === 'INE' || spStatus === 'CLS')">
+                    </dfps-textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="d-flex col-md-12 pt-4">
+                <label for="safetyPlanStatus"
+                    class="col-md-4 col-form-label col-form-label-sm requiredDisplay">Status:</label>
+                <div class="col-md-2">
+                    <dfps-select _id="safetyPlanStatus" formControlName="safetyPlanStatus"
+                        ariaLabel="Status is required" [dropDownValues]="safetyPlanResponse.safetyPlanStatuses">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+
+    <div class="mt-2">
+      <hr aria-hidden="true">
+    </div>
+    <br>
+    <div class="row mt-2">
+      <div class="col-md-6 d-flex justify-content-begin">
+        <dfps-button _id="delete" label="Delete" *ngIf="!hideDeleteButton" [disabled]="disableDeleteButton"
+                     (click)="delete()"></dfps-button>
+        <dfps-button _id="download" label="Download" *ngIf="!hideDownloadButton" [disabled]="disableDownloadButton"
+                     (click)="download()"
+                     class="{{!hideDeleteButton ? 'ml-5' : ''}}" ></dfps-button>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <dfps-button _id="SaveAndComplete" label="Save And Complete" *ngIf="!hideSaveAndCompleteButton"
+                     (click)="saveAndComplete()"></dfps-button>
+        <dfps-button _id="Save" label="Save" *ngIf="!hideSaveButton" (click)="save()" class="ml-5"></dfps-button>
+      </div>
+    </div>
+    <input type="hidden" aria-hidden="true" id="clickedBtn" formControlName="clickedBtn">
+  </form>
+
+</div>

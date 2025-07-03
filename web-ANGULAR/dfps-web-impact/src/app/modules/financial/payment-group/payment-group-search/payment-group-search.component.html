@@ -1,0 +1,124 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Payment Group Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div class="row">
+        <div class="requiredDisplay text-right col-12 mt-2">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-12 mt-2">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <dfps-form-validation [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            <form [formGroup]="paymentGroupSearchForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="accountNumber"
+                                class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Account No:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="accountNumber" formControlName="accountNumber"
+                                    ariaLabel="Account Number is required" [dropDownValues]="displayResponse?.accountNumbers"
+                                    (change)="accountNumberChanged()">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="agencyAccountId" class="col-sm-6 col-form-label col-form-label-sm">Agency
+                                Account ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="agencyAccountId" formControlName="agencyAccountId"
+                                    ariaLabel="Agency Account ID" maxlength="10">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="personId" class="col-sm-6 col-form-label col-form-label-sm">Person ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="personId" formControlName="personId" maxlength="10"
+                                    ariaLabel="Person ID">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="type" class="col-sm-6 col-form-label col-form-label-sm">Status:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="status" formControlName="status" ariaLabel="status"
+                                    [dropDownValues]="displayResponse?.status">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="issuedDateRange" class="col-sm-12 col-form-label col-form-label-sm">Issued Date
+                                Range:</label>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="paymentMode" class="col-sm-6 col-form-label col-form-label-sm">Payment
+                                Mode:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="paymentMode" formControlName="paymentMode" ariaLabel="Payment Mode"
+                                    [dropDownValues]="displayResponse?.paymentModes">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="fromDate" class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">From
+                                Date:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="fromDate" formControlName="fromDate" placeholder="from"
+                                    ariaLabel="From date is conditionally required"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="toDate" class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">To
+                                Date:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="toDate" formControlName="toDate" placeholder="to"
+                                    ariaLabel="To date is conditionally required"></dfps-date-picker>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex col-md-11 justify-content-end pt-4">
+                      <dfps-button label="Search" _id="search" (click)="searchPaymentGroup()"></dfps-button>
+                    </div>
+                    <div class="d-flex col-md-1 justify-content-end pt-4">
+                        <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                    </div>
+                </div>
+                <ng-container *ngIf="showPaymentGroupSearchTable">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+    <div class="row" *ngIf="showPaymentGroupSearchTable">
+        <div class="col-md-12 pt-12">
+            <div class="resource-search-left-pad-second-level ml-0">
+                <dfps-data-table-lazyload class="data-table" [dataTable]="paymentGroupSearchDataTable"
+                    (lazyLoadEvent)="loadDataLazy($event)" [selectedRowOption]="25">
+                </dfps-data-table-lazyload>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-end pr-3 pt-2"
+        *ngIf="displayResponse?.modifyPrivilege && showPaymentGroupSearchTable">
+        <dfps-button *ngIf="showDeleteButton" delete-button size="small" label="Delete" (click)="delete()" class="pr-2">
+        </dfps-button>
+        <dfps-button add-button size="small" label="Add" (click)="add()"></dfps-button>
+    </div>
+</div>

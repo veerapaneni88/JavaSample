@@ -1,0 +1,237 @@
+<!-- <div class="alert alert-danger" *ngIf="false">
+    <p>Attention:</p>
+    <div>
+        Recertification data could not be loaded. (Hardcoded error example)
+    </div>
+</div>
+
+<div class="container-fluid bodycolor" *ngIf="true">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="false" [validationErrors]="[]" [validationErrorsLength]="0">
+        </dfps-form-validation>
+    </div>
+
+    <div class="alert alert-primary" *ngIf="true">
+        <p>Attention:</p>
+        <div>
+            <ul>
+                <li>This is an important hardcoded attention message.</li>
+                <li>Another hardcoded message for demonstration.</li>
+            </ul>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <h1 aria-level="1">Adoption Assistance Recertification</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+
+    <div class="row">
+        <div class="requiredDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-12 mt-2" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+
+    <form>
+        <div class="form-group">
+            <div class="col-md-12 row pt-4">
+                <h2>Child Information</h2>
+            </div>
+            <div class="row pl-3">
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Child's Name:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    Davidson-Gonza,Neveyah O
+                </div>
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Date of Birth:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    06/03/2000
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Social Security Number:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    291-67-1719
+                </div>
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Current Age:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    25
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Person ID:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    111117730
+                </div>
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Child's Age at Adoption <br> Agreement Sign Date:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    24
+                </div>
+            </div>
+
+            <div>
+                <hr aria-hidden="true" />
+            </div>
+            <div class="col-md-12 row pt-4">
+                <h2>Worker Information</h2>
+            </div>
+            <div class="row pl-3">
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Worker's Name:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    Johnson,Jennifer L
+                </div>
+                <div class="text-left col-3 col-form-label pt-3">
+                    <b>Phone:</b>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    (210) 323-5957
+                </div>
+            </div>
+
+            <div>
+                <hr aria-hidden="true" />
+            </div>
+            <div class="col-md-12 row pt-4">
+                <h2>Recertification</h2>
+            </div>
+
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indRecertDocRcvd"
+                        ariaLabel="Was the Recertification paperwork received from the family?"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indRecertDocRcvd" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        Was the Recertification paperwork received from the family?
+                    </label>
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="text-left col-3 col-form-label pt-3">
+                    <label for="dtRecertDocSent" class="col-md-5 col-form-label col-form-label-sm requiredDisplay">
+                        Date Sent:
+                    </label>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    <dfps-date-picker _id="dtRecertDocSent" formControlName="dtRecertDocSent"
+                        ariaLabel="Date Sent is required" [disabled]="false">
+                    </dfps-date-picker>
+                </div>
+                <div class="text-left col-3 col-form-label pt-3">
+                    <label for="dtRecertDocRcvd" class="col-md-5 col-form-label col-form-label-sm conReqDisplay">
+                        Date Signed:
+                    </label>
+                </div>
+                <div class="text-left col-3 pt-3">
+                    <dfps-date-picker _id="dtRecertDocRcvd" formControlName="dtRecertDocRcvd"
+                        ariaLabel="Date Signed is conditionally required" [disabled]="false">
+                    </dfps-date-picker>
+                </div>
+            </div>
+        </div>
+        
+        <!--<div *ngIf="true">-->
+            <div>
+                <hr aria-hidden="true" />
+            </div>
+            <div class="col-md-12 row pt-4">
+                <h2>Extended Adoption Assistance</h2>
+            </div>
+
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indHighSchool"
+                        ariaLabel="Regularly attending high school or enrolled in a program leading towards high school diploma or high school equivalency certificate"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indHighSchool" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        (1) Regularly attending high school or enrolled in a program leading towards high school diploma or
+                        high school equivalency certificate.
+                    </label>
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indPostSecondary"
+                        ariaLabel="Regularly attending an institution of higher education or a postsecondary vocational or technical program"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indPostSecondary" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        (2) Regularly attending an institution of higher education or a postsecondary vocational or
+                        technical program.
+                    </label>
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indPromoteEmployment"
+                        ariaLabel="Participating in a program or activity that promotes, or remove barriers to, employment"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indPromoteEmployment" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        (3) Participating in a program or activity that promotes, or remove barriers to, employment.
+                    </label>
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indEmployMinHrs"
+                        ariaLabel="Employed for at least 80 hours a month"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indEmployMinHrs" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        (4) Employed for at least 80 hours a month.
+                    </label>
+                </div>
+            </div>
+            <div class="row pl-3">
+                <div class="d-flex col-md-12 pt-3 align-items-center">
+                    <dfps-radio-button name="indIncapableMedCond"
+                        ariaLabel="Incapable of performing the activities described by Subdivisions (1)-(4) due to documented medical condition"
+                        [data]="[{ code: 'Y', decode: 'Yes' }, { code: 'N', decode: 'No' }]" [horizontal]="true"
+                        formControlName="indIncapableMedCond" [disabled]="false">
+                    </dfps-radio-button>
+                    <label class="col-form-label col-form-label-sm requiredDisplay ml-2">
+                        (5) Incapable of performing the activities described by Subdivisions (1)-(4) due to documented
+                        medical condition.
+                    </label>
+                </div>
+            </div>
+        <!--</div>-->
+
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div class="row justify-content-end pt-4">
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Save" [disabled]="false">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+<!--</div>-->

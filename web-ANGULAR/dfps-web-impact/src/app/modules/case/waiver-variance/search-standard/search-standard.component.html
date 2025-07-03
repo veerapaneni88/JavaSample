@@ -1,0 +1,70 @@
+<div class="container-fluid bodycolor" *ngIf="displaySearchResponse">
+    <div class="row">
+        <h1>Search Standard</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="searchStandardForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name: {{ displaySearchResponse ? displaySearchResponse.caseName : '' }}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Stage ID:{{ displaySearchResponse ? displaySearchResponse.stageId : '' }}
+            </div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <br />
+        <div class="formGroup mt-5">
+            <h2>Search a Standard</h2>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-5 pt-4">
+                <label for="keyWord" class="col-sm-2 col-form-label col-form-label-sm conReqDisplay">Keyword:</label>
+                <div class="col-sm-10">
+                    <dfps-input _id="keyword" ariaLabel="Keyword" formControlName="keyword"> </dfps-input>
+                </div>
+            </div>
+            <div class="d-flex col-md-5 pt-4">
+                <label for="category" class="col-sm-2 col-form-label col-form-label-sm conReqDisplay">Category:</label>
+                <div class="col-sm-10">
+                    <dfps-select _id="category" ariaLabel="category is conditionally required field"
+                        formControlName="category" [dropDownValues]="displaySearchResponse.category">
+                    </dfps-select>
+                </div>
+            </div>
+            <div class="d-flex col-md-2 pt-4">
+                <div class=" w-100 justify-content-end">
+                    <dfps-button label="Search" size="small" _id="search" (click)="doSearch()"> </dfps-button>
+                </div>
+            </div>
+        </div>
+       
+        <br />
+        <div *ngIf="displaySearchDataTable">
+            <div class="col-md-12 pt-12" id="searchTable" #searchTable>
+                <div class="col-md-12">
+                    <dfps-data-table *ngIf="searchResultTable" [dataTable]="searchResultTable"
+                        class="data-table dataTableConfig" (selectedData)="getSelectedStandardRecord($event)">
+                    </dfps-data-table>
+                </div>
+            </div>
+            <br />
+            <div class="d-flex justify-content-end w-100 pt-4">
+                <dfps-button label="Continue" _id="continue" (click)="doContinue()"> </dfps-button>
+            </div>
+        </div>
+
+    </form>
+</div>

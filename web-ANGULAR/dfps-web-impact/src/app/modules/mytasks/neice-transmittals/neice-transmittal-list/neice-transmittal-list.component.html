@@ -1,0 +1,160 @@
+<div class="container-fluid bodycolor" (keyup.enter)="!displaySearchResults ? doSearch(): ''"
+    *ngIf="displaySearchResponseObs | async as displaySearch">
+    <div class="row">
+        <h1>NEICE Transmittal List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div class="row pt-2">
+        <div class="col-sm-12 pt-0">
+            <dfps-form-validation [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            <form [formGroup]="neiceTransmittalListForm">
+                <div class="form-group">
+                    <h2>Search Criteria</h2>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="dateFrom" class="col-sm-6 col-form-label col-form-label-sm">From:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="dateFrom" formControlName="dateFrom"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="dateTo" class="col-sm-6 col-form-label col-form-label-sm">To:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="dateTo" formControlName="dateTo"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="transmittalType" class="col-sm-6 col-form-label col-form-label-sm">Transmittal
+                                Type:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="transmittalType" formControlName="transmittalType"
+                                    [dropDownValues]="displaySearch.transmittalTypes">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="transmittalStatus" class="col-sm-6 col-form-label col-form-label-sm">Transmittal
+                                Status:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="transmittalStatus" formControlName="transmittalStatus"
+                                    [dropDownValues]="displaySearch.transmittalStatusList">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="neiceHomeStudyId" class="col-sm-6 col-form-label col-form-label-sm">NEICE Home
+                                Study ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="neiceHomeStudyId" formControlName="neiceHomeStudyId" maxlength="20">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="priority" class="col-sm-6 col-form-label col-form-label-sm">Priority:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="priority" formControlName="priority"
+                                    [dropDownValues]="displaySearch.priorities">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="homeStudyType" class="col-sm-6 col-form-label col-form-label-sm">Home Study
+                                Type:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="homeStudyType" formControlName="homeStudyType"
+                                    [dropDownValues]="displaySearch.homeStudyTypes">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="incomingOutgoing"
+                                class="col-sm-6 col-form-label col-form-label-sm">Incoming/Outgoing:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="incomingOutgoing" formControlName="incomingOutgoing"
+                                    [dropDownValues]="displaySearch.incomingOutgoingList">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="transmittingState"
+                                class="col-sm-6 col-form-label col-form-label-sm">Transmitting State:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="transmittingState" formControlName="transmittingState"
+                                    [dropDownValues]="displaySearch.transmittingStates">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="oldestChildName" class="col-sm-6 col-form-label col-form-label-sm">Oldest Child
+                                Name:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="oldestChildName" formControlName="oldestChildName" maxlength="25">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="assignedTo" class="col-sm-6 col-form-label col-form-label-sm">Assigned
+                                To:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="assignedTo" formControlName="assignedTo"
+                                    [dropDownValues]="displaySearch.assignedToList">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="rejectHold" class="col-sm-6 col-form-label col-form-label-sm">Reject/
+                                Hold:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="rejectHold" formControlName="rejectHold"
+                                    [dropDownValues]="displaySearch.rejectHoldList">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="jurisdictionState"
+                                class="col-sm-6 col-form-label col-form-label-sm">Jurisdiction State:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="jurisdictionState" formControlName="jurisdictionState"
+                                    [dropDownValues]="displaySearch.jurisdictionStates">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-sm-6 pt-4">
+                            <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                        </div>
+                        <div class="d-flex col-sm-6 justify-content-end pt-4">
+                            <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="displaySearchResults">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">
+                        search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+    <div class="row" *ngIf="displaySearchResults">
+        <div class="col-sm-12">
+            <h2>Search Results List</h2>
+            <dfps-data-table-1 class="data-table" [dataTable]="dataTable" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                (handleClickEvent)="handleTransmittalListLinkClick($event)">
+            </dfps-data-table-1>
+        </div>
+    </div>
+</div>

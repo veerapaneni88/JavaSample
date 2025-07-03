@@ -1,0 +1,42 @@
+<div class="container-fluid bodycolor" *ngIf="allegationDetailRes">
+    <div class="row">
+        <h1>Allegation List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="col-md-2 mt-2">
+            Stage Name:
+        </div>
+        <div class="col-md-2 mt-2">
+            {{allegationDetailRes.stageName}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 mt-2">
+            Case Id:
+        </div>
+        <div class="col-md-2 mt-2">
+            {{allegationDetailRes.caseId}}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <dfps-data-table [dataTable]="allegationTable"  
+            [selectedRowData]="setSelectedAllegation()"
+            (selectedData)="selectAllegations($event)">
+            </dfps-data-table>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 d-flex justify-content-begin">
+            <dfps-button _id="cancel" label="Cancel" (click)="cancel()"></dfps-button>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <dfps-button _id="continue" label="Continue" (click)="continue()"></dfps-button>
+        </div>
+    </div>
+</div>

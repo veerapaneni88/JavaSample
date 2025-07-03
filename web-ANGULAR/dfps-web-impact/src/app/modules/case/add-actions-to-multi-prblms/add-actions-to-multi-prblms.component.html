@@ -1,0 +1,156 @@
+<div class="container-fluid bodycolor" *ngIf="apsRootFormDetails">
+    <div class="row justify-content-center">
+        <h1>Add Action to Multiple Problems</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="apsRootFormDetails">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name:{{apsRootFormDetails.value.caseName}}</div>
+            <div class="requiredDisplay col-6 text-right">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case ID: {{apsRootFormDetails.value.caseId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="row">
+            <h6 class="mt-4 col-12 text-left font-weight-bold">Problems: The action will be applied to the following
+                problems. </h6>
+        </div>
+        <div class="mt-4">
+            <div formGroupName="apsServicePlanDto">
+                <div formArrayName="immediateInterventionSources"
+                    *ngFor="let data of servicePlanSourcesList; let taskIndex=index;">
+                    <div [formGroupName]="taskIndex">
+                        <div formArrayName="serviceProblems"
+                            *ngFor="let svcPblm of getServiceProblemsFor(taskIndex);let svcPblmIndex=index;">
+                            <div [formGroupName]="svcPblmIndex">
+                                <div class="col-12" *ngIf="svcPblm.controls['selected'].value">
+                                    <label class="col-12" for="taskIndex">{{data.controls['sourceText'].value}}</label>
+                                    <div class="d-flex flex col-12 align-items-center">
+                                        <div class="col-md-auto">
+                                            <li class="col-form-label" for="svcPblm.controls['problemDescription']">
+                                                Problem Description:
+                                            </li>
+                                        </div>
+                                        <div id="problemDescription">
+                                            {{ svcPblm.controls['problemDescription'].value }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div formGroupName="apsServicePlanDto">
+                <div formArrayName="allegData"
+                    *ngFor="let data of allegationServicePlanSourcesList; let taskIndex=index;">
+                    <div [formGroupName]="taskIndex">
+                        <div formArrayName="serviceProblems"
+                            *ngFor="let svcPblm of getServiceProblemsForAllegationData(taskIndex);let svcPblmIndex=index;">
+                            <div [formGroupName]="svcPblmIndex">
+                                <div class="col-12" *ngIf="svcPblm.controls['selected'].value">
+                                    <label class="col-12" for="taskIndex">{{data.controls['sourceText'].value}}</label>
+                                    <div class="d-flex flex col-12 align-items-center">
+                                        <div class="col-md-auto">
+                                            <li class="col-form-label" for="svcPblm.controls['problemDescription']">
+                                                Problem Description:
+                                            </li>
+                                        </div>
+                                        <div id="problemDescription">
+                                            {{ svcPblm.controls['problemDescription'].value }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div formGroupName="apsServicePlanDto">
+                <div formArrayName="snaIcsData" *ngFor="let data of snaServicePlanSourcesList; let taskIndex=index;">
+                    <div [formGroupName]="taskIndex">
+                        <div formArrayName="serviceProblems"
+                            *ngFor="let svcPblm of getServiceProblemsForSNAICSData(taskIndex);let svcPblmIndex=index;">
+                            <div [formGroupName]="svcPblmIndex">
+                                <div class="col-12" *ngIf="svcPblm.controls['selected'].value">
+                                    <label class="col-12" for="taskIndex">{{data.controls['sourceText'].value}}</label>
+                                    <div class="col-12 d-flex flex align-items-center">
+                                        <div class="col-md-auto">
+                                            <li class="col-form-label" for="svcPblm.controls['problemDescription']">
+                                                Problem Description:
+                                            </li>
+                                        </div>
+                                        <div id="problemDescription">
+                                            {{ svcPblm.controls['problemDescription'].value }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form class="row" [formGroup]="childForm">
+        <div class="row border-background-color-1">
+            <div class="row m-4 col-md-12 col-sm-12">
+                <label for="Action Fields">Action Fields</label>
+                <div class="row col-10 ml-4">
+                    <div class="d-flex col-md-12 mt-1">
+                        <label for="actionDescription"
+                            class="requiredDisplay col-sm-3 col-md-3 col-form-label col-form-label-lg ">Action
+                            Description:</label>
+                        <dfps-input _id="actionDescription" maxlength="90" class="col-md-9 col-sm-9"
+                            formControlName="actionDescription" name="actionDescription" inputName="actionDescription"
+                            ariaLabel="Action Description">
+                        </dfps-input>
+                    </div>
+                    <div class="d-flex col-md-12 mt-1">
+                        <label for="actionCategoryCode"
+                            class="requiredDisplay col-sm-3 col-md-3 col-form-label col-form-label-lg ">Action
+                            Category:
+                        </label>
+                        <dfps-select _id="actionCategoryCode" class="col-md-6 col-sm-6"
+                            ariaLabel="primary caretaker name" name="actionCategoryCode"
+                            formControlName="actionCategoryCode"
+                            [dropDownValues]="apsRootFormDetails.value.apsServicePlanDto.actionCategoryCodes">
+                        </dfps-select>
+                    </div>
+                    <div class="d-flex col-md-12 mt-1">
+                        <label for="actionResultsCode"
+                            class="col-sm-3 col-md-3 col-form-label col-form-label-lg ">Action
+                            Result:
+                        </label>
+                        <dfps-select _id="actionResultsCode" class="col-md-3 col-sm-3"
+                            ariaLabel="primary caretaker name" formControlName="actionResultsCode"
+                            [dropDownValues]="apsRootFormDetails.value.apsServicePlanDto.actionResultCodes">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row d-flex justify-content-end mt-2">
+        <div class="d-flex btn-sm">
+            <dfps-button add-button size="small" label="Cancel" (click)="cancel()">
+            </dfps-button>
+        </div>
+        <div class="d-flex btn-sm">
+            <dfps-button add-button size="small" label="Continue" (click)="continue()">
+            </dfps-button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,341 @@
+<div class="container-fluid bodycolor" *ngIf="invoiceDetailRes">
+    <div class="row">
+        <h1>Invoice</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="infoDivDisplay">
+        <p>Attention:</p>
+
+        <div>
+            <ul>
+                <li *ngFor="let msg of informationalMsgs">
+                    {{ msg }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="invoiceHeaderForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Invoice ID: {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.invoiceId : '' }}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Invoice Phase: {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.phase : '' }}
+            </div>
+        </div>
+        <br />
+        <div class="formGroup mt-5">
+            <h2>Contract Information</h2>
+
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="agencyAccountId"
+                        class="col-md-6 col-form-label col-form-label-sm requiredDisplay">Agency Account ID:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="agencyAccountId" formControlName="agencyAccountId" maxlength="10"
+                            ariaLabel="Agency Account ID is required field">
+                        </dfps-input>
+                    </div>
+                    <dfps-button size="extraSmall" label="Validate" _id="validateContractId"
+                        [hidden]="hideValidateButton" (click)="validateContractId()">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="resourceName" class="col-form-label col-form-label-sm col-sm-6">
+                        Resource Name:
+                    </label>
+                    <span id="resourceName" class="col-sm-6">
+                        {{ resourceName ? resourceName : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="resourceId" class="col-sm-6 col-form-label col-form-label-sm">Resource ID:</label>
+                    <span id="resourceId" class="col-sm-6">
+                        {{ resourceId ? resourceId : '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="vendorId" class="col-sm-6 col-form-label col-form-label-sm">Vendor ID:</label>
+                    <span id="vendorId" class="col-sm-6">
+                        {{ resourceVendorId ? resourceVendorId : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="region" class="col-sm-6 col-form-label col-form-label-sm">Region :</label>
+                    <span id="region" class="col-sm-6">
+                        {{ region ? region : '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="form-group mt-5">
+            <h2>Invoice Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4 pl-0">
+                    <div class="col-sm-10">
+                        <div>
+                            <dfps-checkbox _id="invoiceAdjustment" ariaLabel="Invoice Specific Adjustment"
+                                label="Invoice Specific Adjustment"
+                                [formControl]="invoiceHeaderForm.controls['invoiceAdjustment']"
+                                inputName="invoiceAdjustment">
+                            </dfps-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <div>
+                        <dfps-checkbox _id="isReadyForValid" ariaLabel="Invoice Ready for Validation"
+                            label="Invoice Ready for Validation"
+                            [formControl]="invoiceHeaderForm.controls['isReadyForValid']" inputName="isReadyForValid">
+                        </dfps-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="type" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Type:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="type" ariaLabel="Select Invoice Type Dropdown is required field"
+                            formControlName="type" [dropDownValues]="invoiceDetailRes.invoiceTypes">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="receivedDate" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Received
+                        Date:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="receivedDate" formControlName="receivedDate" placeholder="receivedDate"
+                            ariaLabel="Received date is required field"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="month" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Month:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="month" formControlName="month" maxlength="10"
+                            ariaLabel="Month is required field"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="year" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Year:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="year" formControlName="year" ariaLabel="Year is required field" maxlength="10">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="claimedAmount" class="col-sm-6 col-form-label col-form-label-sm">Claimed Amount:</label>
+                    <div class="col-sm-7">
+                        <dfps-input _id="claimedAmount" formControlName="claimedAmount" maxlength="14"
+                            ariaLabel="Claimed Amount" currency="true"></dfps-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="dtInvoSubmitDate" class="col-sm-6 col-form-label col-form-label-sm">Submit Date:</label>
+                    <span id="dtInvoSubmitDate" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.submitDate : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="AmtInvoValidAmount" class="col-sm-6 col-form-label col-form-label-sm">Valid Amount
+                        :</label>
+                    <span id="AmtInvoValidAmount" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult.validAmount | currency: 'USD' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="dtInvoWarrantDate" class="col-sm-6 col-form-label col-form-label-sm">Warrant
+                        Date:</label>
+                    <span id="dtInvoWarrantDate" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.warrantDate : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="amtInvoWarrant" class="col-sm-6 col-form-label col-form-label-sm">Warrant Amount
+                        :</label>
+                    <span id="amtInvoWarrant" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult.warrantAmount | currency: 'USD' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="nbrInvoWarrant" class="col-sm-6 col-form-label col-form-label-sm">Warrant
+                        Number:</label>
+                    <span id="nbrInvoWarrant" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.warrantNumber : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="cdInvoApproved" class="col-sm-6 col-form-label col-form-label-sm">Approval Status
+                        :</label>
+                    <span id="cdInvoApproved" class="col-sm-6">
+                        {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.approved : '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="formGroup mt-5" [hidden]="hideRecoupInformation">
+            <h2>Invoice Recoupment Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4 pl-0">
+                    <div class="col-sm-10">
+                        <div>
+                            <dfps-checkbox _id="manualRecoup" ariaLabel="Manual Recoupment Requested "
+                                label="Manual Recoupment Requested "
+                                [formControl]="invoiceHeaderForm.controls['isManualRecoup']" inputName="isManualRecoup">
+                            </dfps-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="manualRecoupInit" class="col-sm-5 col-form-label col-form-label-sm">Manual Recoupment
+                        Initiated:</label>
+                    <span id="manualRecoupInit" class="col-sm-9">
+                        {{ invoiceDetailRes.invoiceResult ? invoiceDetailRes.invoiceResult.recoupInitiatedDate : '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="recoupCompletedDate" class="col-form-label col-form-label-sm col-sm-6">Manual Recoupment
+                        Completed:</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="recoupCompletedDate" formControlName="recoupCompletedDate"
+                            placeholder="recoupCompletedDate" ariaLabel="recoupCompletedDate"></dfps-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3">
+            <dfps-button label="Save" _id="invoiceSave" [hidden]="hideSaveButton" (click)="doInvoiceSave()">
+            </dfps-button>
+        </div>
+
+        <div class="formGroup mt-5" [hidden]="displayDataTable1">
+            <h2>{{ dataTable1HeaderTxt }}</h2>
+            <div class="row" *ngIf="!displayDataTable1">
+                <div class="col-md-12 pt-12">
+                    <dfps-data-table-lazyload class="data-table dataTableConfig" [dataTable]="invoiceLineItemdataTable1"
+                        (lazyLoadEvent)="loadDataLazy($event)" (selectRowEvent)="selectedRow = $event"
+                        [rowOptions]="ROW_OPTIONS" [selectedRowOption]="DEFAULT_PAGE_SIZE" [sortOrder]="sortOrder"
+                        [scrollable]="true" [sortField]="sortField" [currentPage]="currentPageNumber">
+                    </dfps-data-table-lazyload>
+                    <div class="d-flex justify-content-end mt-2">
+                        <div class="d-flex btn-sm">
+                            <dfps-button add-button size="small" *ngIf="displayExport" label="Download To Excel"
+                                (click)="download()">
+                            </dfps-button>
+                        </div>
+                        <div class="d-flex btn-sm" *ngIf="isDisplayNewUsing">
+                            <dfps-button add-button size="small" label="New Using" (click)="newUsingDsvc()">
+                            </dfps-button>
+                        </div>
+                        <div class="d-flex btn-sm" *ngIf="hideAddInvoiceLineItem">
+                            <dfps-button add-button size="small" label="Add" (click)="addInvoiceLineItem()">
+                            </dfps-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="formGroup mt-5" [hidden]="displayDataTable2">
+            <h2>{{ 'Cost Reimbursement List' }}</h2>
+            <div class="row" *ngIf="!displayDataTable2">
+                <div class="col-md-12 pt-12">
+                    <dfps-data-table-lazyload class="data-table dataTableConfig" [dataTable]="invoiceLineItemdataTable2"
+                        [scrollable]="true" (lazyLoadEvent)="costReimbursementDataLazy($event)"
+                        (selectRowEvent)="selectedRow = $event">
+                    </dfps-data-table-lazyload>
+                </div>
+            </div>
+        </div>
+
+        <div class="formGroup mt-5" *ngIf="showAuthProvideSec">
+            <div class="pt-4">
+                <hr aria-hidden="true" />
+            </div>
+            <h2>{{ 'Provider Authorization' }}</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4 pl-0">
+                    <div class="col-sm-10">
+                        <div>
+                            <dfps-checkbox _id="providerAuth"
+                                ariaLabel="By checking this box I hereby certify the following"
+                                label="By checking this box I hereby certify the following:"
+                                [formControl]="invoiceHeaderForm.controls['providerAuth']" inputName="providerAuth">
+                            </dfps-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex col-md-7 pt-4">
+                <ol>
+                    <li>that all information contained in this invoice is true, accurate, and complete; and</li>
+                    <li>that I am authorized to submit this information on behalf of the resource named above.</li>
+                </ol>
+            </div>
+            <div class="d-flex justify-content-end w-100 mt-3" *ngIf="showBtnAuth">
+                <dfps-button label="Authorize" _id="Authorize" [hidden]="false" (click)="doInvoiceAuthorize()">
+                </dfps-button>
+            </div>
+        </div>
+        <div class="row">
+            <br />
+        </div>
+        <div class="card formPanel" [hidden]="displayReports">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h2>Reports</h2>
+            </div>
+            <div class="p-2 mb-2 card-body">
+                <div class="row">
+                    <div class="d-flex col-md-6 pt-6">
+                        <dfps-report-launch reportId="reportsLaunch" [reportsValues]="reports" buttonId="reportLaunch"
+                            [createEvent]="true">
+                        </dfps-report-launch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

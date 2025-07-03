@@ -1,0 +1,78 @@
+
+.interview-status {
+    max-width: "100%";
+    flex: 0 0 99.666667%;
+    font-size: "5px";
+    position: relative;
+}
+.wrapper {
+    position: relative;
+}
+.form-control1 {
+    width: 30%;
+    max-width: 20%;
+    display: inline-block;
+}    
+
+
+.findings {
+    padding: 0px;    
+}
+
+.findings-ap-header-cell {
+    background-color: #c1d5ec!important;
+    font-weight: 600;
+    font-family: Roboto,sans-serif!important;
+    font-size: 14px;
+    text-align: center;    
+}
+
+.findings-ap-cell {
+    border-left: 1px solid #c1d5ec!important;
+    border-bottom: 1px solid #c1d5ec!important;
+    border-right: 1px solid #c1d5ec!important;
+    border-top: 1px solid #c1d5ec!important;
+    text-align: center;    
+}
+
+.findings-header-cell {
+    background-color: #c1d5ec!important;
+    font-weight: 600;
+    font-family: Roboto,sans-serif!important;
+    font-size: 14px;
+    padding: 1px;
+    text-align: center;    
+}
+
+.findings-cell {
+    border-left: 1px solid #c1d5ec!important;
+    border-bottom: 1px solid #c1d5ec!important;
+    border-right: 1px solid #c1d5ec!important;
+    border-top: 1px solid #c1d5ec!important;
+    padding: 1px;    
+    text-align: center;    
+}
+
+.h-full {
+    height: 100%;
+}
+
+.findings-cb-container {
+    height: 25px;
+}
+
+.findings-cb-container input {
+    height: inherit;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.font-weight-normal {
+    font-weight: 400;
+}
+
+.font-size-larger {
+    font-size: 18px;
+}

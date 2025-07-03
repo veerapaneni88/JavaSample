@@ -1,0 +1,148 @@
+<div class="container-fluid bodycolor" (keyup.enter)="!displaySearchResults ? doSearch(): ''"
+    *ngIf="displaySearchResponseObs | async as displaySearch">
+    <div class="row">
+        <h1>Invoice Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div class="row">
+        <div *ngIf="isUserTypeExternal" class="requiredDisplay text-right mt-2 col-12" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right mt-2 col-12" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <dfps-form-validation [validationErrors]="validationErrors"
+                [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+            <form [formGroup]="invoiceSearchForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="invoiceId" class="col-sm-6 col-form-label col-form-label-sm">Invoice ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="invoiceId" formControlName="invoiceId" maxlength="10"
+                                    ariaLabel="Invoice ID" [disabled]="!displaySearch.searchPrivilege"></dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="agencyAccountId" class="col-sm-6 col-form-label col-form-label-sm"
+                                [class.requiredDisplay]="isUserTypeExternal">Agency Account ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input *ngIf="!isUserTypeExternal" _id="agencyAccountId"
+                                    formControlName="agencyAccountId" maxlength="10" ariaLabel="Agency Account ID"
+                                    [disabled]="!displaySearch.searchPrivilege">
+                                </dfps-input>
+                                <dfps-select *ngIf="isUserTypeExternal" _id="agencyAccountId"
+                                    formControlName="agencyAccountId" [dropDownValues]="agencyAccounts"
+                                    ariaLabel="Agency Account ID is required">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="resourceId" class="col-sm-6 col-form-label col-form-label-sm">Resource
+                                ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="resourceId" formControlName="resourceId" maxlength="10"
+                                    [disabled]="!displaySearch.searchPrivilege" ariaLabel="Resource ID">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="type" class="col-sm-6 col-form-label col-form-label-sm">Type:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="type" formControlName="type" ariaLabel="Type"
+                                    [dropDownValues]="displaySearch.types" [disabled]="!displaySearch.searchPrivilege">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="phase" class="col-sm-6 col-form-label col-form-label-sm">Phase:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="phase" formControlName="phase" ariaLabel="Phase"
+                                    [dropDownValues]="displaySearch.phases" [disabled]="!displaySearch.searchPrivilege">
+                                </dfps-select>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="region"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Region:</label>
+                            <div class="col-sm-6">
+                                <dfps-select _id="region" formControlName="region"
+                                    ariaLabel="Region is conditionally required"
+                                    [dropDownValues]="displaySearch.regions"
+                                    [disabled]="!displaySearch.searchPrivilege">
+                                </dfps-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="invoiceMonth"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Invoice Month:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="month" formControlName="invoiceMonth"
+                                    ariaLabel="Invoice Month is conditionally required"
+                                    [disabled]="!displaySearch.searchPrivilege" maxlength="2">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="invoiceYear"
+                                class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Invoice Year:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="year" formControlName="invoiceYear"
+                                    ariaLabel="Invoice Year is conditionally required"
+                                    [disabled]="!displaySearch.searchPrivilege" maxlength="4">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <div>
+                                <dfps-checkbox _id="providerAuthorized"
+                                    [formControl]="invoiceSearchForm.controls['providerAuthorized']"
+                                    ariaLabel="Provider Authorized" label="Provider Authorized">
+                                </dfps-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-11 justify-content-end pt-4">
+                            <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+                        </div>
+                        <div class="d-flex col-md-1 justify-content-end pt-4">
+                            <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-container *ngIf="displaySearchResults">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">
+                        search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+    <div *ngIf="displaySearchResults">
+        <dfps-data-table-lazyload class="col-md-12 data-table" [dataTable]="dataTable" [currentPage]="currentPageNumber"
+            (handleClickEvent)="handleInvoiceLinkClick($event)" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+            (lazyLoadEvent)="loadDataLazy($event)" [scrollable]="true" (selectRowEvent)="selectedRow = $event">
+        </dfps-data-table-lazyload>
+        <div class="row justify-content-end" *ngIf="displaySearch.addPrivilege">
+            <div class="d-flex btn-sm" *ngIf="dataTable.tableBody.length > 0">
+                <dfps-button add-button size="small" label="New Using" (click)="newUsing()"></dfps-button>
+            </div>
+            <div class="d-flex btn-sm">
+                <dfps-button add-button size="small" label="Add" (click)="add()"></dfps-button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,301 @@
+<div class="container-fluid bodycolor" *ngIf="apsRoraData">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="apsRoraForm">
+        <div class="row case-management-heading pl-2">
+            <h1 aria-level="1">{{apsRoraData?.pageTitle | titlecase}}</h1>
+        </div>
+        <div>
+            <hr aria-hidden="true" />
+        </div>
+        <div>
+            <div class="row mt-2">
+                <div class="text-left col-6">
+                    Case Name: {{apsRoraData?.caseName}}
+                </div>
+                <div class="requiredDisplay col-6 text-right"  tabindex="0">
+                    <span class="sr-only">Red asterisk is </span>required field
+                </div>
+            </div>
+            <div class="row mt-2 mb-4">
+                <div class="text-left col-6">
+                    Case ID: {{apsRoraData?.idCase}}
+                </div>
+                <div class="conReqDisplay text-right col-6"  tabindex="0">
+                    <span class="sr-only">Double dagger is </span>conditionally required field
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-primary" *ngIf="(apsRoraData?.infoMessages?.length> 0) || (apsRoraData?.incompleteSectionMessages?.length> 0)">
+            <p>Attention:</p>
+            <div *ngIf="apsRoraData?.infoMessages?.length> 0">
+                <div *ngFor="let data of apsRoraData.infoMessages">
+                    <li>{{data}}</li>
+                </div>
+            </div>
+            <div *ngIf="apsRoraData?.incompleteSectionMessages?.length > 0">
+                <ul class="pl-0">
+                    The following sections have not been completed:
+                </ul>
+                <ul *ngFor="let message of apsRoraData.incompleteSectionMessages" class="ml-2">
+                    <li>{{message}}</li>
+                </ul>
+            </div>
+        </div>
+        <dfps-collapsable-section>
+            <accordion aria-class="bodycolor">
+                <accordion-group class="accordion-group" id="riskScoreLevelGroup" [isOpen]="true" *ngIf="apsRoraData?.responseListComplete">
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Risk Score/Level</h2>
+                        <span *ngIf="apsRoraData?.riskLevelComplete" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="rora-left-pad-third-level">
+                        <div>
+                        <h2> Scored Risk Level </h2>
+                        </div>
+                        <div>
+                            <p>
+                                The system assigns the client's risk level based on the highest level on either the self-neglect or the abuse, neglect, or exploitation scale, and displays it in the field below.
+                            </p>
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-md-4">
+                                <label for="scoredRiskLevel" class="col-md-6">Scored Risk Level:</label>
+                                <span id="scoredRiskLevel">{{apsRoraData?.cdScoredRiskLevel}}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-md-4">
+                                <label for="snRiskLevel" class="col-md-6">Self-Neglect Risk Level:</label>
+                                <span id="snRiskLevel">{{apsRoraData?.cdSnRiskLevel}}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="snScore" class="col-md-6">Self-Neglect Score:</label>
+                                <span id="snScore">{{apsRoraData?.nbrSnScore}}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-md-4">
+                                <label for="aneRiskLevel" class="col-md-6">ANE Risk Level:</label>
+                                <span id="aneRiskLevel">{{apsRoraData?.cdAneRiskLevel}}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="aneScore" class="col-md-6">ANE Score:</label>
+                                <span id="aneScore">{{apsRoraData?.nbrAneScore}}</span>
+                            </div>
+                        </div>
+                        <div>
+                        <h2>
+                            Overrides
+                        </h2>
+                        </div>
+                        <div>
+                            <span>Mandatory Override:</span>
+                        </div>
+                        <div>
+                            <p class="error-text" *ngIf="apsRoraData.mandatoryMessageRed?.length > 0">
+                                {{apsRoraData.mandatoryMessageRed[0]}}
+                            </p>
+                        </div>
+                        <div>
+                            <p *ngIf="apsRoraData.mandatoryMessageBlack?.length > 0">
+                                {{apsRoraData.mandatoryMessageBlack[0]}}
+                            </p>
+                        </div>
+                        <div>
+                            <span>Discretionary Override:</span>
+                        </div>
+                        <div>
+                            <p>Discretionary Override is used only for merging cases.</p>
+                        </div>
+                        <div>
+                            <div class="case-management-body-text col-sm-12">
+                                <dfps-radio-button _id="discretryOverride" formControlName="discretryOverride"
+                                    name="discretryOverride" ariaLabel=">Discretionary Override" [data]="riskLevelOptions"
+                                    [horizontal]="false">
+                                </dfps-radio-button>
+                            </div>
+                        </div>
+                        <div class="row d-flex col-md-12 pt-4 pb-4">
+                            <label class="col-sm-4 col-md-4 col-2 conReqDisplay" for="reasonForOverride">
+                                Reason for override (mandatory or discretionary):</label>
+                            <dfps-textarea class="col-sm-8 col-md-8 col-2 p-0" id="reasonForOverride" name="reasonForOverride" formControlName="reasonForOverride"
+                                maxLength="4000" ariaLabel="Reason for override (mandatory or discretionary)"></dfps-textarea>
+                        </div>
+                        <div class="row d-flex col-md-12 pt-4 pb-4">
+                            <label class="col-sm-4 col-md-4 col-2" for="comments">
+                                Comments:</label>
+                            <dfps-textarea class="col-sm-8 col-md-8 col-2 p-0" id="comments" name="comments" formControlName="comments"
+                                maxLength="4000" ariaLabel="Comments"></dfps-textarea>
+                        </div>
+                        <div>
+                            <h2>
+                                Final Risk Level
+                            </h2>
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-md-4">
+                                <label for="finalRiskLevel" class="col-md-6">Final Risk Level:</label>
+                                <span id="finalRiskLevel">
+                                    {{finalRiskVal | titlecase}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+                <accordion-group class="accordion-group" id="historicalGroup" [isOpen]=false>
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Historical</h2>
+                        <span *ngIf="apsRoraData?.hicompelete" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row rora-left-pad-third-level mb-1">
+                        <div class="flex-1"> Questions </div>
+                        <div class="rora-sup-fields" *ngIf="apsRoraData?.hasSupervisorAccess">
+                            <span>SN</span>
+                            <span>ANE</span>
+                        </div>
+                    </div>
+                    <ng-container *ngTemplateOutlet="questions; context: { questions:historicalQuestions }">
+                    </ng-container>
+
+                </accordion-group>
+
+                <accordion-group class="accordion-group" id="currentInvestigationGroup" [isOpen]=false>
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Current Investigation</h2>
+                        <span *ngIf="apsRoraData?.cicomplete" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row rora-left-pad-third-level mb-1">
+                        <div class="flex-1"> Questions </div>
+                        <div class="rora-sup-fields" *ngIf="apsRoraData?.hasSupervisorAccess">
+                            <span>SN</span>
+                            <span>ANE</span>
+                        </div>
+                    </div>
+                    <ng-container *ngTemplateOutlet="questions; context: { questions:currentInvestigationQuestions }">
+                    </ng-container>
+
+                </accordion-group>
+
+                <accordion-group class="accordion-group" id="clientCharacteristicsGroup" [isOpen]=false>
+                    <!-- TODO Use template section with the input param so that code is same for all -->
+                    <button class="btn btn-link justify-content-between d-flex" accordion-heading>
+                        <h2 class="pull-left float-left">Client Characteristics</h2>
+                        <span *ngIf="apsRoraData?.cccomplete" class="float-right pull-right"><i
+                                class="fa fa-check"><span class="sr-only">Check
+                                    mark</span></i></span>
+                    </button>
+                    <div class="row rora-left-pad-third-level mb-1">
+                        <div class="flex-1"> Questions </div>
+                        <div class="rora-sup-fields" *ngIf="apsRoraData?.hasSupervisorAccess">
+                            <span>SN</span>
+                            <span>ANE</span>
+                        </div>
+                    </div>
+                    <ng-container *ngTemplateOutlet="questions; context: { questions:clientQuestions }">
+                    </ng-container>
+                </accordion-group>
+            </accordion>
+            <div *ngIf="!isFormDisabled" class="row justify-content-end">
+                <div class="d-flex btn-sm">
+                    <dfps-button add-button size="small" label="Save and Complete" [disabled]="!saveAndCompleteEnabled" (click)="saveAndComplete()">
+                    </dfps-button>
+                </div>
+                <div class="d-flex btn-sm">
+                    <dfps-button  add-button size="small" label="Save" (click)="save()">
+                    </dfps-button>
+                </div>
+            </div>
+        </dfps-collapsable-section>
+        <ng-template #questions let-questions="questions">
+            <ng-container *ngFor="let question of questions">
+                <div formGroupName="questionForm">
+                    <fieldset *ngIf="!question.hidden" class="mb-4">
+                        <div class="row rora-left-pad-third-level mb-1">
+                            <a tabindex="0" *ngIf="question.nmDefinition; else normalQuestionText" (keypress)="openQuestionLinkOnKeyPress($event, question.nmDefinition)"
+                             (click)="openQuestionLink($event, question.nmDefinition)">{{question.nbrOrder}}. {{question.txtQuestion}}</a>
+                            <ng-template #normalQuestionText>
+                                <span>{{question.nbrOrder}}. {{question.txtQuestion}}</span>
+                            </ng-template>
+                        </div>
+                        <div class="row rora-left-pad-third-level rora-options">
+                            <div class="rora-option" *ngFor="let option of question.options">
+                                <div class="rora-answer-option" *ngIf="question.hasCheckBoxAnswers">
+                                    <div class="flex-1">
+                                        <dfps-checkbox [_id]="option.value" [formControl]="apsRoraForm['controls'].questionForm['controls'][question.cdRoraQuestion+'$$'+ option.value]"
+                                            [ariaLabel]="option.label" [label]="option.label"
+                                            [inputName]="option.value">
+                                        </dfps-checkbox>
+                                    </div>
+                                    <div class="rora-sup-fields" *ngIf="indexMap[question.cdRoraQuestion + option.value] as indexes">
+                                        <span class="">{{indexes.snIndex}}</span>
+                                        <span class="">{{indexes.aneIndex}}</span>
+                                    </div>
+                                </div>
+                                <div class="rora-answer-option" *ngIf="!question.hasCheckBoxAnswers">
+                                    <div class="flex-1">
+                                        <p-radioButton (onClick)="onAnswerChange(question)" [value]="option.value" [inputId]="option.value" [name]="option.cdRoraQuestion"
+                                        [formControlName]="question.cdRoraQuestion"></p-radioButton>
+                                        <label class="mb-0" [for]="option.value">{{option.label}}</label>
+                                        <ng-container *ngIf="questionCaseIdsMap[question.cdRoraQuestion + option.value] as caseIds">
+                                            <ng-container *ngFor="let caseId of caseIds">
+                                                <a class="ml-2" tabindex="0" (click)="launchCaseReviewLink(caseId)" (keypress)="launchCaseReviewLinkOnKeyPress($event, caseId)">{{caseId}}</a>
+                                                <span></span>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                    <div class="rora-sup-fields" *ngIf="indexMap[question.cdRoraQuestion + option.value] as indexes">
+                                        <span class="">{{indexes.snIndex}}</span>
+                                        <span class="">{{indexes.aneIndex}}</span>
+                                    </div>
+                                </div>
+                                <div class="rora-suboptions rora-left-pad-third-level">
+                                    <ng-container *ngFor="let subOption of option.subOptions">
+                                        <dfps-checkbox [_id]="subOption.value" [formControl]="apsRoraForm['controls'].questionForm['controls'][subOption.value]"
+                                            [ariaLabel]="subOption.label" [label]="subOption.label"
+                                            [inputName]="subOption.value">
+                                        </dfps-checkbox>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </ng-container>
+        </ng-template>
+        <div class="card formPanel" *ngIf="showFormLaunch && setFormLaunch">
+            <div class="p-2 mb-2 card-heading formHeader">
+                <h3>Forms Launch</h3>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-6 pb-6">
+                    <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'  [createEvent]='true'>
+                    </dfps-form-launch>
+                </div>
+                <div class="d-flex col-md-2"></div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12"> Created Date: <span
+                    *ngIf="apsRoraData?.createdDate">{{apsRoraData?.createdDate |  date: 'MM/dd/yyyy'}}
+                    at
+                    {{apsRoraData?.createdDate | date:'shortTime'}} by
+                    {{apsRoraData?.personCreated}}</span> </div>
+            <div class="col-md-12"> Updated Date: <span
+                    *ngIf="apsRoraData?.lastUpdatedDate">{{apsRoraData?.lastUpdatedDate | date: 'MM/dd/yyyy'}}
+                    at
+                    {{apsRoraData?.lastUpdatedDate | date:'shortTime'}} by
+                    {{apsRoraData?.personUpDated}}</span></div>
+            <div class="col-md-12">Version: {{apsRoraData?.versionNumber}}.0</div>
+        </div>
+    </form>
+</div>

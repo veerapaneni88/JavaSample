@@ -1,0 +1,204 @@
+<div class="container-fluid bodycolor" (keyup.enter)="!displaySearchResponse ? doSearch(): ''"
+  *ngIf="(displaySearchResponse) as displayHomeSearchResponse">
+  <div class="row" class="resource-search-heading">
+    <h1 aria-level="1">Home Search</h1>
+  </div>
+  <div>
+    <hr />
+    <p class="conReqDisplay text-right mt-2 resource-search-body-text">
+      conditionally required field
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12 pt-0">
+      <p>
+        Enter Search Criteria below to find an F/A Home.
+        If a Resource ID is entered, the search will use only that identification number to find a match.
+      </p>
+      <dfps-form-validation [validationErrors]="validationErrors" [validationErrorsLength]="validationErrorsLength">
+      </dfps-form-validation>
+
+      <div class="pl-5">
+        <div class="alert resource-search-alert-info" #results id="searchCriteriaWarningDiv"
+          *ngIf="isSearchCriteriaWarning">
+          <h2 class="title"> Attention:</h2>
+          <ul>
+            <li>
+              <span>
+                Your search criteria was too broad. Over 1,000 records were found. Please search again using more
+                specific criteria.
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <form [formGroup]="homeSearchForm">
+        <div class="form-group">
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-md-4 pt-4">
+              <label for="homeName" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 conReqDisplay">Home
+                Name:</label>
+              <div class="col-sm-6">
+                <dfps-input _id="homeName" formControlName="homeName" ariaLabel="Home Name is Conditionally Required">
+                </dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="city" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">City:</label>
+              <div class="col-sm-6">
+                <dfps-input _id="city" formControlName="city" ariaLabel="city" maxlength="20"></dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="resourceId" class="col-sm-3 conReqDisplay">Resource ID:</label>
+              <div class="col-sm-6">
+                <dfps-input _id="resourceId" formControlName="resourceId"
+                  ariaLabel="Reource ID is Conditionally Required" maxlength="10"></dfps-input>
+              </div>
+            </div>
+          </div>
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-md-4 pt-4">
+              <label for="status" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 ">Status:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="status" formControlName="status" [dropDownValues]="displayHomeSearchResponse.status"
+                  maxlength="15" ariaLabel="Status"></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="region" class="col-xs-12 col-sm-3 col-md-5 col-lg-4 conReqDisplay">Region:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="region" formControlName="region" [dropDownValues]="displayHomeSearchResponse.region"
+                  ariaLabel="Region is Conditionally Required" maxlength="16" (change)="loadCounties($event)">
+                </dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="county" class="col-sm-3 ">County:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="county" formControlName="county" [dropDownValues]="counties"
+                  ariaLabel="County" maxlength="16"></dfps-select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+            <div class="d-flex col-md-4 pt-4">
+              <label for="category" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 conReqDisplay">Category:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="category" formControlName="category"
+                  [dropDownValues]="displayHomeSearchResponse.category" ariaLabel="Category is Conditionally Required"
+                  maxlength="16" (change)="onCategoryChange($event)"></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="language" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Language:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="language" formControlName="language"
+                  [dropDownValues]="displayHomeSearchResponse.language" ariaLabel="Language"
+                  maxlength="16"></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="type" class="col-sm-3">Type:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="type" formControlName="type" [dropDownValues]="displayHomeSearchResponse.homeType"
+                  ariaLabel="Type" maxlength="16"></dfps-select>
+              </div>
+            </div>
+          </div>
+          <br>
+          <accordion aria-class="bodycolor">
+            <accordion-group class="accordion-group" aria-controls="searchTable" aria-expanded="false"
+              heading="Advanced Search">
+              <h2>Child Characteristics</h2>
+              <div class="pt-2 pb-2">
+                <dfps-multi-select id="childCharacteristics"
+                  [multiSelectValues]="displayHomeSearchResponse.childCharacteristics"
+                  [preSelectedValues]="preSelectedValues"
+                  [formControl]="homeSearchForm.controls['childCharacteristics']" formControlName="childCharacteristics"
+                  inputName="childCharacteristics" (selectedValues)="selectedChildCharacteristicsValues($event)">
+                </dfps-multi-select>
+              </div>
+              <h2>Age Range</h2>
+              <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+                <div class="d-flex col-md-3">
+                  <label for="gender" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Gender:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-5 col-lg-4 pl-0">
+                    <dfps-select _id="gender" formControlName="gender"
+                      [dropDownValues]="displayHomeSearchResponse.gender" ariaLabel="Gender"
+                      maxlength="16"></dfps-select>
+                  </div>
+                </div>
+                <div class="d-flex col-md-3">
+                  <label for="openSlots" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Open Slots:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-4 col-lg-3 pl-0">
+                    <dfps-input _id="openSlots" formControlName="openSlots"
+                      ariaLabel="Open Slots" maxlength="5"></dfps-input>
+                  </div>
+                </div>
+              </div>
+              <div class="row resource-search-left-pad-third-level resource-search-row-padding">
+                <div class="d-flex col-md-3">
+                  <label for="minYear" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Min Year:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-4 col-lg-3 pl-0">
+                    <dfps-select _id="minYear" formControlName="minYear"
+                      [dropDownValues]="displayHomeSearchResponse.year" ariaLabel="Minimum Year" maxlength="16">
+                    </dfps-select>
+                  </div>
+                </div>
+                <div class="d-flex col-md-3">
+                  <label for="minMonth" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Min Month:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-4 col-lg-3 pl-0">
+                    <dfps-select _id="minMonth" formControlName="minMonth"
+                      [dropDownValues]="displayHomeSearchResponse.month" ariaLabel="Minimum Month" maxlength="16">
+                    </dfps-select>
+                  </div>
+                </div>
+                <div class="d-flex col-md-3">
+                  <label for="maxYear" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Max Year:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-4 col-lg-3 pl-0">
+                    <dfps-select _id="maxYear" formControlName="maxYear"
+                      [dropDownValues]="displayHomeSearchResponse.year" ariaLabel="Maximum Year" maxlength="16">
+                    </dfps-select>
+                  </div>
+                </div>
+                <div class="d-flex col-md-3">
+                  <label for="maxMonth" class="col-xs-12 col-sm-3 col-md-5 col-lg-4">Max Month:</label>
+                  <div class="col-xs-8 col-sm-8 col-md-4 col-lg-3 pl-0">
+                    <dfps-select _id="maxMonth" formControlName="maxMonth"
+                      [dropDownValues]="displayHomeSearchResponse.month" ariaLabel="Maximum Month" maxlength="16">
+                    </dfps-select>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+          </accordion>
+          <div class="row">
+            <div class="d-flex col-md-12 justify-content-end pt-4">
+              <dfps-button label="Search" _id="search" (click)="doSearch()"></dfps-button>
+            </div>
+          </div>
+          <div *ngIf="displaySearchResults">
+            <div class="row">
+              <dfps-data-table [dataTable]="dataTable" (handleClickEvent)="handleRouting($event)">
+              </dfps-data-table>
+            </div>
+            <div class="row">
+              <div class="d-flex col-md-10 justify-content-end pt-4">
+                <dfps-button label="Add FAD Home" _id="addFadHome" (click)="addFadHome()"
+                  *ngIf="displayHomeSearchResponse.fadHomeAccess"></dfps-button>
+              </div>
+              <div class="d-flex col-md-2 justify-content-end pt-4"
+                *ngIf="displayHomeSearchResponse.kinHomeAccess || displayHomeSearchResponse.fadHomeAccess ">
+                <dfps-button label="Add KIN Home" _id="addKinHome" (click)="addKinHome()"></dfps-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

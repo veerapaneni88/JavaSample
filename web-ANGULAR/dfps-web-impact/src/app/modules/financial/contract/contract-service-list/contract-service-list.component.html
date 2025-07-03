@@ -1,0 +1,26 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Contract Service List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Contract #: {{contractNumber !== 'null' ? contractNumber : '' }}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Agency Acct ID : {{contractId !== '0' ? contractId : ''}}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Period : {{period !== 'null' ? period : '' }}</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Version : {{version !== 'null' ? version : '' }}</div>
+    </div>
+    <dfps-data-table *ngIf="isServiceList" [dataTable]="contractServiceListTable" [allowRowSelection]=""
+        [selectedRowData]="">
+    </dfps-data-table>
+    <div *ngIf="isAddDisplay" class="d-flex justify-content-end w-100 mt-4">
+        <dfps-button label="Add" _id="contractServiceAdd" (click)="add()"></dfps-button>
+    </div>
+</div>

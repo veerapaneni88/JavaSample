@@ -1,0 +1,15 @@
+.checkboxStyling {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    width: 17px !important;
+    height: 17px !important;
+    border: none !important;
+    margin-right: 25px;
+}
+
+input[type=checkbox]:checked {
+    accent-color: #336699 !important;
+}
+

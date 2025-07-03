@@ -1,0 +1,106 @@
+<div class="container-fluid bodycolor" *ngIf="displayServicePackageError">
+  <div class="row" class="resource-search-heading">
+    <h1 aria-level="1">Service Package Error Search</h1>
+  </div>
+  <div class="pt-2 ">
+    <hr />
+  </div>
+  <div class="row">
+    <div class="col-sm-12 pt-0">
+      <dfps-form-validation [validationErrors]="validationErrors" [validationErrorsLength]="validationErrorsLength">
+      </dfps-form-validation>
+
+      <form [formGroup]="servicePackageErrorForm">
+        <div class="form-group">
+          <div class="row pt-4">
+            <div class="d-flex col-md-12 pt-0">
+              <div class="col-sm-12 pr-0">
+                <p class="conReqDisplay text-right mt-2 resource-search-body-text">
+                  conditionally required field
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex col-md-4 pt-4">
+                <dfps-checkbox _id="markedForDeletion"
+                  [formControl]="servicePackageErrorForm.controls['markedForDeletion']" ariaLabel="Marked For Deletion"
+                  label="Marked For Deletion" (click)="markForDeletionChange()" inputName="markedForDeletion">
+                </dfps-checkbox>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex col-md-4 pt-4">
+              <label for="personId" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 ">Person ID:</label>
+              <div class="col-sm-6">
+                <dfps-input _id="personId" formControlName="personId" ariaLabel="Person ID" maxlength="16">
+                </dfps-input>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="region" class="col-xs-6 col-sm-3 col-md-5 col-lg-4">Region:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="region" formControlName="region" [dropDownValues]="displayServicePackageError.region"
+                  ariaLabel="Region" maxlength="16" (change)="loadCounties($event)"></dfps-select>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="county" class="col-xs-6 col-sm-3 col-md-5 col-lg-4">County:</label>
+              <div class="col-sm-6">
+                <dfps-select _id="county" formControlName="county" [dropDownValues]="counties" ariaLabel="county"
+                  maxlength="16"></dfps-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="d-flex col-md-4 pt-4">
+              <label for="fromDate" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 conReqDisplay">Errors From:</label>
+              <div class="col-sm-6">
+                <dfps-date-picker _id="fromDate" formControlName="fromDate"
+                  ariaLabel="Errors From is conditionally required"></dfps-date-picker>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="toDate" class="col-xs-6 col-sm-3 col-md-5 col-lg-4 conReqDisplay">Errors To:</label>
+              <div class="col-sm-6">
+                <dfps-date-picker _id="toDate" formControlName="toDate"
+                  ariaLabel="Errors To is conditionally required"></dfps-date-picker>
+              </div>
+            </div>
+            <div class="d-flex col-md-4 pt-4">
+              <label for="errorText" class="col-xs-6 col-sm-3 col-md-5 col-lg-4">Error Text:</label>
+              <div class="col-sm-6">
+                <dfps-input _id="errorText" formControlName="errorText" ariaLabel="Error Text"
+                  maxlength="30"></dfps-input>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="d-flex col-md-12 justify-content-end pt-4">
+              <dfps-button label="Search" _id="search" (click)="search()"></dfps-button>
+            </div>
+          </div>
+          <br>
+          <!-- Search Result Table -->
+          <div *ngIf="displaySearchResults">
+            <div class="row">
+
+              <dfps-data-table-lazyload class="data-table" [dataTable]="dataTable" [currentPage]="currentPageNumber"
+                 [selectedRowOption]="DEFAULT_PAGE_SIZE" (selectRowEvent)= "selectedForDeletion = ($event)"
+                (lazyLoadEvent)="loadDataLazy($event)" >
+            </dfps-data-table-lazyload>
+
+            </div>
+            <div class="row">
+              <div class="d-flex col-md-12 justify-content-end pt-4">
+                <dfps-button label="Mark for Deletion" _id="deltion" (click)="save()" [hidden] = "hideMarkForDeletion"></dfps-button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h3 class="modal-title pull-left">Request Additional Information</h3>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()" id="closeButton"
+        (keydown)="preventTabbing($event)">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="neiceAdditionalInfoForm">
+        <div class="row pl-4">
+            <div class="d-flex col-md-12 pt-3">
+                <label for="additionalInformation"
+                    class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Additional Information:</label>
+                <div class="col-sm-8">
+                    <dfps-select _id="additionalInformation" ariaLabel="Additional Information"
+                        formControlName="additionalInformation" [dropDownValues]="additionalInformations">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-12 pt-3 pb-3">
+                <label class="col-sm-3 col-2"
+                    [ngClass]="{'requiredDisplay' : neiceAdditionalInfoForm.get('additionalInformation').value==='220'}"
+                    for="comments"> Comments:</label>
+                <dfps-textarea class="col-sm-8 col-md-8 col-2" _id="comments" formControlName="comments" maxLength="4000"
+                    ariaLabel="Comments"></dfps-textarea>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div class="col-sm-12">
+        <dfps-button (keydown)="preventTabbing($event)" class="float-left" _id="cancelButton" size="small"
+            data-dismiss="modal" value="Submit" (click)="closeModal()" label="Cancel"></dfps-button>
+        <dfps-button (keydown)="preventTabbing($event)" class="float-right" _id="sendButton" size="small"
+            data-dismiss="modal" value="Submit" (click)="sendRequest()" label="Send"></dfps-button>
+    </div>
+</div>

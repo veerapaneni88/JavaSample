@@ -1,0 +1,542 @@
+<div class="container-fluid bodycolor" *ngIf="neiceTransmittalSummary">
+    <div class="row">
+        <h1>NEICE Transmittal Summary</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="neiceTransmittalSummaryForm">
+        <div class="form-group mt-5">
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-3">
+                    <div class="col-sm-6 px-0 displayAsLabel">Transmittal Type:</div>
+                    <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.transmittalType}} </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-3">
+                    <div class="col-sm-6 px-0 displayAsLabel">Transmittal Status:</div>
+                    <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.transmittalStatus}} </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-3">
+                    <div class="col-sm-6 px-0 displayAsLabel">Home Study Type:</div>
+                    <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.homeStudyType}} </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-3">
+                    <label for="priority" class="col-sm-6 col-form-label col-form-label-sm">Priority:</label>
+                    <div class="col-sm-6 px-0">
+                        <dfps-select _id="priority" ariaLabel="Priority" formControlName="priority"
+                            [dropDownValues]="neiceTransmittalSummary.priorities">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-3">
+                    <label for="assignedTo" class="col-sm-6 col-form-label col-form-label-sm">Assigned To:</label>
+                    <div class="col-sm-6 px-0">
+                        <dfps-select _id="assignedTo" ariaLabel="Assigned To" formControlName="assignedTo"
+                            [dropDownValues]="neiceTransmittalSummary.assignedToPersons">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-3">
+                    <label for="rejectHoldInd" class="col-sm-6 col-form-label col-form-label-sm">Reject/ Hold:</label>
+                    <div class="col-sm-6 px-0">
+                        <dfps-select _id="rejectHoldInd" ariaLabel="Reject/Hold" formControlName="rejectHoldInd"
+                            [dropDownValues]="neiceTransmittalSummary.rejectHoldList">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-3">
+                    <div class="col-sm-6 px-0 displayAsLabel">Last Updated By:</div>
+                    <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalActivity.lastUpdatedBy}} </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-11 pt-3 pb-4">
+                    <label class="col-sm-6 col-md-2 col-form-label col-form-label-sm" for="comment"
+                        [ngClass]="{'requiredDisplay' : neiceTransmittalSummaryForm.get('rejectHoldInd').value==='R'}">Comment:</label>
+                    <dfps-textarea class="col-sm-6 col-md-10 pl-2 pr-0" _id="comment" formControlName="comment"
+                        maxLength="4000" ariaLabel="Comment"
+                        [attr.aria-required]="neiceTransmittalSummaryForm.get('rejectHoldInd').value==='R' ? true:false">
+                    </dfps-textarea>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-2 pb-4" *ngIf="dispSaveBtn">
+                <div class="d-flex btn-sm">
+                    <dfps-button add-button size="small" label="Save" (click)="save()"> </dfps-button>
+                </div>
+            </div>
+            <dfps-collapsable-section>
+                <accordion>
+                    <accordion-group class="accordion-group pt-2" heading="Transmittal Summary" [isOpen]="true">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">NEICE Home Study ID:</div>
+                                <div class="col-sm-6 px-0">
+                                    <a class="anchorTagColor" [href]="neiceHomeStudyIdIMPACTUrl()"
+                                        *ngIf="neiceTransmittalSummary?.transmittalDetail?.eventId && neiceTransmittalSummary?.transmittalDetail?.neiceHomeStudyId; else displayNoAnchorTag"
+                                        [attr.aria-label]="'Select '+neiceTransmittalSummary.transmittalDetail.neiceHomeStudyId+ ' link to navigate to 100A Home Study Detail page of the Oldest Child on the transmittal'">
+                                        {{neiceTransmittalSummary.transmittalDetail.neiceHomeStudyId}}</a>
+                                    <ng-template #displayNoAnchorTag>
+                                        {{neiceTransmittalSummary.transmittalDetail.neiceHomeStudyId}}</ng-template>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Date Received:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.dateReceived}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Transmittal Type:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.transmittalType}} </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Transmittal Purpose:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.transmittalPurpose}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Jurisdiction State:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.jurisdictionState}} </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Home Study Due Date:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.homeStudyDueDate}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Transmittal State:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.sendingState}}
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Transmitting Agency:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.sendingAgency}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Transmittal Creator:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.transmittalCreator}} </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Compact Administrator or Alternate:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.compactAdministrator}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Receiving State:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.receivingState}}
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Receiving Agency:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.receivingAgency}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Home Study Type:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.transmittalDetail.homeStudyType}}
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Urgent Request:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.urgentRequestInd}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Urgent Request Reason:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.urgentRequestReason}} </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Urgent Request Other Reason:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.otherUrgentRequestReason}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Attention:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.attention}} </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3" *ngIf="dispPublicPrivate">
+                                <div class="col-sm-6 px-0 displayAsLabel">Public/Private:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.publicPrivateInd}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4" *ngIf="dispConcurrence">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Concurrence to Dismiss:</div>
+                                <div class="col-sm-6 px-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.concurrenceToDismiss}} </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-11 pt-3 pb-4">
+                                <div class="col-sm-6 col-md-2 px-0 displayAsLabel">Comments:</div>
+                                <div class="col-sm-6 col-md-10 pl-2 pr-0">
+                                    {{neiceTransmittalSummary.transmittalDetail.summaryText}}</div>
+                            </div>
+                        </div>
+                        <ng-template [ngIf]="dispAdditionalInfo">
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-11 pt-3">
+                                    <div class="col-sm-6 col-md-2 px-0 displayAsLabel">Additional Information Field:
+                                    </div>
+                                    <div class="col-sm-6 col-md-10 pl-2 pr-0">
+                                        {{neiceTransmittalSummary.transmittalDetail.additionalInformation}}</div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-11 pt-3 pb-4">
+                                    <div class="col-sm-6 col-md-2 px-0 displayAsLabel">Other Information:</div>
+                                    <div class="col-sm-6 col-md-10 pl-2 pr-0">
+                                        {{neiceTransmittalSummary.transmittalDetail.otherInformation}}</div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Child Information" [isOpen]="true">
+                        <ng-template ngFor let-childItem let-first="first"
+                            [ngForOf]="neiceTransmittalSummary.childInformations">
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">
+                                        {{first?'Oldest Child Name':'Child Name'}}:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.name}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">DOB:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.dateOfBirth}} </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">NEICE Child ID:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.neicePid}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">IMPACT Child ID:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.impactPid}} </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Race:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.race}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Sex:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.sex}} </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4" *ngIf="dispGenderOtherGender">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Gender:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.gender}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Other Gender:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.otherGender}} </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Hispanic Origin:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.hispanicOrigin}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">SSN:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.ssn}} </div>
+                                </div>
+                            </div>
+                            <ng-template [ngIf]="dispICWATitleIVEICPCOtherLegalTypeOfCare">
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">ICWA Eligible:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.icwaEligible}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Title IV-E Eligible:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.titleIVEEligible}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Current ICPC Legal Status:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.currentLegalStatus}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Other Legal Status:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.otherLegalStatus}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Type of Care:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.typeOfCare}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Other Type of Care:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.otherTypeOfCare}} </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                            <ng-template [ngIf]="dispDecisionDTDenialReasonRemarks">
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Decision:</div>
+                                        <div class="col-sm-6 px-0">{{childItem.decision}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Decision Date:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.decisionDate}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Denial Reason:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.reasonDenial}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Other Denial Reason:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.otherReasonDenial}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-11 pt-3 pb-4">
+                                        <div class="col-sm-6 col-md-2 px-0 displayAsLabel">Remarks:</div>
+                                        <div class="col-sm-6 col-md-10 pl-2 pr-0">{{childItem.placementRemarks}}</div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <div class="row pl-4"
+                                *ngIf="dispPlacementDtType && childItem.placementTypeCode&&childItem.placementTypeCode!=''">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Placement Type:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.placementType}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Placement Date:</div>
+                                    <div class="col-sm-6 px-0"> {{childItem.placementDate}} </div>
+                                </div>
+                            </div>
+
+                            <ng-template
+                                [ngIf]="dispTermination && childItem.compactTerminateReason && childItem.compactTerminateReason!=''">
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Termination Reason:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.compactTerminateReason}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Termination Date:</div>
+                                        <div class="col-sm-6 px-0"> {{childItem.placementTerminationDate}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-11 pt-3 pb-4">
+                                        <div class="col-sm-6 col-md-2 px-0 displayAsLabel">Other Termination Reason:
+                                        </div>
+                                        <div class="col-sm-6 col-md-10 pl-2 pr-0">{{childItem.otherTerminationReason}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Placement Information" [isOpen]="true"
+                        *ngIf="dispPlacementInfoSection">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-11 pt-3">
+                                <div class="col-sm-2 px-0 displayAsLabel">Address: </div>
+                                <div class="col-sm-10 pl-2 pr-0">
+                                    {{neiceTransmittalSummary.placementInformation.address}}</div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">County:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.placementInformation.county}}
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-3">
+                                <div class="col-sm-6 px-0 displayAsLabel">Phone:</div>
+                                <div class="col-sm-6 px-0"> {{neiceTransmittalSummary.placementInformation.phoneNumber}}
+                                </div>
+                            </div>
+                        </div>
+                        <ng-container
+                            *ngIf="neiceTransmittalSummary.placementInformation.displayFacility; else displayPerson">
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Facility Name:</div>
+                                    <div class="col-sm-6 px-0">
+                                        {{neiceTransmittalSummary.placementInformation.facilityName}}
+                                    </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                                <div class="d-flex col-md-4 pt-3">
+
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #displayPerson>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-4 pt-3">
+                                    <div class="col-sm-6 px-0 displayAsLabel">Relationship:</div>
+                                    <div class="col-sm-6 px-0">
+                                        {{neiceTransmittalSummary.placementInformation.relationship}} </div>
+                                </div>
+                                <div class="d-flex col-md-2"></div>
+                            </div>
+                            <ng-template ngFor let-personInfo
+                                [ngForOf]="neiceTransmittalSummary.placementInformation.personInfos">
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Resource Code:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.resourceCode}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Person Name:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.name}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">DOB:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.dateOfBirth}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">Sex:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.sex}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">SSN:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.ssn}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">NEICE ID:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.neicePid}} </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-4 pt-3">
+                                        <div class="col-sm-6 px-0 displayAsLabel">IMPACT ID:</div>
+                                        <div class="col-sm-6 px-0"> {{personInfo.impactPid}} </div>
+                                    </div>
+                                    <div class="d-flex col-md-2"></div>
+                                    <div class="d-flex col-md-4 pt-3">
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </accordion-group>
+                </accordion>
+            </dfps-collapsable-section>
+            <div class="row" id="addressListTable">
+                <div class="col-md-12 pt-3">
+                    <h2>Select Documents to Attach</h2>
+                </div>
+                <div class="col-md-12">
+                    <dfps-data-table [dataTable]="documentsDataTable" class="data-table dataTableConfig"
+                        [selectedRowOption]="DEFAULT_PAGE_SIZE"
+                        (handleClickEvent)="handleTransmittalSummaryDocumentClick($event)"
+                        (selectedData)="selectedDocument($event)">
+                    </dfps-data-table>
+                </div>
+            </div>
+            <div class="row" *ngIf="dispProcessTransmittalBtn">
+                <div class="d-flex col-md-4 pt-3">
+                    <div class="col-sm-12">
+                        <dfps-radio-button _id="specificType" formControlName="specificType" name="specificType"
+                            ariaLabel="Specific Type" [data]="types" [horizontal]="true">
+                        </dfps-radio-button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+                <div class="col-sm-6">
+                    <dfps-button add-button size="small" label="Download to Desktop" [disabled]="!dispDownloadToDesktop"
+                        (click)="downloadToDesktop()"> </dfps-button>
+                    <dfps-button add-button size="small" label="Process Transmittal" class="ml-3"
+                        *ngIf="dispProcessTransmittalBtn" [disabled]="disablepProcessTransmittalBtn"
+                        (click)="process()">
+                    </dfps-button>
+                </div>
+                <div class="col-sm-6">
+                    <dfps-button add-button size="small" label="Reject" *ngIf="dispRejectBtn"
+                        [disabled]="neiceTransmittalSummaryForm?.get('rejectHoldInd').value!='R'" (click)="showNeiceRejectnfoPopup()">
+                    </dfps-button>
+                    <dfps-button add-button size="small" label="Save" class="ml-3 pull-right" *ngIf="dispSaveBtn"
+                        (click)="save()"> </dfps-button>
+                    <dfps-button add-button size="small" label="Request Additional Info" class="ml-3 pull-right"
+                        _id="btnRequestAdditionalInfo" *ngIf="dispReqAddInfoBtn"
+                        (click)="showNeiceAdditionalInfoPopup()"> </dfps-button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

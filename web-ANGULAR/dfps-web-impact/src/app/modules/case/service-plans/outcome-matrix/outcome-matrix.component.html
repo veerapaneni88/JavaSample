@@ -1,0 +1,122 @@
+<div class="container-fluid bodycolor" *ngIf="outcomeMatrixData">
+  <div class="row case-management-heading pl-2">
+    <h1 aria-level="1">Outcome Matrix</h1>
+  </div>
+  <div>
+    <hr aria-hidden="true" />
+  </div>
+  <div>
+    <div class="row mt-2">
+      <div class="text-left col-6">
+        Stage Name: {{outcomeMatrixData?.stageName}}
+      </div>
+    </div>
+    <div class="alert alert-danger mt-2" *ngIf="outcomeMatrixData.errorMessages && outcomeMatrixData.errorMessages.length> 0">
+      <h2 class="error-text"><em class="fa fa-exclamation-circle mr-2"></em> Please correct the following error(s)</h2>
+      <div *ngIf=" outcomeMatrixData.errorMessages && outcomeMatrixData.errorMessages.length > 0">
+        <div *ngFor="let data of outcomeMatrixData.errorMessages">
+          <li class="error-text">{{data}}</li>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-sm-12 table-responsive">
+        <table class="table-striped tableDivClass dataTableSorting dataTable no-footer">
+          <thead>
+            <tr>
+              <th aria-label="Outcome"></th>
+              <th aria-label="Category">Category</th>
+              <th aria-label="Sub Category">Sub Category</th>
+              <th aria-label="Date">Date</th>
+              <th aria-label="Comments">Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let row of outcomeMatrixData?.omResponses">
+              <tr role="row">
+                <td>
+                  <p-checkbox _id="apsClientCategory" ariaLabel="APS Client Category" [disabled]="true">
+                  </p-checkbox>
+                </td>
+                <td>
+                  <ng-container *ngIf="row.cdCareDomain; else careCategory" >
+                    # <a
+                    [routerLink]="['details', row?.careFactorId]">{{row.cdCareDomain}}</a>
+                  </ng-container>
+                  <ng-template #careCategory>
+                    # <a
+                    [routerLink]="['details', row?.careFactorId]">{{row.cdCareCategory}}</a>
+                  </ng-template>
+                </td>
+                <td colspan="3"></td>
+              </tr>
+              <tr role="row">
+                <td></td>
+                <td><b>Problem:</b> {{row.cdCareCategory}}</td>
+                <td>{{row.cdCareFactor}}</td>
+                <td>{{row.dtCareFactor | date: 'MM/dd/yyyy'}}</td>
+                <td>
+                  <div *ngIf="row?.apsOutcomeProblemCmnts != null">
+                    <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                  </div>
+                </td>
+              </tr>
+              <tr role="row">
+                <td></td>
+                <td><b>Action:</b> {{row.apsOutcomeActnCategCode}}</td>
+                <td>{{row.apsOutcomeActionCode}}</td>
+                <td>{{row.dtApsOutComeAction | date: 'MM/dd/yyyy'}}</td>
+                <td>
+                  <div *ngIf="row?.apsOutcomeActnTxt != null">
+                    <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                  </div>
+                </td>
+              </tr>
+              <tr role="row">
+                <td></td>
+                <td><b>Outcome:</b></td>
+                <td>{{row.cdApsOutComeResult}}</td>
+                <td>{{row.dtApsOutComeRecord | date: 'MM/dd/yyyy'}}</td>
+                <td>
+                  <div *ngIf="row?.apsOutcomeResultTxt != null">
+                    <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="outcomeMatrixData?.omResponses.length === 0">
+              <div class="no-records">
+                <p>No records exist.</p>
+              </div>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="p-2 mb-2 mt-4 card-body">
+      <div class="row">
+        <div class="d-flex col-md-6 pt-6" *ngIf="this.outcomeMatrixData?.eventId != 0 && this.outcomeMatrixData?.cdStage !== 'INV'">
+          <dfps-narrative _id="narrative" label="Narrative" [narrativeData]="getNarrative()" createEvent='true'>
+          </dfps-narrative>
+          <div *ngIf="outcomeMatrixData?.narrativeIndicator">
+            <i class="fa fa-check"><span class="sr-only">Check mark</span></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card formPanel">
+      <div class="p-2 mb-2 card-heading formHeader">
+        <h2>Forms Launch</h2>
+      </div>
+      <div class="row pl-4">
+        <div class="d-flex col-md-6 pt-6 pb-6">
+          <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'>
+          </dfps-form-launch>
+        </div>
+        <div class="d-flex col-md-2"></div>
+      </div>
+    </div>
+    
+  </div>
+</div>

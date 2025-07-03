@@ -1,0 +1,21 @@
+#skipToMainContent button { 
+	position:absolute;  
+	left:-10000px;   	
+	top:auto;  
+ 	width:1px;  
+ 	height:1px;  
+ 	overflow:hidden;  
+} 
+	 
+#skipToMainContent button:focus { 
+	position:static; 
+	width:auto; 
+	height:auto;
+	color:#000000;
+	background-color:#ffbf80; 
+	padding:10px;
+	border:1px solid;
+	border-radius: 5px;
+	display: inline-block;
+	margin-bottom:10px;
+}

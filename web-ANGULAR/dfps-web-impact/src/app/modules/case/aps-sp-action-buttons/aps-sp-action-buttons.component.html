@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-end mt-2" *ngIf="!hideAllBtns">
+    <div class="d-flex btn-sm" *ngIf="!enableII">
+        <dfps-button add-button size="small" label="Add Problem" (click)="addPrblm()">
+        </dfps-button>
+    </div>
+    <div class="d-flex btn-sm" *ngIf="!enableII">
+        <dfps-button add-button size="small" label="Remove Problem" (click)="removePrblm()">
+        </dfps-button>
+    </div>
+    <div class="d-flex btn-sm">
+        <dfps-button add-button size="small" label="Add Action" (click)="addAction()">
+        </dfps-button>
+    </div>
+    <div class="d-flex btn-sm">
+        <dfps-button add-button size="small" label="Remove Action" (click)="removeAction()">
+        </dfps-button>
+    </div>
+    <div class="d-flex btn-sm">
+        <dfps-button add-button size="small" label="Save" (click)="save()">
+        </dfps-button>
+    </div>
+</div>

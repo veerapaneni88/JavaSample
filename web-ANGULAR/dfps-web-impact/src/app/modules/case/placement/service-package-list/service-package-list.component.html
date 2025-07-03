@@ -1,0 +1,45 @@
+<div class="container-fluid bodycolor" *ngIf="servicePackageListRes">
+    <div class="row">
+        <h1>Service Package List</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2" tabindex="0"><b>Stage Name:</b></div>
+        <div class="text-left col-4 mt-2" tabindex="0"> {{servicePackageListRes?.stageName}}</div>
+        <div class=" text-right col-6 mt-2" tabindex="0"># Submitted Events</div>
+    </div>
+    <div class="row">
+        <div class="text-left col-2 mt-2" tabindex="0"><b>Case ID:</b></div>
+        <div class="text-left col-4 mt-2" tabindex="0"> {{servicePackageListRes?.caseId}}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-2">
+            <dfps-data-table [dataTable]="dataTable" class="data-table dataTableConfig"></dfps-data-table>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-end pt-4 pr-2" *ngIf="servicePackageListRes?.editMode">
+        <div class="d-flex btn-sm">
+            <dfps-button add-button size="small" label="Add" _id="addButton" (click)="add()">
+            </dfps-button>
+        </div>
+    </div>
+    <div class="row">
+        <br />
+    </div>
+    <div class="card formPanel" *ngIf="servicePackageListRes">
+        <div class="p-2 mb-2 card-heading formHeader">
+            <h2>Reports</h2>
+        </div>
+        <div class="p-2 mb-2 card-body">
+            <div class="row">
+                <div class="d-flex col-md-6 pt-6">
+                    <dfps-report-launch reportId="reportsLaunch" [reportsValues]='reports'
+                    buttonId='reportLaunch' [createEvent]='true'>
+                    </dfps-report-launch>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="container-fluid bodycolor" *ngIf="facilityServiceLevelRes">
+  <div class="row">
+    <h1> Service Level Detail</h1>
+  </div>
+  <div>
+    <hr aria-hidden="true" />
+  </div>
+  <form [formGroup]="serviceLevelDetailForm">
+    <div class="form-group">
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource Name: {{facilityServiceLevelRes.resourceName}}</div>
+      </div>
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource ID : {{facilityServiceLevelRes.resourceId}}</div>
+      </div>
+      <div class="row">
+        <div class="text-left col-6 mt-2">Resource Type : {{facilityServiceLevelRes.resourceType}}</div>
+      </div>
+    </div>
+  </form>
+  <br />
+  <div class="row">
+    <h2>Service Level Detail</h2>
+  </div>
+  <div>
+    <hr aria-hidden="true" />
+  </div>
+  <div class="row">
+    <div class="d-flex col-md-2 pt-4">
+      <label for="effectiveDate" class="col-sm-6 col-form-label">Effective Date:</label>
+      <div class="col-sm-4"> {{facilityServiceLevelRes.effectiveDate}} </div>
+    </div>
+    <div class="d-flex col-md-4 pt-4">
+      <label for="effectiveDate" class="col-sm-6 col-form-label">End Date:</label>
+      <div class="col-sm-4"> {{facilityServiceLevelRes.endDate}} </div>
+    </div>
+  </div>
+  <br />
+  <div *ngIf="facilityServiceLevelRes.facilityLocs">
+    <div class="row">
+      <div class="col-md-2 p-1">
+        <h2> Levels </h2>
+      </div>
+      <div class="col-md-4 p-1">
+        <h2> Status </h2>
+      </div>
+    </div>
+
+    <div class="row" role="group" *ngFor="let loc of facilityServiceLevelRes?.facilityLocs">
+      <div class="col-md-2 pt-3">
+        {{loc.level}}
+      </div>
+      <div class="col-md-4 p-3">
+        <dfps-radio-button ariaLabel="{{loc.level}} level" [(ngModel)]="loc.status"
+          [disableValue]="getDisableOption(loc)" name="{{loc.level}}" [data]="getData" [horizontal]="true">
+        </dfps-radio-button>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="d-flex justify-content-end w-100 mt-3">
+      <dfps-button _id="save" add-button size="big" label="Save" (click)="doSave()"> </dfps-button>
+    </div>
+  </div>
+</div>

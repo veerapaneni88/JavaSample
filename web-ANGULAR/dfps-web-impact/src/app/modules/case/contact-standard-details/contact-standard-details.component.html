@@ -1,0 +1,81 @@
+<div class="container-fluid bodycolor" *ngIf="displayContactStandardDetails">
+  <div>
+    <h1 aria-level="1">Contact Standard Details </h1>
+    <hr aria-hidden="true" />
+  </div>
+  <div class="row">
+    <div class="text-left col-6 mt-2">Case Name: {{ caseName }}</div>
+    <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+      <span class="sr-only">Red asterisk is </span>required field
+    </div>
+  </div>
+  <div class="row padding-1">
+    <div class="text-left col-6 mt-2">Case ID: {{ caseId }}</div>
+    <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+      <span class="sr-only">Double dagger is </span>conditionally required field
+    </div>
+  </div>
+  <div class="border-background-color-1">
+    <div class="row ml-0 background-blue">
+      <h2 class="case-management-h2 padding-left" aria-level="2">
+        Contact Standards
+      </h2>
+    </div>
+    <div class="case-management-body-text">
+      <div class="row padding-left">
+        <div class="text-left col-3">
+          Number of Safety/Service Contacts:
+        </div>
+        <div class="text-left col-3">
+          {{ displayContactStandardDetails.apsServicePlanMonitoringDto.totalNumberOfContacts }}
+        </div>
+      </div>
+      <div class="row case-management-row-padding padding-left">
+        <div class="text-left col-3">
+          Number of Face-to-Face Contacts:
+        </div>
+        <div class="text-left col-1">
+          <dfps-select _id="numberOfFaceToFaceContacts" [dropDownValues]="numberOfFaceToFaceContacts"
+            [blankOption]=false ariaLabel="Number of Face-to-Face Contacts" disabled=true
+            [(ngModel)]="displayContactStandardDetails.apsServicePlanMonitoringDto.numberOfFaceToFaceContacts"></dfps-select>
+        </div>
+      </div>
+      <div class="row case-management-row-padding padding-left">
+        <div class="text-left col-3">
+          Number of Other Contacts:
+        </div>
+        <div class="text-left col-1">
+          <dfps-select _id="numberOfContactsReqd" [dropDownValues]="numberOfContactsReqd" [blankOption]=false
+            ariaLabel="Number of Other Contacts" disabled=true
+            [(ngModel)]="displayContactStandardDetails.apsServicePlanMonitoringDto.numberOfContactsReqd"></dfps-select>
+        </div>
+      </div>
+      <div class="row case-management-row-padding padding-left">
+        <div class="text-left col-3">
+          Description:
+        </div>
+        <div class="text-left col-6">
+          <dfps-textarea id="planDescription" ariaLabel="Description" maxlength="1000" disabled=true
+            [(ngModel)]="displayContactStandardDetails.apsServicePlanMonitoringDto.planDescription">
+          </dfps-textarea>
+        </div>
+      </div>
+      <div class="row case-management-row-padding padding-left">
+        <div class="text-left col-3">
+          Start Date:
+        </div>
+        <div class="text-left col-3">
+          {{displayContactStandardDetails.apsServicePlanMonitoringDto.planStartDate| date: 'MM/dd/yyyy'}}
+        </div>
+      </div>
+      <div class="row case-management-row-padding padding-left">
+        <div class="text-left col-3">
+          End Date:
+        </div>
+        <div class="text-left col-3">
+          {{displayContactStandardDetails.apsServicePlanMonitoringDto.planEndDate| date: 'MM/dd/yyyy'}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,244 @@
+<div class="container-fluid bodycolor" *ngIf="displayRequestDetail">
+    <div class="row">
+        <h1>Central Registry Check Request Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <h2 class="pt-4">Purpose</h2>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4">
+            <label for="requestReason" class="col-sm-4 col-form-label col-form-label-sm">Reason you are
+                requesting the central registry check:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.purposeType}}</div>
+        </div>
+    </div>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4" *ngIf="displayRequestDetail?.cdPurpose==='PC'">
+            <label for="childPlacement" class="col-sm-4 col-form-label col-form-label-sm">Placement of a
+                child:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.placementChild}}</div>
+        </div>
+    </div>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4 pb-4" *ngIf="displayRequestDetail?.cdPlacementChild==='OT'">
+            <label for="specifyReason" class="col-sm-4 col-form-label col-form-label-sm">Specify the
+                reason for
+                the Central Registry request:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.othPlacementChild}}</div>
+        </div>
+    </div>
+    <div class="row pl-4" *ngIf="displayRequestDetail?.cdPurpose==='AE'">
+        <strong class="d-flex col-md-12 pt-4">Please click the link below to view Texas Family Code §§107.101 or
+            107.151.</strong>
+        <a href="https://statutes.capitol.texas.gov/Docs/FA/htm/FA.107.htm"
+            class="d-flex col-md-12 pt-2 pb-4">https://statutes.capitol.texas.gov/Docs/FA/htm/FA.107.htm</a>
+    </div>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4 pb-4" *ngIf="displayRequestDetail?.cdPurpose==='CC'">
+            <label for="childCare" class="col-sm-4 col-form-label col-form-label-sm">Child Care/Day Care/Head Start
+                Employment:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.childCareType}}</div>
+        </div>
+    </div>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4 pb-4" *ngIf="displayRequestDetail?.cdPurpose==='EM'">
+            <label for="employerName" class="col-sm-4 col-form-label col-form-label-sm">Name of Employer:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.employerName}}</div>
+        </div>
+    </div>
+    <div class="row pl-4">
+        <div class="d-flex col-md-12 pt-4 pb-4" *ngIf="['VE', 'IN'].includes(displayRequestDetail?.cdPurpose)">
+            <label for="agencyName" class="col-sm-4 col-form-label col-form-label-sm">Name of Agency:</label>
+            <div class="col-sm-6">{{displayRequestDetail?.volunteerName}}</div>
+        </div>
+    </div>
+
+    <div>
+        <hr aria-hidden="true">
+    </div>
+
+    <h2 class="pt-4">Demographic Information</h2>
+    <div class="row pl-4 pb-4">
+        <div class="d-flex col-md-4 pt-4">
+            <label for="firstName" class="col-sm-4 col-form-label col-form-label-sm">First
+                Name:</label>
+            <div class="col-sm-8">{{displayRequestDetail?.firstName}}</div>
+        </div>
+        <div class="d-flex col-md-4 pt-4">
+            <label for="middleName" class="col-sm-4 col-form-label col-form-label-sm">Middle
+                Name:</label>
+            <div class="col-sm-8">{{displayRequestDetail?.middleName}}</div>
+        </div>
+        <div class="d-flex col-md-4 pt-4">
+            <label for="lastName" class="col-sm-4 col-form-label col-form-label-sm">Last
+                Name:</label>
+            <div class="col-sm-8">{{displayRequestDetail?.lastName}}</div>
+        </div>
+    </div>
+    <dfps-collapsable-section>
+        <accordion>
+            <accordion-group class="accordion-group pt-2" heading="Other Name(s)">
+                <div class="row" id="otherNamesListTable">
+                    <div class="col-md-12" style="overflow-y: auto; max-height: 300px;">
+                        <dfps-data-table [dataTable]="otherNamesListTable" class="data-table dataTableConfig">
+                        </dfps-data-table>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Current Address">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-4">
+                        <label for="addrLn1" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            Street
+                            Address 1:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrLn1}}</div>
+                    </div>
+                    <div class="d-flex col-md-2"></div>
+                    <div class="d-flex col-md-4">
+                        <label for="addrLn2" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            Street
+                            Address 2:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrLn2}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-4 pt-4">
+                        <label for="currentCity" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            City:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrCity}}</div>
+                    </div>
+                    <div class="d-flex col-md-2"></div>
+                    <div class="d-flex col-md-4 pt-4">
+                        <label for="currentCounty" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            County:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrCounty}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-4 pt-4">
+                        <label for="currentState" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            State:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrState}}</div>
+                    </div>
+                    <div class="d-flex col-md-2"></div>
+                    <div class="d-flex col-md-4 pt-4">
+                        <label for="currentZipCode" class="col-sm-6 col-form-label col-form-label-sm">Current
+                            Zip Code:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.addrZip}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Social Security Number">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-10">
+                        <label for="ssnInd" class="col-sm-4 col-form-label col-form-label-sm">Does this
+                            person have a Social
+                            Security Number?</label>
+                        <div class="col-sm-8">{{ssnInd}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-4" *ngIf="displayRequestDetail?.ssnInd === 'Y'">
+                        <label for="ssn" class="col-sm-4 col-form-label col-form-label-sm">Social Security Number:</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.ssnNum}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Alternate Number"
+                *ngIf="displayRequestDetail?.ssnInd === 'N'">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-4">
+                        <label for="altNumberType" class="col-sm-6 col-form-label col-form-label-sm">Alternate
+                            Number Type:</label>
+                        <div class="col-sm-6">{{displayRequestDetail?.altNumberType}}</div>
+                    </div>
+                    <div class="d-flex col-md-1"></div>
+                    <div class="d-flex col-md-4">
+                        <label for="altNumber" class="col-sm-6 col-form-label col-form-label-sm">Alternate
+                            Number:</label>
+                        <div class="col-sm-6">{{displayRequestDetail?.altNumber}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-4 pt-4" *ngIf="['DL', 'SA'].includes(displayRequestDetail?.cdAltNumber)">
+                        <label for="altState" class="col-sm-6 col-form-label col-form-label-sm">State:</label>
+                        <div class="col-sm-6">{{displayRequestDetail?.idState}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Birth Information">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6">
+                        <label for="birthDate" class="col-sm-4 col-form-label col-form-label-sm">Birth
+                            Date:</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.dobDate}}</div>
+                    </div>
+                    <div class="d-flex col-md-6">
+                        <label for="gender" class="col-sm-4 col-form-label col-form-label-sm">Gender:</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.gender}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-4">
+                        <label for="primaryPhone" class="col-sm-4 col-form-label col-form-label-sm">Primary
+                            Phone:</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.phoneNumber}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Race / Ethnicity">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-10">
+                        <label for="ethnicity" class="col-sm-2 col-form-label col-form-label-sm">Ethnicity:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.ethnicity}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-10 pt-4">
+                        <label for="race" class="col-sm-2 col-form-label col-form-label-sm">Race:</label>
+                        <div class="col-sm-10">{{race}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="History of Previous Cities">
+                <div class="row pl-4">
+                    <div class="d-flex col-md-10">
+                        <label for="previousCities" class="col-sm-4 col-form-label col-form-label-sm">Did you
+                            ever live in any other city in
+                            Texas?</label>
+                        <div class="col-sm-8">{{previousCities}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+            <accordion-group class="accordion-group pt-2" heading="Release Of Results">
+                <div class="row pl-4" *ngIf="displayRequestDetail?.indSingleUser === 'Y'">
+                    <div class="d-flex col-md-10">
+                        <label for="email" class="col-sm-2 col-form-label col-form-label-sm">Email:</label>
+                        <div class="col-sm-10">{{displayRequestDetail?.emailId}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="displayRequestDetail?.indSingleUser === 'N'">
+                    <div class="d-flex col-md-10">
+                        <label for="email" class="col-sm-4 col-form-label col-form-label-sm">Email ID of the Requestor :</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.emailId}}</div>
+                    </div>
+                </div>
+                <div class="row pl-4" *ngIf="displayRequestDetail?.indSingleUser === 'N'">
+                    <div class="d-flex col-md-10">
+                        <label for="subjectEmail" class="col-sm-4 col-form-label col-form-label-sm">Email ID of the Subject :</label>
+                        <div class="col-sm-8">{{displayRequestDetail?.subjectEmailId}}</div>
+                    </div>
+                </div>
+            </accordion-group>
+
+        </accordion>
+    </dfps-collapsable-section>
+</div>

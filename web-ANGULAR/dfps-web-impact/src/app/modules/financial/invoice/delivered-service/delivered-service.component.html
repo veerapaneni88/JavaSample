@@ -1,0 +1,225 @@
+<div class="container-fluid bodycolor" *ngIf="deliveredService">
+    <div class="row">
+        <h1>Delivered Service Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <dfps-form-validation
+        [shouldCheckDirty]="true"
+        [validationErrors]="validationErrors"
+        [validationErrorsLength]="validationErrorsLength"
+    >
+    </dfps-form-validation>
+    <div class="alert alert-danger" *ngIf="infoDivDisplay">
+      <p>Attention:</p>
+
+      <div>
+        <ul>
+          <li *ngFor="let msg of informationalMsgs">
+            {{ msg }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <form [formGroup]="deliveredServiceForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Invoice ID: {{ invoiceId }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Invoice Phase: {{ deliveredService?.invoice?.phase }}</div>
+        </div>
+
+        <div class="form-group mt-5">
+            <h2>Delivered Service</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="personId" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay"
+                        >Person ID:</label
+                    >
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="personId"
+                            formControlName="personId"
+                            ariaLabel="Person ID"
+                            maxlength="10"
+                        ></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="month" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Month:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="month" formControlName="month" ariaLabel="Month" maxlength="2"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="year" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Year:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="year" formControlName="year" ariaLabel="year" maxlength="4"></dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="service" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay"
+                        >Service :</label
+                    >
+                    <div class="col-sm-6">
+                        <dfps-select
+                            _id="service"
+                            formControlName="service"
+                            [dropDownValues]="deliveredService?.serviceCodes"
+                            ariaLabel="Service Dropdown is required field"
+                        >
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="county" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay"
+                        >County :</label
+                    >
+                    <div class="col-sm-6">
+                        <dfps-select
+                            _id="county"
+                            formControlName="county"
+                            [dropDownValues]="deliveredService?.countyCodes"
+                            ariaLabel="County Dropdown is required field"
+                        >
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <dfps-button
+                        id="validate"
+                        class="col-sm-0"
+                        label="Validate"
+                        _id="validateResourceId"
+                        size="extraSmall"
+                        (click)="doValidate()"
+                        *ngIf="deliveredService?.pageMode === 'NEW'"
+                    >
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="name" class="col-sm-4 col-form-label col-form-label-sm">Name: </label>
+                    <span id="name" class="col-sm-6"> {{ deliveredService?.deliveredServiceDetail?.fullName }} </span>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="csli" class="col-sm-4 col-form-label col-form-label-sm">CSLI: </label>
+                    <span id="csli" class="col-sm-6"> {{ deliveredService?.deliveredServiceDetail?.csli }} </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="unitType" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">UT :</label>
+                    <div class="col-sm-6">
+                        <dfps-select
+                            _id="unitType"
+                            formControlName="unitType"
+                            [dropDownValues]="deliveredService?.utCodes"
+                            ariaLabel="Unit Type Dropdown is required field"
+                        >
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="hideserviceAuthDetailAndDates">
+                    <label for="serviceAuthDetailId" class="col-sm-4 col-form-label col-form-label-sm"
+                        >Service Auth Dtl ID:
+                    </label>
+                    <span
+                        id="serviceAuthDetailId"
+                        class="col-sm-6"
+                        *ngIf="!deliveredService?.deliveredServiceDetail?.serviceAuthDetails?.length"
+                    >
+                        {{ deliveredService?.deliveredServiceDetail?.serviceAuthDetailId }}
+                    </span>
+                    <div class="col-sm-6" *ngIf="deliveredService?.deliveredServiceDetail?.serviceAuthDetails?.length">
+                        <dfps-select
+                            _id="serviceAuthDetailId"
+                            formControlName="serviceAuthDetailId"
+                            [dropDownValues]="deliveredService?.deliveredServiceDetail?.serviceAuthDetails"
+                            ariaLabel="serviceAuthDetailId is required field"
+                        >
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4"></div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="unitRate" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Rate:</label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            *ngIf="!isUnitRateReadOnly"
+                            _id="unitRate"
+                            formControlName="rate"
+                            ariaLabel="Rate is conditionally required"
+                            maxlength="7"
+                        >
+                        </dfps-input>
+                        <span *ngIf="isUnitRateReadOnly">{{ deliveredServiceForm.get('rate').value }}</span>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="unitQuantity" class="col-sm-4 col-form-label col-form-label-sm">Quantity:</label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="unitQuantity"
+                            formControlName="quantity"
+                            ariaLabel="Quantity"
+                            maxlength="8"
+                        ></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="hideserviceAuthDetailAndDates">
+                    <label for="svcStartDate" class="col-sm-6 col-form-label col-form-label-sm"
+                        >Svc Auth Start Date:
+                    </label>
+                    <div class="col-sm-6">
+                        {{ deliveredService?.deliveredServiceDetail?.svcAuthStartDate }}
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="feePaid" class="col-sm-4 col-form-label col-form-label-sm">Fee Paid:</label>
+                    <div class="col-sm-6">
+                        <dfps-input
+                            _id="feePaid"
+                            formControlName="feePaid"
+                            ariaLabel="Fee Paid"
+                            currency="true"
+                            maxlength="11"
+                        ></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="itemTotal" class="col-sm-4 col-form-label col-form-label-sm">Item Total: </label>
+                    <div class="col-sm-6">
+                        {{
+                            (deliveredService?.deliveredServiceDetail?.itemTotal || 0) >= 0
+                                ? (deliveredService?.deliveredServiceDetail?.itemTotal | currency)
+                                : (previousItemTotal | currency)
+                        }}
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4" *ngIf="hideserviceAuthDetailAndDates">
+                    <label for="svcTermDate" class="col-sm-6 col-form-label col-form-label-sm"
+                        >Svc Auth Term Date:
+                    </label>
+                    <div class="col-sm-6">
+                        {{ deliveredService?.deliveredServiceDetail?.svcAuthTermDate }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end w-100 mt-3">
+            <dfps-button label="Save" _id="deliveredSave" [hidden]="hideSaveButton" (click)="doSave()"></dfps-button>
+        </div>
+    </form>
+</div>

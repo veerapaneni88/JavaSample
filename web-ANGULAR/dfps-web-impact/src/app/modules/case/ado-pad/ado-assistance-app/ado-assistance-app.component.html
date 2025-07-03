@@ -1,0 +1,147 @@
+<div class="container-fluid bodycolor" *ngIf="adoptionAssistanceAppDisplayRes">
+    <div class="row">
+        <h1 aria-level="1">Adoption Assistance Application</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <!-- <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div> -->
+
+    <div class="row">
+        <div class="text-left col-6 mt-2">Stage Name:</div>
+        <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-left col-6 mt-2">Case ID:</div>
+        <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+
+    <dfps-collapsable-section>
+        <div class="pt-2 pb-2">
+            <h2>Child Information</h2>
+            <div class="row pl-4 mt-4">
+                <div class="d-flex col-6">
+                    <div class="col-4 justify-content-end" for="name">Child's Name :</div>
+                    <div class="col-4">
+                        {{adoptionAssistanceAppDisplayRes.personFullName}}
+                    </div>
+                </div>
+                <div class="d-flex col-6">
+                    <div for="VID" class="col-4 justify-content-end">Date of Birth :</div>
+                    <div class="col-4">
+                        {{adoptionAssistanceAppDisplayRes.dateOfBirth}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pl-4 mt-4">
+                <div class="d-flex col-6">
+                    <div class="col-4 justify-content-end" for="name">Social Security Number:</div>
+                    <div class="col-4">
+                        {{adoptionAssistanceAppDisplayRes.socialSecurityNumber}}
+                    </div>
+                </div>
+                <div class="d-flex col-6">
+                    <div for="VID" class="col-4 justify-content-end">Person ID:</div>
+                    <div class="col-4">
+                        {{adoptionAssistanceAppDisplayRes.idPerson}}
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4 mt-4">
+                <div class="d-flex col-6">
+                    <div class="col-4 justify-content-end" for="name">Child's Legal Status:</div>
+                    <div class="col-4">
+                        <!-- {{adoptionAssistanceAppDisplayRes.payee.name}} -->
+                    </div>
+                </div>
+                <div class="d-flex col-6">
+                    <div for="VID" class="col-4 justify-content-end">Child's Age At Qualification:</div>
+                    <div class="col-4">
+                        <!-- {{adoptionAssistanceAppDisplayRes.payee.vendorId}} -->
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4 mt-4">
+                <div class="d-flex col-6">
+                    <div class="col-4 justify-content-end" for="name">Date Parental Rights Terminated:</div>
+                    <div class="col-4">
+                        <!-- {{adoptionAssistanceAppDisplayRes.payee.name}} -->
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+                <div class="d-flex btn-sm">
+                    <dfps-button _id="detail" ariaLabel="Detail" size="small" label="Detail" (click)="personDetail()">
+                    </dfps-button>
+                </div>
+            </div>
+        </div>
+        <form [formGroup]="adoptionAssistanceAppForm">
+            <div class="pt-2 pb-2">
+                <h2>Conservatorship</h2>
+            </div>
+            <fieldset class="row pl-4 mt-2">
+                <dfps-radio-button ariaLabel="Is child in managing conservatorship of DFPS?" [data]="yesNo"
+                    [horizontal]="true" formControlName="isInManagedCvs" name="isInManagedCvs">
+                </dfps-radio-button>
+                <legend>
+                    <h6> Is child in managing conservatorship of DFPS? </h6>
+                </legend>
+            </fieldset>
+            <fieldset class="row pl-4 mt-2">
+                <dfps-radio-button
+                    ariaLabel="Is there a court order granting managing conservatorship for the child to a licensed, private, non-profit child-placing agency? "
+                    [data]="yesNo" [horizontal]="true" formControlName="inLicensedManagingConservatorShip"
+                    name="inLicensedManagingConservatorShip">
+                </dfps-radio-button>
+                <legend>
+                    <h6>
+                        Is there a court order granting managing conservatorship for the child to a licensed, private,
+                        non-profit child-placing agency?</h6>
+                </legend>
+            </fieldset>
+            <fieldset class="row pl-4 mt-2">
+                <dfps-radio-button
+                    ariaLabel="Is child in managing conservatorship of another entity authorized under a Title IV-E contract with DFPS? "
+                    [data]="yesNo" [horizontal]="true" formControlName="otherManagingConservatorShip"
+                    name="otherManagingConservatorShip">
+                </dfps-radio-button>
+                <legend>
+                    <h6> Is child in managing conservatorship of another entity authorized under a Title IV-E contract
+                        with
+                        DFPS? </h6>
+                </legend>
+            </fieldset>
+            <div>
+                If yes, give name and address, including state, of agency/entity:
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="agencyName"
+                        class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Name:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="agencyName" formControlName="agencyName" maxlength="15"
+                            ariaLabel="Name is conditionally required"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="agencyAddress"
+                        class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Address:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="agencyAddress" formControlName="agencyAddress" maxlength="15"
+                            ariaLabel="Address is conditionally required"></dfps-input>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </dfps-collapsable-section>
+</div>

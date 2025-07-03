@@ -1,0 +1,37 @@
+.ttip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .ttip .tttext {
+    visibility: hidden;
+    border: 1px solid black;
+    width: 400px;
+    background-color: rgb(194, 211, 223);
+    color: rgb(34, 33, 33);
+    text-align: left;
+    padding: 5px 5px;
+    margin: 15px;
+    font-size: 15px;
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .ttip:hover .tttext {
+    visibility: visible;
+  }
+
+  .nytd-btn-circle {
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    padding: 0; 
+    font-size: 18px;
+    line-height: 1.2;
+    border-radius: 16px;
+    background-color: #336799
+  }
+
+

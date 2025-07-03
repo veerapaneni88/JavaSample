@@ -1,0 +1,113 @@
+<div class="alert alert-danger" *ngIf="errorNoDataMessage">
+    <p>Attention:</p>
+    <div>
+        {{errorNoDataMessage}}
+    </div>
+</div>
+<div class="container-fluid bodycolor" *ngIf="investigationLetter">
+    <div class="row">
+        <h1>Letter Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="investigationLetterRes?.attentionMessages && !hideAttentionMessage">
+        <p>Attention:</p>
+        <div *ngIf="investigationLetterRes?.attentionMessages">
+            <ul *ngFor="let message of investigationLetterRes?.attentionMessages">
+                <li>{{message}}</li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="investigationLetterForm">
+        <div class="row">
+            <div class="text-left col-3 col-md-4 col-lg-3 col-xl-2 col-xxl-3 mt-2 pl-4"><b>Stage Name:</b></div>
+            <div class="col-4 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 pl-2">{{investigationLetterRes.stageName}}</div>
+            <div class="requiredDisplay text-right mt-2 col-5 col-md-4 col-lg-5 col-xl-6 col-xxl-5" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-3 col-md-4 col-lg-3 col-xl-2 col-xxl-3 mt-2 pl-4"><b>Case ID:</b></div>
+            <div class="col-4 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 pl-2">{{investigationLetterRes.caseId}}</div>
+            <div class="conReqDisplay text-right mt-2 col-5 col-md-4 col-lg-5 col-xl-6 col-xxl-5" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+
+        <div class="form-group mt-4">
+            <div class="row pl-4">
+                <h2>{{letterTypeDecode}}</h2>
+            </div>
+        </div>
+
+        <div class="row pl-4">
+            <div class="d-flex col-md-7">
+                <label for="letterMethod" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Method:</label>
+                <div class="col-sm-5">
+                    <dfps-select _id="letterMethod" ariaLabel="Method is Required" formControlName="letterMethod"
+                        [dropDownValues]="investigationLetterRes.letterMethods" (change) = "showReceiptNumber()">
+                    </dfps-select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pl-4"  *ngIf="displayReceiptNumber">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="recipientNumber" class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">
+                    Regular/Certified Mail Return Receipt Number:</label>
+                <div class="col-sm-5">
+                    <dfps-input _id="recipientNumber" formControlName="recipientNumber" maxlength="30"
+                            ariaLabel="Regular/Certified Mail Return Recipient Number is Conditionally Required">
+                        </dfps-input>
+                </div>
+            </div>
+        </div>
+        <div class="row pl-4">
+            <div class="d-flex col-md-7 pt-4">
+                <label for="operationHomeName" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">
+                    Operation/Home/Branch Name:</label>
+                <div class="col-sm-6">
+                    <dfps-input _id="operationHomeName" formControlName="operationHomeName" maxlength="30"
+                            ariaLabel="Operation/Home/Branch Name is Required">
+                        </dfps-input>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <br />
+        </div>
+
+        <div>
+            <hr aria-hidden="true">
+        </div>
+
+        <div class="d-flex">
+            <div class="justify-content-start mr-auto p-2">
+                <dfps-button class="mr-4" size="small" label="Delete" tabindex="0" _id="deleteButton"
+                    *ngIf="!hideDeleteButton" [disabled]="disableDeleteButton" (click)="delete()">
+                </dfps-button>
+                <dfps-button size="small" label="Download" tabindex="0" _id="downloadButton" (click)="download()"
+                    *ngIf="!hideDownloadButton" [disabled]="disableDownloadButton">
+                </dfps-button>
+              <dfps-button size="small" label="Download Draft" tabindex="0" _id="downloadButton" (click)="downloadDraft()"
+                           *ngIf="!hideDownloadDraftButton" [disabled]="disableDownloadDraftButton">
+              </dfps-button>
+            </div>
+            <div class="justify-content-end p-2">
+                <dfps-button class="mr-4" size="small" label="Save and Complete" _id="submitButton" (click)="submit()"
+                    *ngIf="!hideSaveSubmitButton">
+                </dfps-button>
+                <dfps-button size="small" label="Save" _id="saveButton" (click)="save()"
+                    *ngIf="!hideSaveButton">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

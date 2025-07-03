@@ -1,0 +1,106 @@
+<div class="container-fluid bodycolor" *ngIf="contractServiceResponse as contractService">
+    <div class="row">
+        <h1>Contract Service Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-danger" *ngIf="infoDivDisplay">
+      <p>Attention:</p>
+
+      <div>
+        <ul>
+          <li *ngFor="let msg of informationalMsgs">
+            {{ msg }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <form [formGroup]="contractServiceForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Contract #: {{contractNumber !== null ? contractNumber : '' }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Agency Acct ID :{{contractId !== 0 ? contractId : ''}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Period : {{periodNumber !== 0 ? periodNumber : ''}}</div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Contract Service Detail</h2>
+            <div class="row pl-4">
+                <div class="text-left col-6 mt-2">Version : {{versionNumber !== 0 ? versionNumber : ''}}</div>
+                <div class="text-left col-6 mt-2">CSLI : {{csliNumber !== 0 ? csliNumber : ''}}</div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="service"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Service:</label>
+                    <div class="col-sm-8">
+                        <dfps-select _id="service" ariaLabel="Select Service Dropdown is required field"
+                            formControlName="service" [dropDownValues]="contractService.services" (change)="onServiceCodeChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="paymentType" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Payment Type:</label>
+                    <div class="col-sm-8">
+                        <dfps-select _id="paymentType" ariaLabel="Select Payment Type Dropdown is required field"
+                            formControlName="paymentType" [dropDownValues]="contractService.paymentTypes" (change)="onPaymentTypeChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="unitType" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Unit Type: </label>
+                    <div class="col-sm-8">
+                        <dfps-select _id="unitType" ariaLabel="Select Unit Type Dropdown is required field"
+                            formControlName="unitType" [dropDownValues]="contractService.unitTypes">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="unitRate" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Unit Rate: </label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="unitRate" formControlName="unitRate" maxlength="7" currency=true
+                            ariaLabel="Unit rate is conditionally required"></dfps-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="federalMatch" class="col-sm-4 col-form-label col-form-label-sm">Federal Match: </label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="federalMatch" formControlName="federalMatch" maxlength="3"
+                            ariaLabel="Federal match"></dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="localMatch" class="col-sm-4 col-form-label col-form-label-sm">Local Match: </label>
+                    <div class="col-sm-8">
+                        <dfps-input _id="localMatch" formControlName="localMatch" maxlength="3"
+                            ariaLabel="Local match"></dfps-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <dfps-data-table *ngIf="disabledInfoSelect" [dataTable]="contractServiceTable" [selectedRowData]="selectedCounties" (selectedData) = "modifiedCounties = $event" [allowRowSelection]="isCheckboxSelect">
+    </dfps-data-table>
+    <div class="d-flex justify-content-end w-100 mt-4">
+        <dfps-button *ngIf="isSaveInfo" label="Save" _id="contractServiceSave" (click)="saveContractServiceDetails()"></dfps-button>
+    </div>
+</div>

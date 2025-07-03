@@ -1,0 +1,593 @@
+<div class="alert alert-danger" *ngIf="errorNoDataMessage">
+    <p>Attention:</p>
+    <div>
+        {{errorNoDataMessage}}
+    </div>
+</div>
+
+<div class="container-fluid bodycolor" *ngIf="displayHomeInformation">
+    <div class="row">
+        <h1>Home Information</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="displayHomeInformation?.attentionMessages && !hideAttentionMessage">
+        <p>Attention:</p>
+        <div *ngIf="displayHomeInformation?.attentionMessages">
+            <ul *ngFor="let message of displayHomeInformation?.attentionMessages">
+                <li>{{message}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" [hidden]="hideApproveButton">
+        <div class="d-flex col-md-11 pt-4">
+            <dfps-button label="Approval status" _id="approvalStatus" (click)="showApproval()"></dfps-button>
+        </div>
+    </div>
+    <form [formGroup]="homeInfoForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Case Name #: {{displayHomeInformation.homeName }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Resource ID: {{ displayHomeInformation.resource ?
+                displayHomeInformation.resource.resourceId : ''}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <div class="form-group mt-5">
+            <h2>Home Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="homeName" class="col-sm-6 col-form-label col-form-label-sm">Home
+                        Name:</label>
+                    <div class="col-sm-6">
+                        {{displayHomeInformation.resource.name}}
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="resourceId" class="col-sm-6 col-form-label col-form-label-sm">Resource
+                        ID:</label>
+                    <div class="col-sm-6">
+                        {{displayHomeInformation.resource ? displayHomeInformation.resource.resourceId : ''}}
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="category"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Category:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="category" ariaLabel="Category Dropdown is required" formControlName="category"
+                            [dropDownValues]="displayHomeInformation.category">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4 pb-4">
+                    <label for="status" class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Status of Kin
+                        Stage:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="status" ariaLabel="Status is Required" formControlName="status"
+                            [dropDownValues]="displayHomeInformation.status" [blankOption]="false">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <dfps-collapsable-section>
+                <accordion>
+                    <accordion-group class="accordion-group pt-2" heading="Home Demographics" [isOpen]="true">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="ethnicity"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Ethnicity:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="ethnicity" ariaLabel="Ethnicity" formControlName="ethnicity"
+                                        [dropDownValues]="displayHomeInformation.ethnicity">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="language"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Language:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="language" ariaLabel="Language" formControlName="language"
+                                        [dropDownValues]="displayHomeInformation.language">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="religion"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Religion:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="religion" ariaLabel="Religion" formControlName="religion"
+                                        [dropDownValues]="displayHomeInformation.religion">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="annualIncome"
+                                    class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Annual
+                                    Income:</label>
+                                <div class="col-sm-6">
+                                    <dfps-input _id="annualIncome" ariaLabel="Annual Income is Required" currency=true
+                                        maxlength="11" formControlName="annualIncome" currency=true>
+                                    </dfps-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="maritalStatus"
+                                    class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Marital
+                                    Status:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="maritalStatus"
+                                        ariaLabel="Marital Status is Conditionally Required"
+                                        formControlName="maritalStatus"
+                                        [dropDownValues]="displayHomeInformation.maritalStatus">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="sourceInquiry" class="col-sm-6 col-form-label col-form-label-sm">Source of
+                                    Inquiry:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="sourceInquiry" ariaLabel="Source Of Inquiry"
+                                        formControlName="sourceInquiry"
+                                        [dropDownValues]="displayHomeInformation.sourceOfInquiry">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="pt-4">Kinship Information</h2>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-6 pt-4">
+                                <div class="col-sm-6">
+                                    <dfps-checkbox _id="relativeCaregiver" ariaLabel="Relative Caregiver"
+                                        [formControl]="homeInfoForm.controls['relativeCaregiver']"
+                                        label="Relative Caregiver" inputName="relativeCaregiver"
+                                        (click)="relativeCaregiverClicked()">
+                                    </dfps-checkbox>
+                                </div>
+                                <div class="col-sm-6">
+                                    <dfps-checkbox _id="fictiveKinCaregiver" ariaLabel="Fictive Kin Caregiver"
+                                        [formControl]="homeInfoForm.controls['ficitiveCaregiver']"
+                                        label="Fictive Kin Caregiver" inputName="fictiveKinCaregiver">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-6 pt-4">
+                                <div class="d-flex col-sm-8">
+                                    <label for="personCount"
+                                        class="col-sm-8 col-form-label col-form-label-sm requiredDisplay">#Persons in
+                                        Household:</label>
+                                    <div class="col-sm-4">
+                                        <dfps-input _id="personCount" ariaLabel="Persons In Household is Required"
+                                            formControlName="personCount" maxlength="3" required="true">
+                                        </dfps-input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-6 pt-4" *ngIf="showNewPage && !hidePMCCheckboxes">
+                                <div class="d-flex col-sm-6 conReqDisplay">
+                                    <dfps-checkbox _id="isCaregiverPaternal" ariaLabel="Paternal"
+                                        [formControl]="homeInfoForm.controls['isCaregiverPaternal']" label="Paternal"
+                                        inputName="isCaregiverPaternal" (click)="disableMaternal()">
+                                    </dfps-checkbox>
+                                </div>
+                                <div class="d-flex col-sm-6 conReqDisplay">
+                                    <dfps-checkbox _id="isCaregiverMaternal" ariaLabel="Maternal"
+                                        [formControl]="homeInfoForm.controls['isCaregiverMaternal']" label="Maternal"
+                                        inputName="isCaregiverMaternal" (click)="disablePaternal()">
+                                    </dfps-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="pt-4" *ngIf="showNewPage">Kinship Caregiver Information</h2>
+                        <div *ngIf="!showNewPage">
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-2 pt-4">
+                                    <dfps-radio-button name="type" ariaLabel="Signed Agreement Radio Button"
+                                        [data]="requestType" [horizontal]="true" formControlName="signedAgreement"
+                                        name="signedAgreement">
+                                    </dfps-radio-button>
+                                </div>
+                                <div class="col-md-10 pt-4">
+                                    <label class="conReqDisplay" for="signedAgreement">Has the Kinship Caregiver
+                                        Agreement
+                                        been signed by the
+                                        Kinship Caregiver?</label>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-2 pt-2">
+                                    <dfps-radio-button name="type" ariaLabel="Income Qualified Radio Button"
+                                        [data]="requestType" [horizontal]="true" formControlName="incomeQualified"
+                                        name="incomeQualified">
+                                    </dfps-radio-button>
+                                </div>
+                                <div class="col-md-10 pt-2">
+                                    <label class="conReqDisplay" for="incomeQualified">Does the Kinship Caregiver meet
+                                        the Income Qualification for Kinship payments? </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-2 pt-2">
+                                <dfps-radio-button ariaLabel="Manual Given Radio Button" [data]="requestType"
+                                    [horizontal]="true" formControlName="manualGiven" name="manualGiven">
+                                </dfps-radio-button>
+                            </div>
+                            <div class="col-md-10 pt-2">
+                                <label for="manualGiven" class="conReqDisplay">Has the Kinship Manual been given to the
+                                    Kinship Caregiver?
+                                </label>
+                            </div>
+                        </div>
+                        <div *ngIf="showNewPage">
+                            <div class="row pl-4">
+                                <div class="col-md-4 pt-2">
+                                    <label for="assessmentStatus">Status of Kinship Caregiver Home
+                                        Assessment:</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    {{displayHomeInformation.resource.assessmentStatusDecode}}
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-sm-6 pt-2">
+                                    <label for="assessmentStatusDate"
+                                        class="col-sm-8 col-form-label col-form-label-sm conReqDisplay">Assessment
+                                        Status Date:</label>
+                                    <div class="col-sm-4">
+                                        <dfps-date-picker _id="assessmentStatusDate"
+                                            ariaLabel="Assessment Status Date is Conditionally Required"
+                                            formControlName="assessmentApprovedDate">
+                                        </dfps-date-picker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="col-md-12 pt-2">
+                                    <label for="addendumPageInfo">(Changes to these 'Home Assessment' fields above must
+                                        be performed on the Home Assessment/Addendum Page.)</label>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="d-flex col-md-2 pt-2">
+                                    <dfps-radio-button name="type" ariaLabel="Is Placement Court Ordered Radio Button"
+                                        [data]="requestType" [horizontal]="true"
+                                        formControlName="isPlacementCourtOrdered" name="isPlacementCourtOrdered"
+                                        (click)="placementOrderedClicked()">
+                                    </dfps-radio-button>
+                                </div>
+                                <div class="col-md-10 pt-2">
+                                    <label for="isPlacementCourtOrdered" class="conReqDisplay">Is the placement
+                                        court-ordered?</label>
+                                </div>
+                            </div>
+                            <div class="row pl-4" [hidden]="hidePlacementOrderedDate">
+                                <div class="d-flex col-sm-6 pt-2">
+                                    <label for="courtOrderedPlacementDate"
+                                        class="col-sm-8 col-form-label col-form-label-sm conReqDisplay">Court-Ordered
+                                        Placement Date:
+                                    </label>
+                                    <div class="col-sm-4">
+                                        <dfps-date-picker _id="courtOrderedPlacementDate" ariaLabel="Court-Ordered
+                                        Placement Date is Conditionally Required"
+                                            formControlName="courtOrderedPlacementDate">
+                                        </dfps-date-picker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pl-4">
+                                <div class="col-md-4 pt-2">
+                                    <label for="kinCaregiverEligibilityStatus">Status of Kinship Home:</label>
+                                </div>
+                                <div class="col-sm-8 pt-2">
+                                    {{displayHomeInformation.resource.kinCaregiverEligibilityStatus}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-2 pt-2">
+                                <dfps-radio-button name="type" ariaLabel="All Kin Employed Radio Button"
+                                    [data]="requestType" [horizontal]="true" formControlName="allKinEmployed"
+                                    name="allKinEmployed">
+                                </dfps-radio-button>
+                            </div>
+                            <div class="col-md-10 pt-2">
+                                <label for="allKinEmployed">Is it verified that ALL appropriate caregivers are employed
+                                    full-time where they
+                                    each perform a job at least 40 hours per week that pays a wage or salary to the
+                                    individual (Note: being a volunteer, student, or providing substitute care services
+                                    is not considered employment)?</label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end w-100 mt-3" *ngIf="showNewPage && !hideSave">
+                            <label for="saveInfo">(Please click Save before clicking Save and Submit.) </label>
+                            <dfps-button label="Save" (click)="save()" [hidden]="hideSave"></dfps-button>
+                        </div>
+                        <div *ngIf="showNewPage">
+                            <div
+                                *ngIf="displayHomeInformation.resource && displayHomeInformation.resource.kinCaregiverEligibilityStatus">
+                                <h2 class="pt-4">Kinship Caregiver Payment Information</h2>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-2 pt-4">
+                                        <dfps-radio-button name="type" ariaLabel="Signed Agreement Radio Button"
+                                            [data]="requestType" [horizontal]="true" formControlName="signedAgreement"
+                                            name="signedAgreement" (click)="signedAgreementClicked()">
+                                        </dfps-radio-button>
+                                    </div>
+                                    <div class="col-md-10 pt-4">
+                                        <label class="conReqDisplay" for="signedAgreement">Has the Kinship Caregiver
+                                            Agreement
+                                            been signed by the
+                                            Kinship Caregiver?
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row pl-4" [hidden]="hideAgreementSignedDate">
+                                    <div class="d-flex col-sm-6 pt-2">
+                                        <label for="agreementSignedDate"
+                                            class="col-sm-8 col-form-label col-form-label-sm conReqDisplay">Caregiver
+                                            Agreement
+                                            Signed Date:</label>
+                                        <div class="col-sm-4">
+                                            <dfps-date-picker _id="agreementSignedDate" ariaLabel="Caregiver Agreement
+                                        Signed Date is Conditionally Required" formControlName="agreementSignedDate">
+                                            </dfps-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-2 pt-4">
+                                        <dfps-radio-button name="type" ariaLabel="Is Payment Court Ordered Radio Button"
+                                            [data]="requestType" [horizontal]="true"
+                                            formControlName="isPaymentCourtOrdered" name="isPaymentCourtOrdered"
+                                            (click)="paymentOrderedClicked()">
+                                        </dfps-radio-button>
+                                    </div>
+                                    <div class="col-md-10 pt-4">
+                                        <label class="conReqDisplay" for="isPaymentCourtOrdered">Are the payments
+                                            Court-Ordered?</label>
+                                    </div>
+                                </div>
+                                <div class="row pl-4" [hidden]="hidePaymentOrderedDate">
+                                    <div class="d-flex col-sm-6 pt-2">
+                                        <label for="courtOrderedPaymentDate"
+                                            class="col-sm-8 col-form-label col-form-label-sm conReqDisplay">Court-Ordered
+                                            Payment Date:
+                                        </label>
+                                        <div class="col-sm-4">
+                                            <dfps-date-picker _id="courtOrderedPaymentDate"
+                                                ariaLabel="Court-Ordered Payment Date is Conditionally Required"
+                                                formControlName="courtOrderedPaymentDate">
+                                            </dfps-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="d-flex col-md-2 pt-4">
+                                        <dfps-radio-button name="type" ariaLabel="Has Begun Training Radio Button"
+                                            [data]="requestType" [horizontal]="true" formControlName="hasBegunTraining"
+                                            name="hasBegunTraining">
+                                        </dfps-radio-button>
+                                    </div>
+                                    <div class="col-md-10 pt-4">
+                                        <label class="conReqDisplay" for="hasBegunTraining">Has the Kinship Caregiver
+                                            begun
+                                            required training? </label>
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="col-md-6 pt-2">
+                                        <label class="conReqDisplay" for="incomeQualified">Does the Kinship Caregiver
+                                            meet
+                                            the
+                                            Income Qualification
+                                            for Kinship payments? </label>
+                                    </div>
+                                    <div class="col-sm-2 pt-2">
+                                        {{(this.displayHomeInformation.resource && this.displayHomeInformation.resource.isHouseholdMeetFPL)? 'Yes': 
+                                            (this.displayHomeInformation.resource && this.displayHomeInformation.resource.isHouseholdMeetFPL === false)?'No' : null}}
+                                    </div>
+                                </div>
+                                <div class="row pl-4">
+                                    <div class="col-md-4 pt-2">
+                                        <label for="fplAmount">Income Threshold of Federal Poverty Level:</label>
+                                    </div>
+                                    <div class="col-sm-8 pt-2">
+                                        {{displayHomeInformation.resource.fplAmount? ((displayHomeInformation.resource.fplAmount * 3) | currency) : null}}
+                                    </div>
+                                </div>
+                                <div
+                                    *ngIf="displayHomeInformation.resource && displayHomeInformation.resource.kinCaregiverPaymentEligibilityStatus">
+                                    <div class="row pl-4">
+                                        <div class="col-md-4 pt-2">
+                                            <label for="kinCaregiverPaymentEligibilityStatus">Status of Kinship Payment
+                                                Eligibility:</label>
+                                        </div>
+                                        <div class="col-sm-8 pt-2">
+                                            {{displayHomeInformation.resource.kinCaregiverPaymentEligibilityStatus}}
+                                        </div>
+                                    </div>
+                                    <div class="row pl-4">
+                                        <div class="d-flex col-sm-6 pt-2">
+                                            <label for="paymentStartDate"
+                                                class="col-sm-8 col-form-label col-form-label-sm">Payment
+                                                Start Date:</label>
+                                            <div class="col-sm-4">
+                                                <dfps-date-picker _id="paymentStartDate" ariaLabel="Payment Start Date"
+                                                    formControlName="paymentStartDate">
+                                                </dfps-date-picker>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Caregiver Eligibility History" *ngIf="showNewPage && displayHomeInformation.resource && 
+                                    displayHomeInformation.resource.kinCaregiverEligibilityStatus">
+                        <div class="row" id="caregiverEligibilityTable">
+                            <div class="col-md-12">
+                                <dfps-data-table [dataTable]="careGiverEligibilityDataTable">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Payment Eligibility History" *ngIf="showNewPage && displayHomeInformation.resource &&
+                                displayHomeInformation.resource.kinCaregiverEligibilityStatus">
+                        <div class="row" id="paymentEligibilityTable">
+                            <div class="col-md-12">
+                                <dfps-data-table [dataTable]="paymentEligibilityDataTable">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Address List" [isOpen]="isAddress">
+                        <div class="row" id="addressListTable">
+                            <div class="col-md-12">
+                                <dfps-data-table [dataTable]="addressListDatatable" class="data-table dataTableConfig"
+                                    (selectedData)="selectedAddress($event)">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex" *ngIf="!hideAddressAndPhoneButtons">
+                            <div class="justify-content-start mr-auto p-2">
+                                <dfps-button add-button size="small" label="Delete" tabindex="0"
+                                    _id="addressDeleteButtonId" (click)="deleteAddress()"
+                                    [hidden]="hideAddressAndPhoneButtons">
+                                </dfps-button>
+                            </div>
+                            <div class="justify-content-end p-2">
+                                <dfps-button add-button size="small" label="Add" _id="addressAddButtonId"
+                                    (click)="addAddress()" [hidden]="hideAddressAndPhoneButtons">
+                                </dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+                    <accordion-group class="accordion-group pt-2" heading="Phone List" [isOpen]="isPhone">
+                        <div class="row" id="phoneListTable">
+                            <div class="col-md-12">
+                                <dfps-data-table [dataTable]="phoneListDatatable" class="data-table dataTableConfig"
+                                    (selectedData)="selectedPhone($event)">
+                                </dfps-data-table>
+                            </div>
+                        </div>
+                        <div class="d-flex" *ngIf="!hideAddressAndPhoneButtons">
+                            <div class="justify-content-start mr-auto p-2">
+                                <dfps-button add-button size="small" label="Delete" tabindex="0"
+                                    _id="phoneDeleteButtonId" (click)="deletePhone()"
+                                    [hidden]="hideAddressAndPhoneButtons">
+                                </dfps-button>
+                            </div>
+                            <div class="justify-content-end p-2">
+                                <dfps-button add-button size="small" label="Add" _id="phoneAddButtonId"
+                                    (click)="addPhone()" [hidden]="hideAddressAndPhoneButtons">
+                                </dfps-button>
+                            </div>
+                        </div>
+                    </accordion-group>
+
+
+                    <accordion-group class="accordion-group pt-2" heading="Close Home">
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="closureReason"
+                                    class="col-sm-6 col-form-label col-form-label-sm conReqDisplay">Closure
+                                    Reason:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="closureReason"
+                                        ariaLabel="Closure Reason is Conditionally Required"
+                                        formControlName="closureReason"
+                                        [dropDownValues]="displayHomeInformation.closureReason">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-2"></div>
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="recommendReopening"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Recommend
+                                    Re-opening:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="recommendReopening"
+                                        ariaLabel="Recommend Reopening"
+                                        formControlName="recommendReopening"
+                                        [dropDownValues]="displayHomeInformation.recommendReopening">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-4 pt-4">
+                                <label for="involuntaryClosure"
+                                    class="col-sm-6 col-form-label col-form-label-sm">Involuntary
+                                    Closure:</label>
+                                <div class="col-sm-6">
+                                    <dfps-select _id="involuntaryClosure"
+                                        ariaLabel="Involuntary Closure"
+                                        formControlName="involuntaryClosure"
+                                        [dropDownValues]="displayHomeInformation.involuntaryClosure">
+                                    </dfps-select>
+                                </div>
+                            </div>
+                        </div>
+                    </accordion-group>
+                </accordion>
+            </dfps-collapsable-section>
+            <div class="d-flex justify-content-end mt-2">
+                <div class="d-flex btn-sm" *ngIf="displayHomeInformation && displayHomeInformation.resource && 
+                                                displayHomeInformation.resource.faHomeStatus === '070'">
+                    <dfps-button add-button size="small" label="Save And Assign" (click)="saveAndAssign()">
+                    </dfps-button>
+                </div>
+                <div class="d-flex btn-sm">
+                    <dfps-button add-button size="small" label="Save And Submit" (click)="submit()"
+                        [hidden]="hideSaveSubmit">
+                    </dfps-button>
+                </div>
+                <div class="d-flex btn-sm">
+                    <dfps-button add-button size="small" label="Save" (click)="save()" [hidden]="hideSave">
+                    </dfps-button>
+                </div>
+            </div>
+            <div class="card formPanel">
+                <div class="p-2 mb-2 card-heading formHeader">
+                    <h2>Forms Launch</h2>
+                </div>
+                <div class="row pl-4">
+                    <div class="d-flex col-md-6 pt-6 pb-6">
+                        <dfps-form-launch formId="formsLaunch" buttonId="formLaunch" [formValues]='formValues'>
+                        </dfps-form-launch>
+                    </div>
+                    <div class="d-flex col-md-2"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

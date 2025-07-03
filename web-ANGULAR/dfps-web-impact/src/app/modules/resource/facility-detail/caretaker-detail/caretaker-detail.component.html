@@ -1,0 +1,129 @@
+<div class="container-fluid bodycolor" *ngIf="caretakerRes">
+    <div class="row">
+        <h1>Caretaker Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="careTakerDetailReqForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Resource Name: {{ caretakerRes?.resource?.name }}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Resource ID: {{ caretakerRes?.resource?.resourceId }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Resource Type: {{ caretakerRes?.resource?.type }}
+            </div>
+        </div>
+        <div class="formGroup mt-5">
+            <h2>Home Family Structure</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-6 pt-4">
+                    <label for="homeMaritalStatus"
+                        class="col-sm-6 col-form-label col-form-label-sm requiredDisplay">Home Marital Status:</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="homeMaritalStatus" formControlName="homeMaritalStatus"
+                            [dropDownValues]="caretakerRes.maritalStatus" ariaLabel="Home Marital Status is Required">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="formGroup mt-5">
+            <h2>Caretaker Information</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="firstName"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">First:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="firstName" formControlName="firstName" ariaLabel="First Name is Required"
+                            maxlength="12">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="middleName" class="col-sm-4 col-form-label col-form-label-sm">Middle:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="middleName" formControlName="middleName" ariaLabel="Middle Name"
+                            maxlength="12">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="lastName"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Last:</label>
+                    <div class="col-sm-6">
+                        <dfps-input _id="lastName" formControlName="lastName" ariaLabel="Last Name is Required"
+                            maxlength="22">
+                        </dfps-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="dateOfBirth" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Date of
+                        Birth :</label>
+                    <div class="col-sm-6">
+                        <dfps-date-picker _id="dateOfBirth" placeholder="dateOfBirth"
+                            ariaLabel="Date Of Birth is Required" formControlName="dateOfBirth">
+                        </dfps-date-picker>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="gender" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Gender
+                        :</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="gender" formControlName="gender" [dropDownValues]="caretakerRes.sex"
+                            ariaLabel="Gender is Required">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="race" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Race :</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="race" formControlName="race" [dropDownValues]="caretakerRes.race"
+                            ariaLabel="Race is Required">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="ethnicity" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Ethnicity
+                        :</label>
+                    <div class="col-sm-6">
+                        <dfps-select _id="ethnicity" formControlName="ethnicity"
+                            [dropDownValues]="caretakerRes.ethnicity" ariaLabel="Ethnicity is Required">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-11 justify-content-start pt-4">
+                <dfps-button label="Delete" _id="delete" [hidden]="hideDeleteButton" (click)="doDelete()"></dfps-button>
+            </div>
+            <div class="d-flex col-md-1 justify-content-end pt-4">
+                <dfps-button label="Save" _id="save" [hidden]="hideSaveButton" (click)="doSave()"></dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

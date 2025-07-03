@@ -1,0 +1,113 @@
+<div class="container-fluid bodycolor" *ngIf="financialAcctSearchRes as FinAccSearch">
+    <div class="row">
+        <h1>Financial Account Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+
+    <div class="row">
+        <div class="requiredDisplay text-right col-12 mt-2">
+            <span class="sr-only">Red asterisk is </span>required field
+        </div>
+    </div>
+    <div class="row">
+        <div class="conReqDisplay text-right col-12 mt-2">
+            <span class="sr-only">Double dagger is </span>conditionally required field
+        </div>
+    </div>
+    <div #errors>
+        <dfps-form-validation [validationErrors]="validationErrors" [shouldCheckDirty]="true"
+            [validationErrorsLength]="validationErrorsLength"></dfps-form-validation>
+    </div>
+    <form [formGroup]="financialAccountSearchForm">
+        <div class="form-group">
+            <div class="row">
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="person_id" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Person ID:
+                    </label>
+                    <div class="col-sm-7">
+                        <dfps-input _id="person_id" formControlName="personId" maxlength="16"
+                            ariaLabel="Person Id is conditionally required">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4" *ngIf="FinAccSearch.displayAccountNumber">
+                    <label for="accountNumber" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Account#:
+                    </label>
+                    <div class="col-sm-7">
+                        <dfps-input _id="accountNumber" formControlName="accountNumber" maxlength="16"
+                            ariaLabel="Account Number is conditionally required">
+                        </dfps-input>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="accountType" class="col-sm-4 col-form-label col-form-label-sm">Account Type:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="accountType" ariaLabel="Select Account Type Dropdown" [blankOption]="false"
+                            formControlName="accountType" [dropDownValues]="accountType">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="program"
+                        class="col-sm-4 col-form-label col-form-label-sm requiredDisplay">Program:</label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="program" ariaLabel="Select program Dropdown is required field"
+                            [blankOption]="false" formControlName="program" [dropDownValues]="FinAccSearch.programs"
+                            (change)="onProgramChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="region" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Region: </label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="region" ariaLabel="Select Region Dropdown is conditionally required field"
+                            [blankOption]="false" formControlName="region" [dropDownValues]="FinAccSearch.csvcRegions"
+                            (change)="onRegionChange($event)">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="county" class="col-sm-4 col-form-label col-form-label-sm">County: </label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="county" ariaLabel="Select County Dropdown field" [blankOption]="false"
+                            formControlName="county" [dropDownValues]="counties">
+                        </dfps-select>
+                    </div>
+                </div>
+                <div class="d-flex col-md-3 pt-4">
+                    <label for="status" class="col-sm-4 col-form-label col-form-label-sm conReqDisplay">Status: </label>
+                    <div class="col-sm-7">
+                        <dfps-select _id="status" ariaLabel="Select Status Dropdown is conditionally required field"
+                            formControlName="status" [dropDownValues]="FinAccSearch.status">
+                        </dfps-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex col-md-11 justify-content-end pt-4">
+                <dfps-button label="Search" _id="financialAccountSearch" (click)="searchFinancialAccount()"
+                    [disabled]="isSearchDisabled"></dfps-button>
+            </div>
+            <div class="d-flex col-md-1 justify-content-end pt-4">
+                <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+            </div>
+        </div>
+        <ng-container *ngIf="isTableInfo">
+            <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+            </div>
+        </ng-container>
+    </form>
+
+    <dfps-data-table *ngIf="isTableInfo" [selectedRowOption]="DEFAULT_PAGE_SIZE"
+        (handleClickEvent)="handleRouting($event)" [dataTable]="financialAcctSearchTable">
+    </dfps-data-table>
+    <div class="d-flex justify-content-end w-100 mt-4">
+        <dfps-button *ngIf="isEditMode" label="Add" _id="financialAccountAdd" (click)="addFinancialAccount()">
+        </dfps-button>
+    </div>
+</div>

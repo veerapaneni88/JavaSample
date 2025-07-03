@@ -1,0 +1,85 @@
+<div class="container-fluid bodycolor">
+    <div class="row">
+        <h1>Payment History Search</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <p class="requiredDisplay text-right mt-2"><span class="sr-only">Red asterisk is</span>required field</p>
+    <div class="row">
+        <div class="col-sm-12 pt-0">
+            <div class="pl-3 pt-2">
+                <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+                    [validationErrorsLength]="validationErrorsLength">
+                </dfps-form-validation>
+            </div>
+            <form [formGroup]="paymentHistorySearchForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="searchFor" class="col-sm-3 col-form-label col-form-label-sm">Search
+                                For:</label>
+                            <div class="col-sm-12">
+                                <dfps-radio-button _id="searchFor" formControlName="searchFor" name="searchFor"
+                                    ariaLabel="Search Type radio button" [data]="searchForData" [horizontal]="true">
+                                </dfps-radio-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="searchId"
+                                class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Search ID:</label>
+                            <div class="col-sm-6">
+                                <dfps-input _id="searchId" formControlName="searchId" maxlength=16
+                                    ariaLabel="search Id is required">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="fromDate"
+                                class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">From:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="fromDate" formControlName="fromDate" placeholder="from"
+                                    ariaLabel="From date is required"></dfps-date-picker>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="toDate"
+                                class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">To:</label>
+                            <div class="col-sm-6">
+                                <dfps-date-picker _id="toDate" formControlName="toDate" placeholder="to"
+                                    ariaLabel="To date is required"></dfps-date-picker>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="d-flex col-md-11 justify-content-end pt-4">
+                            <dfps-button _id="paymentHistoryButton" label="Search" (click)="searchPaymentHistory()">
+                                Search
+                            </dfps-button>
+                        </div>
+                        <div class="d-flex col-md-1 justify-content-end pt-4">
+                            <dfps-button label="Clear" _id="clear" (click)="clear()"></dfps-button>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="isPaymentHistoryTable">
+                    <div class="sr-only" tabindex="0" #results (blur)="searchButtonResultOnBlur()">search results loaded
+                    </div>
+                </ng-container>
+            </form>
+        </div>
+    </div>
+    <div *ngIf="isPaymentHistoryTable">
+        <dfps-data-table-lazyload class="data-table" [dataTable]="paymentHistoryDataTable"
+            [currentPage]='currentPageNumber' (lazyLoadEvent)="loadDataLazy($event)"
+            [selectedRowOption]="DEFAULT_PAGE_SIZE">
+        </dfps-data-table-lazyload>
+        <div class="d-flex justify-content-end pl-1 pr-4 pt-4"
+            *ngIf="paymentHistoryDataTable.tableBody && paymentHistoryDataTable.tableBody.length > 0">
+            <span>Total Payments: {{ totalPayments | currency: 'USD' }}</span>
+        </div>
+    </div>
+</div>

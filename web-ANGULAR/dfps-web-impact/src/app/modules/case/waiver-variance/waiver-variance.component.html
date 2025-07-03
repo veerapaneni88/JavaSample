@@ -1,0 +1,489 @@
+<div class="container-fluid bodycolor" *ngIf="waiverVarianceDetailRes">
+    <div class="row">
+        <h1>Waiver/Variance Request Detail</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true" />
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <div class="alert alert-primary" *ngIf="infoDivDisplay">
+        <p>Attention:</p>
+        <div>
+            <ul>
+                <li *ngFor="let msg of informationalMsgs">
+                    {{ msg }}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <form [formGroup]="waiverVarianceReqForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Case Name: {{ waiverVarianceDetailRes ? waiverVarianceDetailRes.caseName : '' }}
+            </div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field
+            </div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">
+                Stage ID:{{ waiverVarianceDetailRes ? waiverVarianceDetailRes.stageId : '' }}
+            </div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field
+            </div>
+        </div>
+        <br />
+        <div class="formGroup">
+            <h2>Home Information</h2>
+            <div class="row" [hidden]="hideApprovalStatus" tabindex="0">
+                <div class="d-flex col-md-11 pt-4">
+                    <dfps-button label="Approval status" _id="saveAndSubmit" (click)="showApproval()"></dfps-button>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="homeName" class="col-form-label col-form-label-sm col-sm-6"> Home Name: </label>
+                    <span id="homeName" class="col-sm-6">
+                        {{ waiverVarianceDetailRes ? waiverVarianceDetailRes.caseName : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="resourceId" class="col-sm-6 col-form-label col-form-label-sm">Resource ID:</label>
+                    <span id="resourceId" class="col-sm-6">
+                        {{ waiverVarianceDetailRes ? waiverVarianceDetailRes.resourceId : '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="category" class="col-form-label col-form-label-sm col-sm-6"> Category: </label>
+                    <span id="category" class="col-sm-6">
+                        {{ waiverVarianceDetailRes ? waiverVarianceDetailRes.homeCategory : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="status" class="col-sm-6 col-form-label col-form-label-sm">Status:</label>
+                    <span id="status" class="col-sm-6">
+                        {{ waiverVarianceDetailRes ? waiverVarianceDetailRes.homeStatus : '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="pt-4">
+            <hr aria-hidden="true" />
+        </div>
+        <div class="formGroup mt-5">
+            <h2>Search Minimum Standard</h2>
+            <div class="row pl-4">
+                <div class="d-flex col-md-10 pt-4">
+                    <label for="searchSelect" class="col-sm-8 col-form-label col-form-label-sm">
+                        Search and select a minimum standard/rule number that you are requesting a waiver/variance for:
+                    </label>
+                    <div class="col-sm-3">
+                        <dfps-button size="small" label="Search" _id="searchSelect" (click)="doSearchMinimumStandard()"
+                            [hidden]="hideSaveAndSubmit">
+                        </dfps-button>
+                    </div>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="standardRule" class="col-form-label col-form-label-sm col-sm-6">
+                        Standard/Rule Number:
+                    </label>
+                    <span id="standardRule" class="col-sm-6">
+                        {{ waiverVariance ? waiverVariance?.standard?.number : '' }}
+                    </span>
+                </div>
+                <div class="d-flex col-md-2"></div>
+                <div class="d-flex col-md-4 pt-4">
+                    <label for="weight" class="col-sm-6 col-form-label col-form-label-sm">Weight:</label>
+                    <span id="weight" class="col-sm-6">
+                        {{ waiverVariance ? waiverVariance?.standard?.weightDecode : '' }}
+                    </span>
+                </div>
+            </div>
+            <div class="row pl-4">
+                <div class="d-flex col-md-10 pt-4">
+                    <label for="description" class="col-form-label col-form-label-sm col-sm-2"> Description: </label>
+                    <span id="description" class="col-sm-12">
+                        {{ waiverVariance ? waiverVariance?.standard?.sds : 'TODO' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <dfps-collapsable-section aria-expanded="true">
+            <accordion>
+                <accordion-group class="accordion-group pt-2" heading="Request Details" [isOpen]="true">
+                    <div class="row">
+                        <div class="d-flex col-md-4 pt-4">
+                            <label for="request" class="col-sm-4 col-form-label col-form-label-sm requiredDisplay"
+                                tabindex="0" style="outline: none">Request Type :<i class="fa fa-question-circle"
+                                    style="font-size: 20px; color: #4986c2" aria-hidden="true"
+                                    (click)="requestHelpIcon()"></i><span class="sr-only">Request Type is required
+                                    field</span></label>
+                        </div>
+                        <div class="d-flex col-md-4 pt-4">
+                            <dfps-radio-button formControlName="request" id="request" name="request"
+                                ariaLabel="Request Type radio is required field" [data]="requestType"
+                                [horizontal]="true">
+                            </dfps-radio-button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="childrenInCare"
+                                class="col-sm-8 col-form-label col-form-label-sm requiredDisplay">Number of children
+                                in
+                                care or to be placed :
+                               
+                            </label>
+                            <div class="col-md-4">
+                                <dfps-input _id="childrenInCare"
+                                    ariaLabel="Number of children in care or to be placed is required field."
+                                    maxlength="10" formControlName="childrenInCare" maxlength="3">
+                                </dfps-input>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-6 pt-4">
+                            <label for="ages" class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Ages
+                                :</label>
+                            <div class="col-sm-4">
+                                <dfps-input _id="ages" ariaLabel="Ages is required field." maxlength="20"
+                                    formControlName="ages">
+                                </dfps-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <hr aria-hidden="true" />
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="d-flex col-md-5">
+                            <label for="childRelatedFosterParents"
+                                class="col-sm-12 col-form-label col-form-label-sm conReqDisplay" tabindex="0"
+                                style="outline: none">How are these children related to the foster parent? (Check all
+                                that apply) :<span class="sr-only">How are these children related to the foster parent?
+                                    (Check all that apply) is
+                                    conditionally required</span>
+                                    <i class="fa fa-question-circle" style="font-size: 20px; color: #4986c2"
+                                    aria-hidden="true" (click)="childRelHelpIcon()"></i>
+                                </label>
+                        </div>
+                        <div class="col-md-7 d-flex">
+                            <div class="col-sm-2">
+                                <dfps-checkbox _id="relative"
+                                    ariaLabel="relative checkbox is conditionally required field" label="Relative"
+                                    [formControl]="waiverVarianceReqForm.controls['relative']" inputName="relative">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-sm-3">
+                                <dfps-checkbox _id="fictiveKin"
+                                    ariaLabel="fictiveKin checkbox is conditionally required field" label="Fictive Kin"
+                                    [formControl]="waiverVarianceReqForm.controls['fictiveKin']" inputName="fictiveKin">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-checkbox _id="unrelated"
+                                    ariaLabel="unrelated checkbox is conditionally required field" label="Unrelated"
+                                    [formControl]="waiverVarianceReqForm.controls['unrelated']" inputName="unrelated">
+                                </dfps-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc1"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Give the name of
+                                the
+                                caregiver or the name and date of birth of the child this request
+                                applies to, if applicable:</label>
+                        </div>
+                        <div class="col-md-10 pt-1">
+                            <dfps-textarea _id="lblTxtRqstDesc1" class="col-sm-10" maxLength="500" ariaLabel="Give the name of the caregiver or 
+                                the name and date of birth of the child this request
+                                applies to, if applicable is conditionally required text filed"
+                                formControlName="description1"></dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc2"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Specifically,
+                                describe
+                                how you do not, or would not, meet the minimum standard and
+                                WHY:</label>
+                        </div>
+                        <div class="col-md-10 pt-1">
+                            <dfps-textarea _id="lblTxtRqstDesc2" class="col-sm-10" maxLength="500" ariaLabel="Specifically, describe how you do not,
+                                 or would not, meet the minimum standard and
+                                WHY is conditionally required text field" formControlName="description2">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc3"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">How does this
+                                impact
+                                the safety of the children?</label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblTxtRqstDesc3" class="col-sm-10" maxLength="500" ariaLabel="How does this impact the safety of 
+                                the children is conditionally required text field" formControlName="description3">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc4"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">If you believe
+                                that it
+                                is not economically practical for you to comply with this
+                                minimum standard, Explain WHY and include a cost estimate in your answer:</label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblTxtRqstDesc4" class="col-sm-10" maxLength="500" ariaLabel="If you believe that 
+                                it is not economically practical for you to comply with this
+                                minimum standard, 
+                                Explain WHY and include a 
+                                cost estimate in your answer is conditionally required text field"
+                                formControlName="description4"></dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-10 pt-4">
+                            <label for="requestUntilDate"
+                                class="col-sm-9 col-form-label col-form-label-sm requiredDisplay">Until when do
+                                you need
+                                the waiver or variance? (specify a month, day, and year):</label>
+                            <div class="col-sm-3">
+                                <dfps-date-picker _id="requestUntilDate" placeholder="dtRqstUntil"
+                                    ariaLabel="date request until is required date field"
+                                    formControlName="requestUntilDate">
+                                </dfps-date-picker>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc5"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Why do you need
+                                this
+                                length of time?
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblTxtRqstDesc5" class="col-sm-10" maxLength="500" ariaLabel="Why do you need this length of time is 
+                                conditionally required text field" formControlName="description5"></dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc6"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">How do you propose
+                                to
+                                protect the children in your care if you are not meeting the
+                                minimum standard?
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblTxtRqstDesc6" class="col-sm-10" maxLength="500" ariaLabel="How do you propose to protect the children 
+                                in your care if you are not meeting the
+                                minimum standard is conditionally required text field" formControlName="description6">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 pt-4">
+                            <label for="lblTxtRqstDesc7"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Identify steps you
+                                will
+                                take to meet this minimum standard by the time the waiver or
+                                variance expires:
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblTxtRqstDesc7" class="col-sm-10" maxLength="500" ariaLabel="Identify steps you will take to meet this 
+                                minimum standard by the time the waiver or
+                                variance expires is conditionally required text field" formControlName="description7">
+                            </dfps-textarea>
+                        </div>
+                        <span id="txtId" class="col-sm-10">
+                            If additional supporting documentation is being provided with this request (photos, legal
+                            documents, etc.), please select delivery method(s). IMPORTANT: Please include your Operation
+                            Name and Number on all supporting documentation.
+                        </span>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex col-md-2 pt-4">
+                            <label for="deliveryMethod" class="col-sm-8 col-form-label col-form-label-sm"
+                                tabindex="0">Delivery Method
+                                :<span class="sr-only">Delivery Method </span></label>
+                        </div>
+                        <div class="d-flex col-md-8 pt-4">
+                            <div class="col-sm-2">
+                                <dfps-checkbox _id="email" ariaLabel="email  checkbox field" label="Email"
+                                    [formControl]="waiverVarianceReqForm.controls['email']" inputName="email">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-checkbox _id="mail" ariaLabel="mail checkbox field" label="Mail"
+                                    [formControl]="waiverVarianceReqForm.controls['mail']" inputName="mail">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-sm-2">
+                                <dfps-checkbox _id="fax" ariaLabel="fax checkbox field" label="Fax"
+                                    [formControl]="waiverVarianceReqForm.controls['fax']" inputName="fax">
+                                </dfps-checkbox>
+                            </div>
+                            <div class="col-sm-3">
+                                <dfps-checkbox _id="handDelivered" ariaLabel="Hand Delivered checkbox field"
+                                    label="Hand Delivered"
+                                    [formControl]="waiverVarianceReqForm.controls['handDelivered']"
+                                    inputName="handDelivered">
+                                </dfps-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </accordion-group>
+            </accordion>
+        </dfps-collapsable-section>
+        <dfps-collapsable-section *ngIf="displayRequestAdminReview">
+            <accordion>
+                <accordion-group class="accordion-group pt-2" heading="Request Status (Decision/Admin Review)"
+                    [isOpen]="true">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <dfps-data-table [dataTable]="reqStatusTable"></dfps-data-table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="lblCondition1"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Condition 1:
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblCondition1" class="col-sm-10" maxLength="500"
+                                ariaLabel="Description is conditionally required" formControlName="txtCondition1">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="lblCondition2"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Condition 2:
+                            </label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblCondition2" class="col-sm-10" maxLength="500"
+                                ariaLabel="Description is conditionally required" formControlName="txtCondition2">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label for="lblCondition3"
+                                class="col-sm-10 col-form-label col-form-label-sm conReqDisplay">Condition 3</label>
+                        </div>
+                        <div class="col-md-10">
+                            <dfps-textarea _id="lblCondition3" class="col-sm-10" maxLength="500"
+                                ariaLabel="Description is conditionally required" formControlName="txtCondition3">
+                            </dfps-textarea>
+                        </div>
+                    </div>
+                    <div class="formGroup mt-5">
+                        <h2>Administrative Review</h2>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="dtAdminRvwRqstd" class="col-form-label col-form-label-sm col-sm-6">
+                                    Date Requested:
+                                </label>
+                                <span id="dtAdminRvwRqstd" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ?
+                                    waiverVarianceDetailRes?.waiverVariance?.reviewRequestDate : '' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="dtAdminRvwRsltSent" class="col-form-label col-form-label-sm col-sm-6">
+                                    Notification Date:
+                                </label>
+                                <span id="dtAdminRvwRsltSent" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ?
+                                    waiverVarianceDetailRes?.waiverVariance?.reviewResultDate : '' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="cdAdminRvwStts" class="col-form-label col-form-label-sm col-sm-6">
+                                    Admin Review Status:
+                                </label>
+                                <span id="cdAdminRvwStts" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ? waiverVarianceDetailRes?.waiverVariance?.reviewStatus :
+                                    '' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="dtAdminRvwDcsn" class="col-form-label col-form-label-sm col-sm-6">
+                                    Admin Review Decision Date:
+                                </label>
+                                <span id="dtAdminRvwDcsn" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ?
+                                    waiverVarianceDetailRes?.waiverVariance?.reviewDecisianDate : '' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="cdResult" class="col-form-label col-form-label-sm col-sm-6">
+                                    Outcome Result:
+                                </label>
+                                <span id="cdResult" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ? waiverVarianceDetailRes?.waiverVariance?.result : '' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row pl-4">
+                            <div class="d-flex col-md-5 pt-4">
+                                <label for="dtOutcome" class="col-form-label col-form-label-sm col-sm-6">
+                                    Outcome Date:
+                                </label>
+                                <span id="dtOutcome" class="col-sm-6">
+                                    {{ waiverVarianceDetailRes ? waiverVarianceDetailRes?.waiverVariance?.outcomeDate :
+                                    '' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+        </dfps-collapsable-section>
+        <br />
+        <div class="row">
+            <div class="d-flex col-md-11 justify-content-end pt-4">
+                <dfps-button label="Save And Submit" _id="saveAndSubmit" (click)="doSaveAndSubmit()"
+                    [hidden]="hideSaveAndSubmit"></dfps-button>
+            </div>
+            <div class="d-flex col-md-1 justify-content-end pt-4">
+                <dfps-button label="Save" _id="save" (click)="doSave()" [hidden]="hideSaveAndSubmit">
+                </dfps-button>
+            </div>
+        </div>
+    </form>
+</div>

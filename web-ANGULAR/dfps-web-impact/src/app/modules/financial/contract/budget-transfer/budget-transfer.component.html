@@ -1,0 +1,59 @@
+<div class="container-fluid bodycolor" *ngIf="budgetTransferResponse">
+    <div class="row">
+        <h1>Budget Transfer</h1>
+    </div>
+    <div>
+        <hr aria-hidden="true">
+    </div>
+    <div #errors>
+        <dfps-form-validation [shouldCheckDirty]="true" [validationErrors]="validationErrors"
+            [validationErrorsLength]="validationErrorsLength" [shouldCheckDirty]="true">
+        </dfps-form-validation>
+    </div>
+    <form [formGroup]="budgetTransferForm">
+        <div class="row">
+            <div class="text-left col-6 mt-2">Contract #: {{contractNumber !== 'null' ? contractNumber : '' }}</div>
+            <div class="requiredDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Red asterisk is </span>required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Agency Acct ID :{{contractId !== 0 ? contractId : ''}}</div>
+            <div class="conReqDisplay text-right mt-2 col-6" tabindex="0">
+                <span class="sr-only">Double dagger is </span>conditionally required field</div>
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Period :{{period !== 0 ? period : ''}}</div>
+
+        </div>
+        <div class="row">
+            <div class="text-left col-6 mt-2">Version : {{version !== null ? version : '' }}</div>
+        </div>
+        <div class="col-md-12 pt-12" id="btTable" #btTable>
+
+            <div class="col-md-12">
+                <dfps-data-table *ngIf="btDatatable" [dataTable]="btDatatable" class="data-table dataTableConfig"
+                    (selectedColumn1Data) = "fromId= $event" (selectedColumn2Data) = "toId= $event"></dfps-data-table>
+            </div>
+        </div>
+        <div class="row col-md-12 pt-12 justify-content-end">
+            <div class="col-md-12">
+            </div>
+        </div>
+        <div class="row col-md-12 pt-12 justify-content-end" *ngIf="budgetTransferResponse.budgetTransfers?.length > 1">
+            <div class="d-flex col-md-6 pt-6 text-left">
+                <label for="amount" class="col-sm-3 col-form-label col-form-label-sm requiredDisplay">Amount:</label>
+                <div class="col-sm-6">
+                    <dfps-input _id="amount" formControlName="amount" maxlength="50" ariaLabel="Amount  is required"
+                        currency=true>
+                    </dfps-input>
+                </div>
+
+            </div>
+            <div class="d-flex col-md-6 pt-6 justify-content-end">
+                <dfps-button add-button size="small" (click)="doTransfer()" label="Transfer"> </dfps-button>
+            </div>
+        </div>
+
+
+    </form>
+</div>
