@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<%@  taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@  taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@  taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="us.tx.state.dfps.common.web.MessagesConstants" %>
+<%@ page import="us.tx.state.dfps.common.web.CodesConstant" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+           prefix="security" %>
+<html lang="en">
+<head>
+    <title>SSCC Employee Detail</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Common Components">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<main id="mainContent" tabindex="0">
+    <div id="mainDiv" class="container-fluid bodycolor">
+        <div class="row leftPadFirstLevel">
+            <h1 aria-level="1">
+                <spring:message code="SSCC.Employee.Details.label.pageHeader"/>
+            </h1>
+            <hr>
+        </div>
+ 
+        <c:if test="${not empty errorMsg }">
+            <div id="infodiv" class="row alert alert-danger serverErrorValid"
+                 role="alert">
+                <div class="col-xs-12">
+                    <h2 class="errorText" id="errorMessageHeaderServer">
+                        <spring:message code="groupUpdate.label.globalError1"/> ${errorsobj.getErrorCount()}
+                        <spring:message code="groupUpdate.label.globalError2"/>
+                    </h2>
+                </div>
+                <div class="col-xs-12 leftPadSecondLevel">
+                    <c:forEach var="entry" items="${errorMsg}">
+                        <ul id="infoMessageList">
+                            <li><span class="glypiconBlueColor">${entry.value}</span></li>
+                        </ul>
+                    </c:forEach>
+                </div>
+            </div>
+        </c:if>
+ 
+        <form:form method="POST"
+                   action="${pageContext.request.contextPath}/search/SsccEmployeeDetails"
+                   modelAttribute="ssccEmployeeDetailBean" id="SSCCEmployeeDetail">
+ 
+        <div class="row alert alert-danger" id="errorDiv" role="alert"
+             tabindex="0" hidden="true">
+            <div class="col-xs-12">
+                <h2 id="errorMessageHeader">Please correct the following
+                    error(s):</h2>
+            </div>
+            <div class="col-xs-12 noLeftPad leftPadFirstLevel" aria-hidden="true">
+                <p class="sensitiveInd noMarginBottom" id="errorMessageInfo"></p>
+            </div>
+            <div class="col-xs-12 leftPadSecondLevel">
+                <ul id="errorMessageList">
+                </ul>
+            </div>
+        </div>
+ 
+        <form:hidden id="ssccEmployeeDetailsJson" path="ssccEmployeeDetailsJson"/>
+        <form:hidden id="userDataJson" path="userDataJson"/>
+        <form:hidden id="isExistingEmp" path="isExsistingSSCCStaff"/>
+        <form:hidden id="cbcRegion" path="cbcAreaRegion"/>
+ 
+        <input type="hidden" id="isExternalUser" value="${isExternalUser}"/>
+        <input type="hidden" id="isExistingEmployee" value="${isExistingEmployee}"/>
+ 
+        <c:if test="${not empty ssccEmployeeDetailBean.errors}">
+            <div class="row alert alert-danger marginLeft15" role="alert">
+                <c:forEach items="${ssccEmployeeDetailBean.errors}" var="error">
+                    <p>${error}</p>
+                </c:forEach>
+            </div>
+        </c:if>
+
+        <!-- Row 1: Person Details -->
+        <div id="personDetails" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="personId"><spring:message code="SSCCEmployeeDetail.label.personId"/></label>
+                <form:input type="text" id="personId" class="inputNoBorder livingClearable" path="personId" readonly="true"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="displayName"><spring:message code="SSCCEmployeeDetail.label.displayName"/></label>
+                <form:input type="text" id="displayName" class="inputNoBorder livingClearable" path="displayName" readonly="true"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label><spring:message code="SSCCEmployeeDetail.label.cbc.area.region"/></label>
+                <span class="bodyText"><c:out value="${ssccEmployeeDetailBean.cbcAreaRegion}"/></span>
+            </div>
+        </div>
+
+        <!-- Row 2: Hire Date Section -->
+        <div id="hireDateSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div id="staffStartDateDiv" class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="staffStartDate">
+                    <spring:message code="SSCCEmployeeDetail.label.hireDate"/>
+                </label>
+                <form:input type="text" class="dateField" path="hireDate" id="staffStartDate" aria-required="true" size="12"/>
+            </div>
+            <input id="staffStartDateForAria" class="sr-only" aria-labelledby="staffStartDateDiv">
+            
+            <div id="hireTypeDiv" class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="hireTypeDropdown">
+                    Hire Type at Most Recent Entry to SSCC
+                </label>
+                <select name="hireType" id="hireTypeDropdown" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Hire Type</option>
+                    <option value="NEW_HIRE">New Hire</option>
+                    <option value="REHIRE">Rehire</option>
+                    <option value="TRANSFER">Transfer</option>
+                    <option value="PROMOTION">Promotion</option>
+                </select>
+            </div>
+            <input id="hireTypeForAria" class="sr-only" aria-labelledby="hireTypeDiv">
+            
+            <div id="stipendStudentDiv" class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="stipendStudent" class="mdl-checkbox mdl-js-checkbox" disabled="true">
+                    <form:checkbox class="mdl-checkbox__input" name="Stipend Student" id="stipendStudent" path="stipendStudent" value="Y"/> 
+                    <spring:message code="SSCCEmployeeDetail.label.stipend.student"/>
+                </label>
+            </div>
+            <input id="studentStipendForAria" class="sr-only" aria-labelledby="stipendStudentDiv">
+            
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="workerCountyNames">
+                    <spring:message code="SSCCEmployeeDetail.label.worker.county"/>
+                </label>
+                <form:select path="workerCounty" id="workerCountyNames" aria-required="true" class="minWidthSelect">
+                    <option value=""></option>
+                    <c:forEach var="workerCountyNamesDropdown" items="${workerCountyNames}" varStatus="workerCountyNamesDropdownLoop">
+                        <option value="${workerCountyNamesDropdown.key}"
+                                <c:if test="${ssccEmployeeDetailBean.workerCounty == workerCountyNamesDropdown.key}">selected="selected"</c:if>>
+                                ${workerCountyNamesDropdown.value}
+                        </option>
+                    </c:forEach>
+                </form:select>
+            </div>
+        </div>
+
+        <!-- Row 3: Job Title Section -->
+        <div id="jobTitleSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="jobTitle">
+                    <spring:message code="SSCCEmployeeDetail.label.currentTitle"/>
+                </label>
+                <form:input type="text" path="jobTitle" id="jobTitle" maxlength="100" aria-required="true"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="jobStartDate">Job Start Date</label>
+                <input type="text" class="dateField" name="jobStartDate" id="jobStartDate" size="12"/>
+            </div>
+            <div id="rehireDiv" class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="rehire" class="mdl-checkbox mdl-js-checkbox">
+                    <form:checkbox id="rehire" class="mdl-checkbox__input" path="rehire" value="Y"/>
+                    <spring:message code="SSCCEmployeeDetail.label.rehire"/>
+                </label>
+            </div>
+            <input id="rehireForAria" class="sr-only" aria-labelledby="rehireDiv">
+        </div>
+
+        <!-- Row 4: Additional Fields Section -->
+        <div id="additionalFieldsSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="positionType">Position Type</label>
+                <select name="positionType" id="positionType" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Position Type</option>
+                    <option value="FULL_TIME">Full Time</option>
+                    <option value="PART_TIME">Part Time</option>
+                    <option value="CONTRACT">Contract</option>
+                    <option value="TEMPORARY">Temporary</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="caseworkerType">Caseworker Type</label>
+                <select name="caseworkerType" id="caseworkerType" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Caseworker Type</option>
+                    <option value="INVESTIGATOR">Investigator</option>
+                    <option value="FAMILY_BASED_SAFETY">Family Based Safety</option>
+                    <option value="CONSERVATORSHIP">Conservatorship</option>
+                    <option value="ADOPTION">Adoption</option>
+                    <option value="KINSHIP">Kinship</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="subjectToRO22">Subject to RO22?</label>
+                <select name="subjectToRO22" id="subjectToRO22" aria-required="true" class="minWidthSelect">
+                    <option value="">Select</option>
+                    <option value="YES">Yes</option>
+                    <option value="NO">No</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Row 5: Effective Date and Reason for Change -->
+        <div id="effectiveDateSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="effectiveDate">
+                    <spring:message code="SSCCEmployeeDetail.label.effectiveDate.titleUpdate"/>
+                </label>
+                <form:input type="text" class="dateField" path="effectiveDateOfChange" id="effectiveDate" aria-required="true" size="12"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="reasonForChange">Reason for Change</label>
+                <select name="reasonForChange" id="reasonForChange" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Reason</option>
+                    <option value="NEW_HIRE">New Hire</option>
+                    <option value="JOB_CHANGE">Job Change</option>
+                    <option value="MODIFY_CORRECT">Modify/Correct Existing Position</option>
+                    <option value="TERMINATION">Termination</option>
+                    <option value="PROMOTION">Promotion</option>
+                    <option value="TRANSFER">Transfer</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Row 6: Training Section -->
+        <div id="trainingSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="requiredTrainingEntry">Required Training at Entry into Specialty</label>
+                <select name="requiredTrainingEntry" id="requiredTrainingEntry" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Training</option>
+                    <option value="BASIC_SKILLS">Basic Skills Training</option>
+                    <option value="ADVANCED_SKILLS">Advanced Skills Training</option>
+                    <option value="SPECIALTY_TRAINING">Specialty Training</option>
+                    <option value="ONGOING_TRAINING">Ongoing Training</option>
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label class="reqField" for="requiredTrainingNotes">Required Training Notes</label>
+                <select name="requiredTrainingNotes" id="requiredTrainingNotes" aria-required="true" class="minWidthSelect">
+                    <option value="">Select Notes</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="NOT_STARTED">Not Started</option>
+                    <option value="WAIVED">Waived</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Row 7: Supervisor Section (LAST ROW) -->
+        <div id="supervisorSection" class="row rowPadding marginBottom10 leftPadFirstLevel">
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="supervisorId" class="reqField">
+                    <spring:message code="SSCCEmployeeDetail.label.supervisorPID"/>
+                </label>
+                <form:input type="text" id="supervisorId" class="inputNoBorder livingClearable" path="supervisorPid" readonly="true"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <label for="supervisorName" class="reqField">
+                    <spring:message code="SSCCEmployeeDetail.label.supervisorName"/>
+                </label>
+                <form:input type="text" id="supervisorName" class="inputNoBorder livingClearable" path="supervisorName" readonly="true"/>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 noLeftPad">
+                <button type="button" id="staffSearch" name="Select a Staff" onclick="searchStaff();"
+                        class="btn btn-sm marginTop25 btnSectionLevel navCheckFalse"
+                        aria-label="Select a staff" ${isExternalUser ? '' : 'disabled'}>
+                    Staff Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row justify-content-end fixed-bottom">
+            <div class="col-md-10"></div>
+            <div class="col-md-2 text-end">
+                <button type="button" id="saveSSCCEmployeeDetail"
+                        name="saveSSCCEmployeeDetail"
+                        class="btn btn-primary mb-3 marginLeft15 navCheckFalse">&nbsp;&nbsp;<spring:message
+                        code="SSCCEmployeeDetail.label.SaveButton"/>&nbsp;&nbsp;
+                </button>
+            </div>
+        </div>
+ 
+        </form:form>
+    </div>
+</main>
+
+<script src="${pageContext.request.contextPath}/resources/js/ssccEmployeeDetails.js?v=1.0"></script>
+<script src="${pageContext.request.contextPath}/resources/js/fieldValidation.js?v=0.1"></script>
+<script src="${pageContext.request.contextPath}/resources/js/commonFunctions.js?v=0.1"></script>
+<script src="${pageContext.request.contextPath}/resources/js/formChange.js"></script>
+</body>
+</html>
